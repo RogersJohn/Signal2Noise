@@ -7,7 +7,11 @@
       "Bash(findstr :3000)",
       "Bash(taskkill /F /PID 27908)",
       "Bash(cat src/App.tsx)",
-      "Bash(taskkill //F //PID 27908)"
+      "Bash(taskkill //F //PID 27908)",
+      "Bash(npm test -- --testPathPattern=gameLogic.test.ts --watchAll=false)",
+      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testNamePattern=\"Comprehensive Analytics\")",
+      "Bash(npm test -- --testPathPattern=aiPersonalities.test.ts --watchAll=false)",
+      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false)"
     ],
     "deny": [],
     "ask": []

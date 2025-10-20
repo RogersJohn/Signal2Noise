@@ -12,6 +12,7 @@ export interface ConspiracyCard {
   tier: Tier;
   truthValue: TruthValue;
   isRevealed: boolean;
+  icon?: string; // Emoji/Unicode icon for visual identity
 }
 
 export interface EvidenceCard {

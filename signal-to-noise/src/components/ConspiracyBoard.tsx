@@ -67,6 +67,9 @@ export const ConspiracyBoard: React.FC<ConspiracyBoardProps> = ({
             >
               {getTierStars(conspiracy.tier)}
             </div>
+            {conspiracy.icon && (
+              <div className="conspiracy-icon">{conspiracy.icon}</div>
+            )}
             <h3>{conspiracy.name}</h3>
             <p className="conspiracy-description">{conspiracy.description}</p>
             {conspiracy.isRevealed && (
