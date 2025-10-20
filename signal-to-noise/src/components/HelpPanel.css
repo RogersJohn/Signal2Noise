@@ -1,0 +1,90 @@
+.help-panel {
+  background: #1f2937;
+  border: 2px solid #3b82f6;
+  border-radius: 8px;
+  margin: 20px 0;
+  transition: all 0.3s;
+}
+
+.help-panel.collapsed {
+  border-color: #4b5563;
+}
+
+.help-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.help-header:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.help-header h3 {
+  margin: 0;
+  color: #3b82f6;
+  font-size: 1.2rem;
+}
+
+.toggle-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.help-content {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid #374151;
+}
+
+.help-content h4 {
+  margin: 15px 0 10px 0;
+  color: #f3f4f6;
+  font-size: 1.1rem;
+}
+
+.help-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.help-content li {
+  padding: 8px 0;
+  color: #d1d5db;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.help-content li:before {
+  content: '→ ';
+  color: #3b82f6;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.help-tip {
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid #3b82f6;
+  border-radius: 4px;
+  color: #d1d5db;
+  font-size: 0.9rem;
+}
+
+.help-tip strong {
+  color: #3b82f6;
+}

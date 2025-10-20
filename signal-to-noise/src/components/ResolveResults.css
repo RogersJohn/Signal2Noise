@@ -1,0 +1,229 @@
+.resolve-results {
+  background: #111827;
+  border: 3px solid #3b82f6;
+  border-radius: 8px;
+  padding: 30px;
+  margin: 20px 0;
+}
+
+.resolve-results h2 {
+  margin: 0 0 25px 0;
+  font-size: 2rem;
+  color: #3b82f6;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.no-broadcasts {
+  background: #1f2937;
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.no-broadcasts p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #d1d5db;
+}
+
+.no-broadcasts .hint {
+  font-size: 1rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.conspiracy-results {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.conspiracy-result {
+  background: #1f2937;
+  border-radius: 8px;
+  padding: 20px;
+  border: 3px solid #4b5563;
+}
+
+.conspiracy-result.consensus {
+  border-color: #10b981;
+}
+
+.conspiracy-result.no-consensus {
+  border-color: #f59e0b;
+}
+
+.conspiracy-result h3 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  color: #f3f4f6;
+}
+
+.vote-summary {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #111827;
+  border-radius: 6px;
+}
+
+.vote-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vote-label {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.vote-label.real {
+  color: #10b981;
+}
+
+.vote-label.fake {
+  color: #ef4444;
+}
+
+.vote-number {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #f3f4f6;
+}
+
+.consensus-banner {
+  background: #10b981;
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.no-consensus-banner {
+  background: #f59e0b;
+  color: #1f2937;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.truth-reveal {
+  background: #374151;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.truth-reveal strong {
+  color: #d1d5db;
+}
+
+.truth {
+  font-weight: bold;
+  font-size: 1.3rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.truth.real {
+  background: #10b981;
+  color: white;
+}
+
+.truth.fake {
+  background: #ef4444;
+  color: white;
+}
+
+.scoring-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.player-result.correct {
+  background: rgba(16, 185, 129, 0.15);
+  border: 2px solid #10b981;
+}
+
+.player-result.wrong {
+  background: rgba(239, 68, 68, 0.15);
+  border: 2px solid #ef4444;
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.player-claim {
+  color: #9ca3af;
+}
+
+.evidence-count {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.score-gain {
+  margin-left: auto;
+  font-weight: bold;
+  color: #10b981;
+  font-size: 1.1rem;
+}
+
+.score-loss {
+  margin-left: auto;
+  font-weight: bold;
+  color: #ef4444;
+  font-size: 1.1rem;
+}
+
+.no-score {
+  padding: 20px;
+  text-align: center;
+}
+
+.no-score p {
+  margin: 8px 0;
+  font-size: 1rem;
+  color: #d1d5db;
+}
+
+.no-score .hint {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
+.continue-btn {
+  width: 100%;
+  margin-top: 25px;
+  padding: 15px;
+  font-size: 1.2rem;
+}

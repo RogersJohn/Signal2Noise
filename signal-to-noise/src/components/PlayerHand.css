@@ -1,0 +1,187 @@
+.player-hand {
+  background: #111827;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.player-stats h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hotseating-note {
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.stats-row {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.stat-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #f3f4f6;
+}
+
+.stat-value.audience {
+  font-size: 1.5rem;
+  color: #3b82f6;
+}
+
+.credibility-bar {
+  width: 100px;
+  height: 20px;
+  background: #374151;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #4b5563;
+}
+
+.credibility-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #10b981 100%);
+  transition: width 0.3s;
+}
+
+.evidence-section {
+  margin-top: 20px;
+}
+
+.evidence-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #f3f4f6;
+}
+
+.evidence-cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.evidence-card {
+  background: #1f2937;
+  border: 2px solid #4b5563;
+  border-radius: 6px;
+  padding: 12px;
+  width: 180px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.evidence-card:hover {
+  transform: translateY(-2px);
+  border-color: #6b7280;
+}
+
+.evidence-card.selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.evidence-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: #f3f4f6;
+}
+
+.flavor-text {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0 0 8px 0;
+}
+
+.supported-conspiracies {
+  padding-top: 8px;
+  border-top: 1px solid #374151;
+  margin-top: 8px;
+}
+
+.supports-all {
+  font-size: 0.8rem;
+  color: #10b981;
+  font-weight: bold;
+}
+
+.supports-specific {
+  font-size: 0.75rem;
+}
+
+.supports-label {
+  color: #9ca3af;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.conspiracy-tag {
+  background: #374151;
+  color: #d1d5db;
+  padding: 3px 6px;
+  border-radius: 3px;
+  margin: 3px 0;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  border-left: 2px solid #3b82f6;
+}
+
+.assigned-evidence-section {
+  margin-top: 20px;
+}
+
+.assigned-evidence-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.2rem;
+  color: #f3f4f6;
+}
+
+.assigned-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.assignment {
+  background: #1f2937;
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assignment-conspiracy {
+  color: #f3f4f6;
+  font-weight: 500;
+}
+
+.assignment-count {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.empty-message {
+  color: #6b7280;
+  font-style: italic;
+  margin: 10px 0;
+}

@@ -1,0 +1,111 @@
+.conspiracy-board {
+  margin: 20px 0;
+}
+
+.conspiracy-board h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.conspiracy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.conspiracy-card {
+  background: #1f2937;
+  border: 3px solid #4b5563;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.conspiracy-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.conspiracy-card.selected {
+  border-width: 4px;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+.conspiracy-card.valid-target {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  opacity: 1;
+}
+
+.conspiracy-card.valid-target:hover {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+  transform: translateY(-4px);
+}
+
+.conspiracy-card.invalid-target {
+  opacity: 0.3;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.conspiracy-card.invalid-target:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.conspiracy-tier {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.conspiracy-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #f3f4f6;
+}
+
+.conspiracy-description {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.truth-value {
+  margin-top: 10px;
+  padding: 6px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+.truth-value.real {
+  background: #10b981;
+  color: white;
+}
+
+.truth-value.fake {
+  background: #ef4444;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .conspiracy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .conspiracy-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,145 @@
+.game-setup {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.game-setup h1 {
+  font-size: 4rem;
+  margin: 0 0 10px 0;
+  color: #3b82f6;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  text-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0 0 60px 0;
+  text-align: center;
+  max-width: 600px;
+}
+
+.setup-content {
+  background: #1f2937;
+  border-radius: 12px;
+  padding: 40px;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.setup-content h2 {
+  margin: 0 0 20px 0;
+  color: #f3f4f6;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.player-count-options {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.player-count-btn {
+  padding: 20px 40px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border: 3px solid #4b5563;
+  border-radius: 8px;
+  background: #111827;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.player-count-btn:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+.player-count-btn.selected {
+  border-color: #3b82f6;
+  background: #1e3a8a;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+.game-info {
+  background: #111827;
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.game-info h3 {
+  margin: 0 0 15px 0;
+  color: #3b82f6;
+  font-size: 1.5rem;
+}
+
+.game-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.game-info li {
+  padding: 10px 0;
+  color: #d1d5db;
+  border-bottom: 1px solid #374151;
+  font-size: 1rem;
+}
+
+.game-info li:last-child {
+  border-bottom: none;
+}
+
+.game-info strong {
+  color: #3b82f6;
+}
+
+.scoring-info {
+  border-top: 2px solid #374151;
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+.scoring-info p {
+  margin: 8px 0;
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+.start-btn {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.start-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4);
+}
+
+.start-btn:active {
+  transform: translateY(0);
+}

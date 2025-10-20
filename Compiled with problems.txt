@@ -1,0 +1,351 @@
+Compiled with problems:
+×
+ERROR in src/App.tsx:48:18
+TS2345: Argument of type '(prev: GameState | null) => { players: PlayerState[]; conspiracies?: ConspiracyCard[] | undefined; conspiracyDeck?: ConspiracyCard[] | undefined; ... 8 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { players: PlayerState[]; conspiracies?: ConspiracyCard[] | undefined; conspiracyDeck?: ConspiracyCard[] | undefined; ... 8 more ...; totalRevealed?: number | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ players: PlayerState[]; conspiracies?: ConspiracyCard[] | undefined; conspiracyDeck?: ConspiracyCard[] | undefined; evidenceDeck?: EvidenceCard[] | undefined; ... 7 more ...; totalRevealed?: number | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'conspiracies' are incompatible between these types.
+        Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+          Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    46 |     }
+    47 |
+  > 48 |     setGameState(prev => {
+       |                  ^^^^^^^^^
+    49 |       const updatedPlayers = [...prev.players];
+    50 |       const playerIndex = prev.currentPlayerIndex;
+    51 |       const player = { ...updatedPlayers[playerIndex] };
+ERROR in src/App.tsx:49:34
+TS18047: 'prev' is possibly 'null'.
+    47 |
+    48 |     setGameState(prev => {
+  > 49 |       const updatedPlayers = [...prev.players];
+       |                                  ^^^^
+    50 |       const playerIndex = prev.currentPlayerIndex;
+    51 |       const player = { ...updatedPlayers[playerIndex] };
+    52 |
+ERROR in src/App.tsx:50:27
+TS18047: 'prev' is possibly 'null'.
+    48 |     setGameState(prev => {
+    49 |       const updatedPlayers = [...prev.players];
+  > 50 |       const playerIndex = prev.currentPlayerIndex;
+       |                           ^^^^
+    51 |       const player = { ...updatedPlayers[playerIndex] };
+    52 |
+    53 |       // Remove card from hand
+ERROR in src/App.tsx:77:18
+TS2345: Argument of type '(prev: GameState | null) => { players: PlayerState[]; evidenceDeck: EvidenceCard[]; phase: "BROADCAST"; currentPlayerIndex: number; conspiracies?: ConspiracyCard[] | undefined; ... 6 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { players: PlayerState[]; evidenceDeck: EvidenceCard[]; phase: "BROADCAST"; currentPlayerIndex: number; conspiracies?: ConspiracyCard[] | undefined; ... 6 more ...; totalRevealed?: number | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ players: PlayerState[]; evidenceDeck: EvidenceCard[]; phase: "BROADCAST"; currentPlayerIndex: number; conspiracies?: ConspiracyCard[] | undefined; ... 6 more ...; totalRevealed?: number | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'conspiracies' are incompatible between these types.
+        Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+          Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    75 |   // INVESTIGATE PHASE: Done investigating (draw cards for all players)
+    76 |   const handleDoneInvestigating = () => {
+  > 77 |     setGameState(prev => {
+       |                  ^^^^^^^^^
+    78 |       let updatedDeck = [...prev.evidenceDeck];
+    79 |       const updatedPlayers = prev.players.map(player => {
+    80 |         const result = drawCards(player, updatedDeck, 2);
+ERROR in src/App.tsx:78:29
+TS18047: 'prev' is possibly 'null'.
+    76 |   const handleDoneInvestigating = () => {
+    77 |     setGameState(prev => {
+  > 78 |       let updatedDeck = [...prev.evidenceDeck];
+       |                             ^^^^
+    79 |       const updatedPlayers = prev.players.map(player => {
+    80 |         const result = drawCards(player, updatedDeck, 2);
+    81 |         updatedDeck = result.updatedDeck;
+ERROR in src/App.tsx:79:30
+TS18047: 'prev' is possibly 'null'.
+    77 |     setGameState(prev => {
+    78 |       let updatedDeck = [...prev.evidenceDeck];
+  > 79 |       const updatedPlayers = prev.players.map(player => {
+       |                              ^^^^
+    80 |         const result = drawCards(player, updatedDeck, 2);
+    81 |         updatedDeck = result.updatedDeck;
+    82 |         return result.updatedPlayer;
+ERROR in src/App.tsx:118:18
+TS2345: Argument of type '(prev: GameState | null) => { broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; phase: "BROADCAST" | "RESOLVE"; conspiracies?: ConspiracyCard[] | undefined; ... 7 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; phase: "BROADCAST" | "RESOLVE"; conspiracies?: ConspiracyCard[] | undefined; ... 7 more ...; totalRevealed?: number | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; phase: "BROADCAST" | "RESOLVE"; conspiracies?: ConspiracyCard[] | undefined; conspiracyDeck?: ConspiracyCard[] | undefined; ... 6 more ...; totalRevealed?: number | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'conspiracies' are incompatible between these types.
+        Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+          Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    116 |     };
+    117 |
+  > 118 |     setGameState(prev => {
+        |                  ^^^^^^^^^
+    119 |       const updatedQueue = [...prev.broadcastQueue, broadcast];
+    120 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+    121 |       const allPlayersWent = nextPlayerIndex === 0;
+ERROR in src/App.tsx:119:32
+TS18047: 'prev' is possibly 'null'.
+    117 |
+    118 |     setGameState(prev => {
+  > 119 |       const updatedQueue = [...prev.broadcastQueue, broadcast];
+        |                                ^^^^
+    120 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+    121 |       const allPlayersWent = nextPlayerIndex === 0;
+    122 |
+ERROR in src/App.tsx:120:32
+TS18047: 'prev' is possibly 'null'.
+    118 |     setGameState(prev => {
+    119 |       const updatedQueue = [...prev.broadcastQueue, broadcast];
+  > 120 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        |                                ^^^^
+    121 |       const allPlayersWent = nextPlayerIndex === 0;
+    122 |
+    123 |       return {
+ERROR in src/App.tsx:120:63
+TS18047: 'prev' is possibly 'null'.
+    118 |     setGameState(prev => {
+    119 |       const updatedQueue = [...prev.broadcastQueue, broadcast];
+  > 120 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        |                                                               ^^^^
+    121 |       const allPlayersWent = nextPlayerIndex === 0;
+    122 |
+    123 |       return {
+ERROR in src/App.tsx:147:18
+TS2345: Argument of type '(prev: GameState | null) => { players: PlayerState[]; evidenceDeck: EvidenceCard[]; broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; ... 7 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { players: PlayerState[]; evidenceDeck: EvidenceCard[]; broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; ... 7 more ...; totalRevealed?: number | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ players: PlayerState[]; evidenceDeck: EvidenceCard[]; broadcastQueue: BroadcastObject[]; currentPlayerIndex: number; phase: "BROADCAST" | "RESOLVE"; ... 6 more ...; totalRevealed?: number | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'conspiracies' are incompatible between these types.
+        Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+          Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    145 |     };
+    146 |
+  > 147 |     setGameState(prev => {
+        |                  ^^^^^^^^^
+    148 |       // Draw 1 card
+    149 |       const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
+    150 |       const updatedPlayers = [...prev.players];
+ERROR in src/App.tsx:149:47
+TS18047: 'prev' is possibly 'null'.
+    147 |     setGameState(prev => {
+    148 |       // Draw 1 card
+  > 149 |       const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
+        |                                               ^^^^
+    150 |       const updatedPlayers = [...prev.players];
+    151 |       updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+    152 |
+ERROR in src/App.tsx:150:34
+TS18047: 'prev' is possibly 'null'.
+    148 |       // Draw 1 card
+    149 |       const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
+  > 150 |       const updatedPlayers = [...prev.players];
+        |                                  ^^^^
+    151 |       updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+    152 |
+    153 |       const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+ERROR in src/App.tsx:151:22
+TS18047: 'prev' is possibly 'null'.
+    149 |       const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
+    150 |       const updatedPlayers = [...prev.players];
+  > 151 |       updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+        |                      ^^^^
+    152 |
+    153 |       const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+    154 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+ERROR in src/App.tsx:153:32
+TS18047: 'prev' is possibly 'null'.
+    151 |       updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+    152 |
+  > 153 |       const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+        |                                ^^^^
+    154 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+    155 |       const allPlayersWent = nextPlayerIndex === 0;
+    156 |
+ERROR in src/App.tsx:154:32
+TS18047: 'prev' is possibly 'null'.
+    152 |
+    153 |       const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+  > 154 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        |                                ^^^^
+    155 |       const allPlayersWent = nextPlayerIndex === 0;
+    156 |
+    157 |       return {
+ERROR in src/App.tsx:154:63
+TS18047: 'prev' is possibly 'null'.
+    152 |
+    153 |       const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+  > 154 |       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        |                                                               ^^^^
+    155 |       const allPlayersWent = nextPlayerIndex === 0;
+    156 |
+    157 |       return {
+ERROR in src/App.tsx:172:18
+TS2345: Argument of type '(prev: GameState | null) => { conspiracies: ConspiracyCard[]; players: PlayerState[]; totalRevealed: number; phase: "CLEANUP"; conspiracyDeck?: ConspiracyCard[] | undefined; ... 6 more ...; advancedRules?: AdvancedRules | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { conspiracies: ConspiracyCard[]; players: PlayerState[]; totalRevealed: number; phase: "CLEANUP"; conspiracyDeck?: ConspiracyCard[] | undefined; ... 6 more ...; advancedRules?: AdvancedRules | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ conspiracies: ConspiracyCard[]; players: PlayerState[]; totalRevealed: number; phase: "CLEANUP"; conspiracyDeck?: ConspiracyCard[] | undefined; ... 6 more ...; advancedRules?: AdvancedRules | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'conspiracyDeck' are incompatible between these types.
+        Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+          Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    170 |   // RESOLVE PHASE: Process all broadcasts and check consensus
+    171 |   const handleResolve = () => {
+  > 172 |     setGameState(prev => {
+        |                  ^^^^^^^^^
+    173 |       const updatedPlayers = [...prev.players];
+    174 |       const revealedConspiracies: string[] = [];
+    175 |       let totalRevealed = prev.totalRevealed;
+ERROR in src/App.tsx:173:34
+TS18047: 'prev' is possibly 'null'.
+    171 |   const handleResolve = () => {
+    172 |     setGameState(prev => {
+  > 173 |       const updatedPlayers = [...prev.players];
+        |                                  ^^^^
+    174 |       const revealedConspiracies: string[] = [];
+    175 |       let totalRevealed = prev.totalRevealed;
+    176 |
+ERROR in src/App.tsx:175:27
+TS18047: 'prev' is possibly 'null'.
+    173 |       const updatedPlayers = [...prev.players];
+    174 |       const revealedConspiracies: string[] = [];
+  > 175 |       let totalRevealed = prev.totalRevealed;
+        |                           ^^^^
+    176 |
+    177 |       // Check each conspiracy for consensus
+    178 |       prev.conspiracies.forEach(conspiracy => {
+ERROR in src/App.tsx:178:7
+TS18047: 'prev' is possibly 'null'.
+    176 |
+    177 |       // Check each conspiracy for consensus
+  > 178 |       prev.conspiracies.forEach(conspiracy => {
+        |       ^^^^
+    179 |         const { consensus, position } = detectConsensus(prev.broadcastQueue, conspiracy.id, prev.players.length);
+    180 |
+    181 |         if (consensus && position) {
+ERROR in src/App.tsx:179:57
+TS18047: 'prev' is possibly 'null'.
+    177 |       // Check each conspiracy for consensus
+    178 |       prev.conspiracies.forEach(conspiracy => {
+  > 179 |         const { consensus, position } = detectConsensus(prev.broadcastQueue, conspiracy.id, prev.players.length);
+        |                                                         ^^^^
+    180 |
+    181 |         if (consensus && position) {
+    182 |           // Mark conspiracy as revealed
+ERROR in src/App.tsx:179:93
+TS18047: 'prev' is possibly 'null'.
+    177 |       // Check each conspiracy for consensus
+    178 |       prev.conspiracies.forEach(conspiracy => {
+  > 179 |         const { consensus, position } = detectConsensus(prev.broadcastQueue, conspiracy.id, prev.players.length);
+        |                                                                                             ^^^^
+    180 |
+    181 |         if (consensus && position) {
+    182 |           // Mark conspiracy as revealed
+ERROR in src/App.tsx:183:35
+TS18047: 'prev' is possibly 'null'.
+    181 |         if (consensus && position) {
+    182 |           // Mark conspiracy as revealed
+  > 183 |           const conspiracyIndex = prev.conspiracies.findIndex(c => c.id === conspiracy.id);
+        |                                   ^^^^
+    184 |           if (conspiracyIndex >= 0 && !prev.conspiracies[conspiracyIndex].isRevealed) {
+    185 |             revealedConspiracies.push(conspiracy.id);
+    186 |             totalRevealed++;
+ERROR in src/App.tsx:184:40
+TS18047: 'prev' is possibly 'null'.
+    182 |           // Mark conspiracy as revealed
+    183 |           const conspiracyIndex = prev.conspiracies.findIndex(c => c.id === conspiracy.id);
+  > 184 |           if (conspiracyIndex >= 0 && !prev.conspiracies[conspiracyIndex].isRevealed) {
+        |                                        ^^^^
+    185 |             revealedConspiracies.push(conspiracy.id);
+    186 |             totalRevealed++;
+    187 |           }
+ERROR in src/App.tsx:190:11
+TS18047: 'prev' is possibly 'null'.
+    188 |
+    189 |           // Score all broadcasts on this conspiracy
+  > 190 |           prev.broadcastQueue
+        |           ^^^^
+    191 |             .filter(b => b.conspiracyId === conspiracy.id && !b.isPassed)
+    192 |             .forEach(broadcast => {
+    193 |               const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
+ERROR in src/App.tsx:212:35
+TS18047: 'prev' is possibly 'null'.
+    210 |
+    211 |       // Reveal conspiracies
+  > 212 |       const updatedConspiracies = prev.conspiracies.map(c =>
+        |                                   ^^^^
+    213 |         revealedConspiracies.includes(c.id) ? { ...c, isRevealed: true } : c
+    214 |       );
+    215 |
+ERROR in src/App.tsx:230:18
+TS2345: Argument of type '(prev: GameState | null) => { conspiracies: ConspiracyCard[]; conspiracyDeck: ConspiracyCard[]; players: { assignedEvidence: {}; id: string; ... 4 more ...; color: string; }[]; ... 8 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'SetStateAction<GameState | null>'.
+  Type '(prev: GameState | null) => { conspiracies: ConspiracyCard[]; conspiracyDeck: ConspiracyCard[]; players: { assignedEvidence: {}; id: string; ... 4 more ...; color: string; }[]; ... 8 more ...; totalRevealed?: number | undefined; }' is not assignable to type '(prevState: GameState | null) => GameState | null'.
+    Call signature return types '{ conspiracies: ConspiracyCard[]; conspiracyDeck: ConspiracyCard[]; players: { assignedEvidence: {}; id: string; name: string; credibility: number; audience: number; evidenceHand: EvidenceCard[]; color: string; }[]; ... 8 more ...; totalRevealed?: number | undefined; }' and 'GameState | null' are incompatible.
+      The types of 'evidenceDeck' are incompatible between these types.
+        Type 'EvidenceCard[] | undefined' is not assignable to type 'EvidenceCard[]'.
+          Type 'undefined' is not assignable to type 'EvidenceCard[]'.
+    228 |   // CLEANUP PHASE: Replace revealed conspiracies and advance round
+    229 |   const handleCleanup = () => {
+  > 230 |     setGameState(prev => {
+        |                  ^^^^^^^^^
+    231 |       // Replace revealed conspiracies
+    232 |       let updatedDeck = [...prev.conspiracyDeck];
+    233 |       const updatedConspiracies = prev.conspiracies.map(c => {
+ERROR in src/App.tsx:232:29
+TS18047: 'prev' is possibly 'null'.
+    230 |     setGameState(prev => {
+    231 |       // Replace revealed conspiracies
+  > 232 |       let updatedDeck = [...prev.conspiracyDeck];
+        |                             ^^^^
+    233 |       const updatedConspiracies = prev.conspiracies.map(c => {
+    234 |         if (c.isRevealed && updatedDeck.length > 0) {
+    235 |           const newConspiracy = updatedDeck[0];
+ERROR in src/App.tsx:233:35
+TS18047: 'prev' is possibly 'null'.
+    231 |       // Replace revealed conspiracies
+    232 |       let updatedDeck = [...prev.conspiracyDeck];
+  > 233 |       const updatedConspiracies = prev.conspiracies.map(c => {
+        |                                   ^^^^
+    234 |         if (c.isRevealed && updatedDeck.length > 0) {
+    235 |           const newConspiracy = updatedDeck[0];
+    236 |           updatedDeck = updatedDeck.slice(1);
+ERROR in src/App.tsx:243:30
+TS18047: 'prev' is possibly 'null'.
+    241 |
+    242 |       // Clear assigned evidence from all players
+  > 243 |       const updatedPlayers = prev.players.map(p => ({
+        |                              ^^^^
+    244 |         ...p,
+    245 |         assignedEvidence: {}
+    246 |       }));
+ERROR in src/App.tsx:249:42
+TS2345: Argument of type '{ conspiracies: ConspiracyCard[]; players: { assignedEvidence: {}; id: string; name: string; credibility: number; audience: number; evidenceHand: EvidenceCard[]; color: string; }[]; ... 9 more ...; totalRevealed?: number | undefined; }' is not assignable to parameter of type 'GameState'.
+  Types of property 'conspiracyDeck' are incompatible.
+    Type 'ConspiracyCard[] | undefined' is not assignable to type 'ConspiracyCard[]'.
+      Type 'undefined' is not assignable to type 'ConspiracyCard[]'.
+    247 |
+    248 |       // Check win condition
+  > 249 |       const winCheck = checkWinCondition({
+        |                                          ^
+  > 250 |         ...prev,
+        | ^^^^^^^^^^^^^^^^
+  > 251 |         conspiracies: updatedConspiracies,
+        | ^^^^^^^^^^^^^^^^
+  > 252 |         players: updatedPlayers,
+        | ^^^^^^^^^^^^^^^^
+  > 253 |         round: prev.round + 1
+        | ^^^^^^^^^^^^^^^^
+  > 254 |       });
+        | ^^^^^^^^
+    255 |
+    256 |       return {
+    257 |         ...prev,
+ERROR in src/App.tsx:253:16
+TS18047: 'prev' is possibly 'null'.
+    251 |         conspiracies: updatedConspiracies,
+    252 |         players: updatedPlayers,
+  > 253 |         round: prev.round + 1
+        |                ^^^^
+    254 |       });
+    255 |
+    256 |       return {
+ERROR in src/App.tsx:263:16
+TS18047: 'prev' is possibly 'null'.
+    261 |         broadcastQueue: [],
+    262 |         phase: winCheck.gameOver ? 'CLEANUP' : 'INVESTIGATE',
+  > 263 |         round: prev.round + 1,
+        |                ^^^^
+    264 |         gameOver: winCheck.gameOver,
+    265 |         winner: winCheck.winner
+    266 |       };

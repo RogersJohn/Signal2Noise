@@ -1,0 +1,102 @@
+.broadcast-queue {
+  background: #111827;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.broadcast-queue h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  color: #f3f4f6;
+}
+
+.empty-queue {
+  color: #6b7280;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.broadcast-item {
+  background: #1f2937;
+  border-left: 4px solid;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.broadcast-number {
+  background: #374151;
+  color: #9ca3af;
+  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.broadcast-content {
+  flex: 1;
+}
+
+.broadcast-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 1rem;
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.conspiracy-name {
+  color: #f3f4f6;
+  font-weight: 500;
+}
+
+.equals {
+  color: #6b7280;
+}
+
+.position {
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.95rem;
+}
+
+.position.real {
+  background: #10b981;
+  color: white;
+}
+
+.position.fake {
+  background: #ef4444;
+  color: white;
+}
+
+.evidence-count {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.action {
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 1.05rem;
+}

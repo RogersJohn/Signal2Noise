@@ -1,0 +1,385 @@
+import { EvidenceCard } from '../types';
+
+export const EVIDENCE_DECK: EvidenceCard[] = [
+  // Generic evidence (supports ALL or most conspiracies)
+  {
+    id: 'ev_001',
+    name: 'Anonymous Whistleblower',
+    supportedConspiracies: ['ALL'],
+    flavorText: '"I\'ll lose my job if they find out it\'s me, but the truth needs to be told..." - Message received 3am'
+  },
+  {
+    id: 'ev_002',
+    name: 'Leaked Documents',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Posted to Pastebin at 4:17am, deleted by 4:23am. I downloaded them. They\'re REAL.'
+  },
+  {
+    id: 'ev_003',
+    name: 'Viral Social Media Post',
+    supportedConspiracies: ['ALL'],
+    flavorText: '87K shares in 6 hours, then POOF - memory-holed. Why would they delete the truth?'
+  },
+  {
+    id: 'ev_004',
+    name: 'Expert Testimony',
+    supportedConspiracies: ['ALL'],
+    flavorText: '"In my 30 years studying this..." - PhD from a university you\'ve definitely heard of'
+  },
+  {
+    id: 'ev_005',
+    name: 'Pattern Recognition',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'I made a spreadsheet. The correlation is 94.7%. You can\'t argue with MATH.'
+  },
+  {
+    id: 'ev_006',
+    name: 'Follow the Money',
+    supportedConspiracies: ['ALL'],
+    flavorText: '$2.3 million deposited the day before the incident. But sure, totally normal.'
+  },
+  {
+    id: 'ev_007',
+    name: 'Cui Bono Analysis',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Who profits from this? Oh, what a surprise - THE SAME PEOPLE AS ALWAYS.'
+  },
+  {
+    id: 'ev_008',
+    name: 'Common Sense',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Literally use your brain for 30 seconds. That\'s all I\'m asking. Thirty. Seconds.'
+  },
+  {
+    id: 'ev_009',
+    name: 'Independent Investigation',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'I spent 47 hours researching this. MSM spent zero. Who do YOU trust?'
+  },
+  {
+    id: 'ev_010',
+    name: 'Suspicious Timing',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'This happened EXACTLY 3 days after the hearing. Three days. EXACTLY.'
+  },
+
+  // Weather/Science conspiracies
+  {
+    id: 'ev_011',
+    name: 'Atmospheric Samples',
+    supportedConspiracies: ['chemtrails', 'weather_machine'],
+    flavorText: 'My buddy tested it in his garage lab. Barium levels OFF THE CHARTS. Don\'t breathe!'
+  },
+  {
+    id: 'ev_012',
+    name: 'Flight Path Analysis',
+    supportedConspiracies: ['chemtrails'],
+    flavorText: 'Normal planes don\'t fly in perfect grids for 6 hours. I tracked them on FlightRadar24!'
+  },
+  {
+    id: 'ev_013',
+    name: 'Pilot Reports',
+    supportedConspiracies: ['chemtrails'],
+    flavorText: '"They made us install tanks we weren\'t allowed to ask about" - Pilot, 22 years experience'
+  },
+  {
+    id: 'ev_014',
+    name: 'Meteorological Anomalies',
+    supportedConspiracies: ['weather_machine', 'chemtrails'],
+    flavorText: 'Square clouds. SQUARE. Clouds aren\'t square in nature. Wake up!'
+  },
+  {
+    id: 'ev_015',
+    name: 'Military Patents',
+    supportedConspiracies: ['weather_machine'],
+    flavorText: 'Patent US5003186 - "Stratospheric Welsbach seeding for reduction of global warming" IT\'S PUBLIC!'
+  },
+  {
+    id: 'ev_016',
+    name: 'HAARP Facility Activity',
+    supportedConspiracies: ['weather_machine'],
+    flavorText: 'Power surge detected 48 hours before the earthquake. FORTY-EIGHT HOURS.'
+  },
+
+  // Alien/Cryptid conspiracies
+  {
+    id: 'ev_017',
+    name: 'Eyewitness Accounts',
+    supportedConspiracies: ['bigfoot', 'crop_circles'],
+    flavorText: 'Twelve people, different locations, same night. All described the EXACT same thing.'
+  },
+  {
+    id: 'ev_018',
+    name: 'Footprint Casts',
+    supportedConspiracies: ['bigfoot'],
+    flavorText: '18 inches long, 7 inches wide, dermal ridges visible. Fake that in 1967, I dare you.'
+  },
+  {
+    id: 'ev_019',
+    name: 'Thermal Imaging Footage',
+    supportedConspiracies: ['bigfoot'],
+    flavorText: '8-foot heat signature, bipedal gait, moving at 30mph uphill. Not a bear.'
+  },
+  {
+    id: 'ev_020',
+    name: 'Geometric Precision',
+    supportedConspiracies: ['crop_circles'],
+    flavorText: '409 circles, perfect fractals, appeared in 4 hours. You try that with rope and planks.'
+  },
+  {
+    id: 'ev_021',
+    name: 'Radiation Readings',
+    supportedConspiracies: ['crop_circles'],
+    flavorText: 'Geiger counter went CRAZY inside the circle. Background radiation outside: normal.'
+  },
+  {
+    id: 'ev_022',
+    name: 'Bent Plant Stems',
+    supportedConspiracies: ['crop_circles'],
+    flavorText: 'Bent at the nodes, not broken. Microwave radiation signature. HOW?!'
+  },
+
+  // Media/Celebrity conspiracies
+  {
+    id: 'ev_023',
+    name: 'Paparazzi Photos',
+    supportedConspiracies: ['celebrity_death'],
+    flavorText: 'That\'s him! Same mole on the left cheek! Cashier in Buenos Aires, 2019. I KNOW IT\'S HIM.'
+  },
+  {
+    id: 'ev_024',
+    name: 'Death Certificate Irregularities',
+    supportedConspiracies: ['celebrity_death'],
+    flavorText: 'The coroner\'s signature doesn\'t match ANY other document. Forensics doesn\'t lie!'
+  },
+  {
+    id: 'ev_025',
+    name: 'Numerology Patterns',
+    supportedConspiracies: ['celebrity_death', 'subliminal_ads'],
+    flavorText: 'Add up the dates. Divide by 7. Add the time zones. It\'s all 27s. ALL TWENTY-SEVENS.'
+  },
+  {
+    id: 'ev_026',
+    name: 'Backmasking Audio',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: 'Play it at 0.68x speed backwards. "Buy... consume... obey..." Clear as day!'
+  },
+  {
+    id: 'ev_027',
+    name: 'Industry Insider',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: '"We call it the frequency layer. The execs know exactly what it does." - Engineer, 15 years'
+  },
+  {
+    id: 'ev_028',
+    name: 'Consumer Behavior Studies',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: 'Fast food sales spike 340% in markets where the song plays. Coincidence? I THINK NOT.'
+  },
+
+  // Government/Institutional conspiracies
+  {
+    id: 'ev_029',
+    name: 'Declassified CIA Documents',
+    supportedConspiracies: ['fluoride', 'moon_landing', 'election_rigging', 'weather_machine'],
+    flavorText: 'Operation [REDACTED]. Page 47, paragraph 3. Still mostly blacked out, but you can read enough.'
+  },
+  {
+    id: 'ev_030',
+    name: 'Congressional Testimony',
+    supportedConspiracies: ['pharma_coverup', 'election_rigging', 'mayor_embezzlement'],
+    flavorText: 'Under oath, on C-SPAN, at 2:47pm. He SAID IT. Then resigned the next day. Explain that!'
+  },
+  {
+    id: 'ev_031',
+    name: 'Budget Discrepancies',
+    supportedConspiracies: ['mayor_embezzlement', 'weather_machine', 'moon_landing'],
+    flavorText: '$847 million allocated, $23 million spent. WHERE DID THE REST GO?! NOBODY WILL ANSWER.'
+  },
+  {
+    id: 'ev_032',
+    name: 'Fluoride Health Data',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'IQ scores drop 7 points in fluoridated areas. Harvard study. HARVARD. Look it up!'
+  },
+  {
+    id: 'ev_033',
+    name: 'Nazi Research Papers',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'I.G. Farben documents, 1939-1944. They knew. And now it\'s in YOUR water.'
+  },
+  {
+    id: 'ev_034',
+    name: 'Dental Industry Lobbying',
+    supportedConspiracies: ['fluoride'],
+    flavorText: '$14M in campaign donations from Colgate alone. They don\'t want you to know it doesn\'t work!'
+  },
+
+  // Space/Moon Landing
+  {
+    id: 'ev_035',
+    name: 'Flag Movement Analysis',
+    supportedConspiracies: ['moon_landing'],
+    flavorText: 'The flag WAVES. There\'s NO AIR on the moon. FRAME 27:43. Watch it yourself!'
+  },
+  {
+    id: 'ev_036',
+    name: 'Van Allen Radiation Belt',
+    supportedConspiracies: ['moon_landing'],
+    flavorText: '25,000 rads of radiation. Lead suits or not, they\'d be DEAD. NASA won\'t address this!'
+  },
+  {
+    id: 'ev_037',
+    name: 'Photo Inconsistencies',
+    supportedConspiracies: ['moon_landing'],
+    flavorText: 'Shadows going in THREE directions. The sun is ONE light source. BASIC PHYSICS, PEOPLE.'
+  },
+  {
+    id: 'ev_038',
+    name: 'Missing Moon Rocks',
+    supportedConspiracies: ['moon_landing'],
+    flavorText: 'They gave Netherlands "moon rock" - turned out to be PETRIFIED WOOD. Oops!'
+  },
+  {
+    id: 'ev_039',
+    name: 'Stanley Kubrick Connection',
+    supportedConspiracies: ['moon_landing'],
+    flavorText: 'Kubrick had top clearance. 2001 came out in \'68. Moon landing \'69. DO THE MATH.'
+  },
+
+  // Pharmaceutical/Medical
+  {
+    id: 'ev_040',
+    name: 'Suppressed Clinical Trials',
+    supportedConspiracies: ['pharma_coverup'],
+    flavorText: '94% success rate in trials. Paper was "lost". All 7 copies. From 3 different labs.'
+  },
+  {
+    id: 'ev_041',
+    name: 'Researcher Death',
+    supportedConspiracies: ['pharma_coverup'],
+    flavorText: '"Accidental" death #12 this year. All working on the same cure. All different "accidents".'
+  },
+  {
+    id: 'ev_042',
+    name: 'Patent Applications',
+    supportedConspiracies: ['pharma_coverup'],
+    flavorText: 'Filed in 1997. Approved in 1998. Never manufactured. They buried it!'
+  },
+  {
+    id: 'ev_043',
+    name: 'Revenue Projections',
+    supportedConspiracies: ['pharma_coverup'],
+    flavorText: 'Internal memo: "Cure would cost us $40B annually in treatment revenue." FORTY BILLION.'
+  },
+
+  // Election/Voting
+  {
+    id: 'ev_044',
+    name: 'Source Code Analysis',
+    supportedConspiracies: ['election_rigging'],
+    flavorText: 'Line 1,547 in the code: if(candidate=="X") votes--; IT\'S RIGHT THERE IN THE CODE!'
+  },
+  {
+    id: 'ev_045',
+    name: 'Statistical Impossibilities',
+    supportedConspiracies: ['election_rigging'],
+    flavorText: 'Benford\'s Law violation. 0.000001% chance naturally. But sure, totally legit!'
+  },
+  {
+    id: 'ev_046',
+    name: 'Machine Calibration Issues',
+    supportedConspiracies: ['election_rigging'],
+    flavorText: 'Touch candidate A, machine votes candidate B. "Calibration error" - 47 counties, same day.'
+  },
+  {
+    id: 'ev_047',
+    name: 'Exit Poll Discrepancies',
+    supportedConspiracies: ['election_rigging'],
+    flavorText: 'Exit polls off by 11%. Margin of error: 3%. Math isn\'t lying. Someone else is.'
+  },
+
+  // Tech/Corporate
+  {
+    id: 'ev_048',
+    name: 'Server Logs',
+    supportedConspiracies: ['tech_data_sale'],
+    flavorText: '2.4TB uploaded to Beijing servers. Daily. Your data doesn\'t live in "the cloud" - it lives in CHINA.'
+  },
+  {
+    id: 'ev_049',
+    name: 'Employee NDA Violations',
+    supportedConspiracies: ['tech_data_sale'],
+    flavorText: '"I had to sign an NDA to work in data exports. That should tell you everything." - Ex-employee'
+  },
+  {
+    id: 'ev_050',
+    name: 'Terms of Service Changes',
+    supportedConspiracies: ['tech_data_sale'],
+    flavorText: 'Clause 7.4.2, added last Tuesday: "...may share with partners and affiliates." PARTNERS.'
+  },
+  {
+    id: 'ev_051',
+    name: 'Foreign Government Contracts',
+    supportedConspiracies: ['tech_data_sale'],
+    flavorText: '$280M contract with a government that censors the internet. For what? DATA MINING.'
+  },
+
+  // Local Government
+  {
+    id: 'ev_052',
+    name: 'Offshore Bank Records',
+    supportedConspiracies: ['mayor_embezzlement'],
+    flavorText: 'Panama Papers, page 1,847. Account #472819. Mayor\'s wife\'s maiden name. Boom.'
+  },
+  {
+    id: 'ev_053',
+    name: 'Construction Contracts',
+    supportedConspiracies: ['mayor_embezzlement'],
+    flavorText: '$8M for a bridge. Actual cost: $900K. The rest went to "LuxuryLife LLC" - Mayor\'s shell corp!'
+  },
+  {
+    id: 'ev_054',
+    name: 'Luxury Purchases',
+    supportedConspiracies: ['mayor_embezzlement'],
+    flavorText: '$2.1M yacht. $95K salary. "Family money" they say. Family money from WHERE?!'
+  },
+  {
+    id: 'ev_055',
+    name: 'Accounting Audit',
+    supportedConspiracies: ['mayor_embezzlement'],
+    flavorText: 'Independent CPA found "irregularities" - code word for FRAUD - in 73% of expense reports.'
+  },
+
+  // Multi-category generic evidence
+  {
+    id: 'ev_056',
+    name: 'Unexplained Coincidences',
+    supportedConspiracies: ['celebrity_death', 'election_rigging', 'pharma_coverup', 'mayor_embezzlement'],
+    flavorText: 'Seven "coincidences" in nine days. At some point, it stops being coincidence!'
+  },
+  {
+    id: 'ev_057',
+    name: 'Mainstream Media Silence',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'CNN: nothing. Fox: nothing. MSNBC: nothing. They\'re ALL covering it up. Controlled media!'
+  },
+  {
+    id: 'ev_058',
+    name: 'Fact-Checker Bias',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Snopes called it "false" - funded by the SAME PEOPLE we\'re exposing! Conflict of interest much?!'
+  },
+  {
+    id: 'ev_059',
+    name: 'Occam\'s Razor',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'What\'s simpler? A massive coincidence... or the OBVIOUS truth staring you in the face?'
+  },
+  {
+    id: 'ev_060',
+    name: 'Your Gut Feeling',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Deep down, you know something\'s wrong. Trust your instincts. They\'re trying to make you doubt yourself!'
+  }
+];
