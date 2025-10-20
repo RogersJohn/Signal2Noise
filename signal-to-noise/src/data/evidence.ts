@@ -77,7 +77,7 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_011',
     name: 'Atmospheric Samples',
-    supportedConspiracies: ['chemtrails', 'weather_machine'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'My buddy tested it in his garage lab. Barium levels OFF THE CHARTS. Don\'t breathe!',
     excitement: 0
   },
@@ -98,7 +98,7 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_014',
     name: 'Meteorological Anomalies',
-    supportedConspiracies: ['weather_machine', 'chemtrails'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Square clouds. SQUARE. Clouds aren\'t square in nature. Wake up!',
     excitement: 0
   },
@@ -121,7 +121,7 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_017',
     name: 'Eyewitness Accounts',
-    supportedConspiracies: ['bigfoot', 'crop_circles'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Twelve people, different locations, same night. All described the EXACT same thing.',
     excitement: 0
   },
@@ -179,7 +179,7 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_025',
     name: 'Numerology Patterns',
-    supportedConspiracies: ['celebrity_death', 'subliminal_ads'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Add up the dates. Divide by 7. Add the time zones. It\'s all 27s. ALL TWENTY-SEVENS.',
     excitement: 0
   },
@@ -209,21 +209,21 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_029',
     name: 'Declassified CIA Documents',
-    supportedConspiracies: ['fluoride', 'moon_landing', 'election_rigging', 'weather_machine'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Operation [REDACTED]. Page 47, paragraph 3. Still mostly blacked out, but you can read enough.',
     excitement: -1
   },
   {
     id: 'ev_030',
     name: 'Congressional Testimony',
-    supportedConspiracies: ['pharma_coverup', 'election_rigging', 'mayor_embezzlement'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Under oath, on C-SPAN, at 2:47pm. He SAID IT. Then resigned the next day. Explain that!',
     excitement: -1
   },
   {
     id: 'ev_031',
     name: 'Budget Discrepancies',
-    supportedConspiracies: ['mayor_embezzlement', 'weather_machine', 'moon_landing'],
+    supportedConspiracies: ['ALL'],
     flavorText: '$847 million allocated, $23 million spent. WHERE DID THE REST GO?! NOBODY WILL ANSWER.',
     excitement: -1
   },
@@ -410,7 +410,7 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_056',
     name: 'Unexplained Coincidences',
-    supportedConspiracies: ['celebrity_death', 'election_rigging', 'pharma_coverup', 'mayor_embezzlement'],
+    supportedConspiracies: ['ALL'],
     flavorText: 'Seven "coincidences" in nine days. At some point, it stops being coincidence!',
     excitement: -1
   },
@@ -441,5 +441,133 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
     supportedConspiracies: ['ALL'],
     flavorText: 'Deep down, you know something\'s wrong. Trust your instincts. They\'re trying to make you doubt yourself!',
     excitement: -1
+  },
+
+  // v4.6: ADDITIONAL GENERIC EVIDENCE - Boost 'ALL' cards from 22 to 40 (50% of deck)
+  {
+    id: 'ev_061',
+    name: 'Deleted Social Media Posts',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Posted at 9:47pm, deleted by 10:02pm. I got screenshots. They can\'t hide the TRUTH.',
+    excitement: -1
+  },
+  {
+    id: 'ev_062',
+    name: 'Insider Tips',
+    supportedConspiracies: ['ALL'],
+    flavorText: '"Off the record? This goes all the way to the top." - Source works at the facility.',
+    excitement: -1
+  },
+  {
+    id: 'ev_063',
+    name: 'Statistical Correlation',
+    supportedConspiracies: ['ALL'],
+    flavorText: '87% correlation. Anything above 70% indicates causation. That\'s SCIENCE.',
+    excitement: -1
+  },
+  {
+    id: 'ev_064',
+    name: 'Missing Records',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Filed FOIA request. 347 pages marked "classified". What are they HIDING?!',
+    excitement: -1
+  },
+  {
+    id: 'ev_065',
+    name: 'Convenient Timing',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Announced the day before the hearing. DAY. BEFORE. That\'s not coincidence.',
+    excitement: -1
+  },
+  {
+    id: 'ev_066',
+    name: 'Expert Debunking',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'They sent "experts" to debunk it. When has the establishment EVER debunked the truth? NEVER.',
+    excitement: -1
+  },
+  {
+    id: 'ev_067',
+    name: 'Forum Discussion',
+    supportedConspiracies: ['ALL'],
+    flavorText: '2,847 upvotes on the subreddit. That many people can\'t all be wrong!',
+    excitement: -1
+  },
+  {
+    id: 'ev_068',
+    name: 'Historical Parallels',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'They did the EXACT same thing in 1987. Same playbook, different decade.',
+    excitement: -1
+  },
+  {
+    id: 'ev_069',
+    name: 'Photographic Evidence',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Enhance... ENHANCE... see that pixel? That\'s all the proof I need.',
+    excitement: 0
+  },
+  {
+    id: 'ev_070',
+    name: 'Whistleblower Testimony',
+    supportedConspiracies: ['ALL'],
+    flavorText: '"I can\'t reveal my identity for safety reasons, but I was THERE." - Anonymous',
+    excitement: 0
+  },
+  {
+    id: 'ev_071',
+    name: 'Unexplained Deaths',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Three witnesses dead in six months. ALL ruled "suicide". ALL shot twice in the back of the head.',
+    excitement: 0
+  },
+  {
+    id: 'ev_072',
+    name: 'Following the Money',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Shell company → offshore account → PAC donation. Paper trail leads RIGHT TO THEM.',
+    excitement: 0
+  },
+  {
+    id: 'ev_073',
+    name: 'Government Denials',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'The government says it\'s false. THAT MEANS IT\'S TRUE. They always lie!',
+    excitement: 0
+  },
+  {
+    id: 'ev_074',
+    name: 'Ancient Texts',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Predicted in a 12th century manuscript. HOW COULD THEY KNOW?! Time travelers.',
+    excitement: 1
+  },
+  {
+    id: 'ev_075',
+    name: 'Deathbed Confession',
+    supportedConspiracies: ['ALL'],
+    flavorText: '"I have nothing left to lose. I\'ll tell you everything..." - Dying engineer',
+    excitement: 1
+  },
+  {
+    id: 'ev_076',
+    name: 'Mathematical Proof',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'Did the calculations myself. Numbers DON\'T LIE. Unless they want them to...',
+    excitement: 0
+  },
+  {
+    id: 'ev_077',
+    name: 'Eyewitness Reports',
+    supportedConspiracies: ['ALL'],
+    flavorText: '47 independent witnesses across 9 states. Same description. You can\'t fake that.',
+    excitement: 0
+  },
+  {
+    id: 'ev_078',
+    name: 'Corporate Partnerships',
+    supportedConspiracies: ['ALL'],
+    flavorText: 'CEO sits on BOTH boards. Conflict of interest? No, CONSPIRACY of interest!',
+    excitement: 0
   }
 ];

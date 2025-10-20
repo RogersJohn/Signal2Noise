@@ -195,7 +195,8 @@ export function makeAIDecision(
   personality: AIPersonality
 ): AIDecision {
   const player = gameState.players[playerIndex];
-  const availableConspiracies = gameState.conspiracies.filter(c => !c.isRevealed);
+  // v4.5: Allow broadcasting on revealed conspiracies (cleanup happens at end of round)
+  const availableConspiracies = gameState.conspiracies;
 
   // PHASE 1: Evaluate each conspiracy option
   const evaluations = availableConspiracies.map(conspiracy => {
@@ -203,26 +204,47 @@ export function makeAIDecision(
     const hasEvidence = assignedEvidence.length > 0;
     const evidenceCount = assignedEvidence.length;
 
+    // v4.0: Distinguish between real evidence and bluff cards
+    const realEvidence = assignedEvidence.filter(card => !card.isBluff);
+    const bluffCards = assignedEvidence.filter(card => card.isBluff);
+    const hasRealEvidence = realEvidence.length > 0;
+
     // Calculate base score for this conspiracy
     let score = 0;
 
-    // Evidence strength bonus
-    if (hasEvidence) {
-      score += evidenceCount * 20;
+    // v4.6: EVIDENCE FIRST - Massively increased evidence value
+    if (hasRealEvidence) {
+      // Real evidence: DOUBLED points (20 → 40)
+      score += realEvidence.length * 40;
 
-      // Excitement mechanic consideration
-      const excitementBonus = calculateExcitementValue(player, assignedEvidence);
+      // v4.6: Confidence bonus - 3+ real evidence cards = strong case!
+      if (realEvidence.length >= 3) {
+        score += 50; // Big bonus for well-researched broadcasts
+      }
+
+      // Excitement mechanic consideration (only for real evidence)
+      const excitementBonus = calculateExcitementValue(player, realEvidence);
       score += excitementBonus * 5;
-    } else {
-      // BLUFF INCENTIVES: Score conspiracies without evidence based on personality
 
-      // High risk tolerance = willing to bluff
-      score += personality.riskTolerance * personality.bluffFrequency * 30;
+      // v4.0: Bluff cards add modest bonus (cover/padding)
+      score += bluffCards.length * 5;
+    } else if (bluffCards.length > 0) {
+      // v4.0: BLUFF CARDS ONLY - safer than pure bluffing
+      // v4.6: Reduced value (15 → 10) to discourage bluff-only strategy
+      score += bluffCards.length * 10;
+
+      // Still requires risk tolerance
+      score += personality.riskTolerance * personality.bluffFrequency * 20;
+    } else {
+      // PURE BLUFF: No evidence at all (very risky!)
+
+      // v4.6: Reduced bluff appeal (30 → 15)
+      score += personality.riskTolerance * personality.bluffFrequency * 15;
 
       // Desperate play: losing badly? Take risks!
       const avgAudience = gameState.players.reduce((sum, p) => sum + p.audience, 0) / gameState.players.length;
       if (player.audience < avgAudience - 10) {
-        score += 20; // Desperation bonus
+        score += 15; // Desperation bonus (reduced from 20)
       }
     }
 
@@ -239,14 +261,40 @@ export function makeAIDecision(
       score += previousBroadcasts * personality.specialization * 15;
     }
 
-    // Opportunistic: check if others might be broadcasting on this too (consensus potential)
-    if (personality.opportunistic) {
-      const broadcastsOnThis = gameState.broadcastQueue.filter(
-        b => b.conspiracyId === conspiracy.id && !b.isPassed
-      ).length;
-      if (broadcastsOnThis > 0) {
-        // STRONG incentive to jump on consensus, even without evidence!
-        score += broadcastsOnThis * 40;
+    // v3.8: Enhanced Bandwagon Mechanics - ALL personalities can see and react to queue
+    // Check if others have already broadcast on this conspiracy (bandwagon effect)
+    const broadcastsOnThis = gameState.broadcastQueue.filter(
+      b => b.conspiracyId === conspiracy.id && !b.isPassed
+    );
+    if (broadcastsOnThis.length > 0) {
+      // v4.6: REDUCED bandwagon bonus (50 → 20) - evidence should dominate!
+      let bandwagonBonus = broadcastsOnThis.length * 20;
+
+      // v4.6: REDUCED opportunistic bonus (30 → 10, total now 30 per broadcast)
+      if (personality.opportunistic) {
+        bandwagonBonus += broadcastsOnThis.length * 10;
+      }
+
+      // Skeptical personalities are more cautious about jumping on bandwagon
+      if (personality.skepticism > 0.7 && !hasEvidence) {
+        bandwagonBonus *= 0.5; // Half bonus if skeptical and no evidence
+      }
+
+      score += bandwagonBonus;
+
+      // v3.8: Position Matching Bonus - extra points for agreeing on position
+      // Check if there's a dominant position forming (encourages actual consensus)
+      const realCount = broadcastsOnThis.filter(b => b.position === 'REAL').length;
+      const fakeCount = broadcastsOnThis.filter(b => b.position === 'FAKE').length;
+
+      if (realCount > 0 || fakeCount > 0) {
+        // If there's a clear majority position, give bonus for likely matching it
+        const dominantCount = Math.max(realCount, fakeCount);
+        const positionMatchBonus = dominantCount * 20; // +20 per matching broadcast
+
+        // Apply full bonus if we have evidence (likely to make informed choice)
+        // Apply half bonus if bluffing (50% chance to guess right position)
+        score += hasEvidence ? positionMatchBonus : positionMatchBonus * 0.5;
       }
     }
 
@@ -254,7 +302,8 @@ export function makeAIDecision(
       conspiracy,
       score,
       hasEvidence,
-      evidenceCount
+      evidenceCount,
+      hasRealEvidence
     };
   });
 
@@ -268,12 +317,12 @@ export function makeAIDecision(
 
   // PHASE 2: Decide whether to broadcast or pass
 
-  // Check evidence threshold
-  const meetsEvidenceThreshold = bestOption.hasEvidence &&
+  // v4.0: Check evidence threshold (based on REAL evidence)
+  const meetsEvidenceThreshold = bestOption.hasRealEvidence &&
     bestOption.evidenceCount >= Math.ceil(personality.evidenceThreshold * 5);
 
-  // Decide if we're bluffing
-  const willBluff = !bestOption.hasEvidence &&
+  // v4.0: Decide if we're bluffing (bluff cards count as bluffing)
+  const willBluff = !bestOption.hasRealEvidence &&
     Math.random() < personality.bluffFrequency &&
     player.credibility > 3; // Don't bluff if low credibility
 
@@ -284,20 +333,21 @@ export function makeAIDecision(
 
   // PHASE 3: Make final decision
   if (meetsEvidenceThreshold || (willBluff && canAffordRisk)) {
-    // Choose position based on personality
+    // Choose position based on personality (v4.0: now considers real evidence)
     const position = choosePosition(
       bestOption.conspiracy,
-      bestOption.hasEvidence,
+      bestOption.hasRealEvidence, // v4.0: use real evidence, not bluff cards
       personality,
-      player
+      player,
+      gameState
     );
 
     return {
       action: 'broadcast',
       conspiracyId: bestOption.conspiracy.id,
       position,
-      isBluff: !bestOption.hasEvidence,
-      confidence: bestOption.hasEvidence ? 0.8 : 0.4
+      isBluff: !bestOption.hasRealEvidence, // v4.0: bluff cards = bluffing
+      confidence: bestOption.hasRealEvidence ? 0.8 : 0.4
     };
   }
 
@@ -309,9 +359,32 @@ function choosePosition(
   conspiracy: ConspiracyCard,
   hasEvidence: boolean,
   personality: AIPersonality,
-  player: PlayerState
+  player: PlayerState,
+  gameState: GameState
 ): Position {
-  // If bluffing, choose randomly with personality bias
+  // v3.8: Check if there's a dominant position in the queue (bandwagon consensus)
+  const broadcastsOnThis = gameState.broadcastQueue.filter(
+    b => b.conspiracyId === conspiracy.id && !b.isPassed
+  );
+
+  if (broadcastsOnThis.length > 0) {
+    const realCount = broadcastsOnThis.filter(b => b.position === 'REAL').length;
+    const fakeCount = broadcastsOnThis.filter(b => b.position === 'FAKE').length;
+
+    // If there's a clear majority, follow it (especially if no evidence)
+    if (realCount > fakeCount && realCount >= 1) {
+      // Strong bias to follow REAL consensus
+      if (!hasEvidence) return 'REAL'; // Bluffers always follow
+      if (Math.random() < 0.7) return 'REAL'; // 70% chance with evidence
+    }
+    if (fakeCount > realCount && fakeCount >= 1) {
+      // Strong bias to follow FAKE consensus
+      if (!hasEvidence) return 'FAKE'; // Bluffers always follow
+      if (Math.random() < 0.7) return 'FAKE'; // 70% chance with evidence
+    }
+  }
+
+  // If bluffing and no queue guidance, choose randomly with personality bias
   if (!hasEvidence) {
     // Reckless players might guess high-tier as REAL more often
     if (personality.riskTolerance > 0.7 && conspiracy.tier >= 2) {

@@ -14,27 +14,27 @@ export function shuffle<T>(array: T[]): T[] {
 
 // Initialize game state
 export function initializeGame(playerCount: number): GameState {
-  if (playerCount < 2 || playerCount > 4) {
-    throw new Error('Game requires 2-4 players');
+  if (playerCount < 3 || playerCount > 5) {
+    throw new Error('Game requires 3-5 players');
   }
 
   // Shuffle decks
   const shuffledConspiracies = shuffle([...CONSPIRACY_DECK]);
   const shuffledEvidence = shuffle([...EVIDENCE_DECK]);
 
-  // Deal 6 conspiracies to the board
-  const conspiracies = shuffledConspiracies.slice(0, 6);
-  const conspiracyDeck = shuffledConspiracies.slice(6);
+  // v4.5: Deal 5 conspiracies (more variety, conspiracies stay on board after reveal)
+  const conspiracies = shuffledConspiracies.slice(0, 5);
+  const conspiracyDeck = shuffledConspiracies.slice(5);
 
-  // Create players
-  const playerColors = ['#3b82f6', '#ef4444', '#10b981', '#a855f7']; // blue, red, green, purple
-  const playerNames = ['Alice', 'Bob', 'Carol', 'Dave'];
+  // Create players (v4.0: expanded to 5 players)
+  const playerColors = ['#3b82f6', '#ef4444', '#10b981', '#a855f7', '#f59e0b']; // blue, red, green, purple, orange
+  const playerNames = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve'];
 
   const players: PlayerState[] = [];
   let evidenceIndex = 0;
 
   for (let i = 0; i < playerCount; i++) {
-    // Deal 3 evidence cards to each player
+    // Deal 3 evidence cards to each player (v3.7: reverted from 7 back to original)
     const evidenceHand = shuffledEvidence.slice(evidenceIndex, evidenceIndex + 3);
     evidenceIndex += 3;
 
@@ -78,18 +78,33 @@ export function initializeGame(playerCount: number): GameState {
 export function drawCards(
   player: PlayerState,
   deck: EvidenceCard[],
-  count: number
+  count: number,
+  activeConspiracies?: string[] // v4.6: Optional filter for active conspiracies
 ): { updatedPlayer: PlayerState; updatedDeck: EvidenceCard[] } {
-  const handLimit = 5;
+  const handLimit = 5; // v3.7: reverted from 7 back to original
   const currentHandSize = player.evidenceHand.length;
-  const cardsToAdd = Math.min(count, handLimit - currentHandSize, deck.length);
+
+  // v4.6: Filter deck to only cards that support active conspiracies
+  // This solves the mismatch problem while preserving deduction
+  let availableDeck = deck;
+  if (activeConspiracies && activeConspiracies.length > 0) {
+    availableDeck = deck.filter(card =>
+      card.supportedConspiracies.includes('ALL') ||
+      card.supportedConspiracies.some(id => activeConspiracies.includes(id))
+    );
+  }
+
+  const cardsToAdd = Math.min(count, handLimit - currentHandSize, availableDeck.length);
 
   if (cardsToAdd <= 0) {
     return { updatedPlayer: player, updatedDeck: deck };
   }
 
-  const drawnCards = deck.slice(0, cardsToAdd);
-  const updatedDeck = deck.slice(cardsToAdd);
+  const drawnCards = availableDeck.slice(0, cardsToAdd);
+
+  // Remove drawn cards from original deck (not filtered deck)
+  const updatedDeck = deck.filter(card => !drawnCards.includes(card));
+
   const updatedPlayer = {
     ...player,
     evidenceHand: [...player.evidenceHand, ...drawnCards]
@@ -119,8 +134,10 @@ export function detectConsensus(
   const realCount = broadcasts.filter(b => b.position === 'REAL').length;
   const fakeCount = broadcasts.filter(b => b.position === 'FAKE').length;
 
-  // Dynamic threshold: 2 players need 2 broadcasts, 3-4 players need 3
-  const threshold = playerCount === 2 ? 2 : 3;
+  // v4.6: Consensus threshold = 3 broadcasts (increased from 2)
+  // Gives more time for evidence gathering before reveals
+  // 3P: 3 (100% - rare), 4P: 3 (75%), 5P: 3 (60%)
+  const threshold = 3;
 
   if (realCount >= threshold) {
     return { consensus: true, position: 'REAL' };
@@ -137,18 +154,19 @@ export function checkWinCondition(gameState: GameState): {
   gameOver: boolean;
   winner: string | null;
 } {
-  // End if 12 conspiracies revealed
-  if (gameState.totalRevealed >= 12) {
+  // End if 10 conspiracies revealed (v3: reduced from 12)
+  if (gameState.totalRevealed >= 10) {
     return determineWinner(gameState.players);
   }
 
-  // End if 6 rounds completed
-  if (gameState.round > 6) {
+  // End if playerCount rounds completed (v3.3: reduced from playerCount + 1)
+  const maxRounds = gameState.players.length;
+  if (gameState.round > maxRounds) {
     return determineWinner(gameState.players);
   }
 
-  // End if any player reaches 60 audience
-  const hasWinner = gameState.players.some(p => p.audience >= 60);
+  // End if any player reaches 50 audience (v3.2: increased from 40)
+  const hasWinner = gameState.players.some(p => p.audience >= 50);
   if (hasWinner) {
     return determineWinner(gameState.players);
   }

@@ -60,26 +60,46 @@ export function simulateGame(personalities: AIPersonality[]): {
   let consensusCount = 0;
   let totalBluffs = 0;
   let successfulBluffs = 0;
+  let hasHadFirstConsensus = false; // v3.3: Track first consensus bonus
 
-  // Simulate game until win condition
-  while (!gameState.gameOver && gameState.round <= 6) {
-    // INVESTIGATE PHASE (simplified - AI just keeps existing assignments)
-    for (let idx = 0; idx < gameState.players.length; idx++) {
-      const player = gameState.players[idx];
+  // v3.4: Track participation streaks for each player (consecutive broadcasts)
+  const playerStreaks = new Array(gameState.players.length).fill(0);
 
-      // Draw cards
-      const cardsNeeded = 3 - player.evidenceHand.length;
-      const result = drawCards(player, gameState.evidenceDeck, cardsNeeded);
-      gameState.players[idx] = result.updatedPlayer;
-      gameState.evidenceDeck = result.updatedDeck;
+  // Simulate game until win condition (v3.3: dynamic rounds = playerCount)
+  const maxRounds = gameState.players.length;
+  while (!gameState.gameOver && gameState.round <= maxRounds) {
+    // v4.2: MULTI-INVESTIGATION PHASES (refined)
+    // Round 1: 2 investigations (build your case!)
+    // Round 2+: 1 investigation (normal pace)
+    const investigationsThisRound = gameState.round === 1 ? 2 : 1;
 
-      // AI assigns evidence strategically based on personality
-      const personality = personalities[idx];
-      assignEvidenceIntelligently(gameState.players[idx], gameState.conspiracies, personality);
+    for (let invPhase = 0; invPhase < investigationsThisRound; invPhase++) {
+      // INVESTIGATE PHASE (simplified - AI just keeps existing assignments)
+      for (let idx = 0; idx < gameState.players.length; idx++) {
+        const player = gameState.players[idx];
+
+        // Draw cards (v3.7: reverted to draw back to 3)
+        // v4.6: Filter to only evidence supporting active conspiracies
+        const cardsNeeded = 3 - player.evidenceHand.length;
+        const activeConspiracyIds = gameState.conspiracies.map(c => c.id);
+        const result = drawCards(player, gameState.evidenceDeck, cardsNeeded, activeConspiracyIds);
+        gameState.players[idx] = result.updatedPlayer;
+        gameState.evidenceDeck = result.updatedDeck;
+
+        // v4.2: AI assigns evidence strategically based on personality
+        // Evidence assignments persist - this only assigns NEW cards from hand
+        // On investigation 2, players get 3 MORE cards and assign them
+        // This simulates "reinforce existing case OR start new investigation"
+        const personality = personalities[idx];
+        assignEvidenceIntelligently(gameState.players[idx], gameState.conspiracies, personality);
+      }
     }
 
     // BROADCAST PHASE
-    gameState.broadcastQueue = [];
+    // v4.5: PERSISTENCE - Keep ALL broadcasts from previous rounds
+    // Conspiracies stay on board after reveal, replaced only at cleanup
+    // This allows broadcasts to accumulate even on "solved" conspiracies
+    // (No filtering - all broadcasts persist)
 
     for (let i = 0; i < gameState.players.length; i++) {
       const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
@@ -105,8 +125,17 @@ export function simulateGame(personalities: AIPersonality[]): {
         if (decision.isBluff) {
           totalBluffs++;
         }
+
+        // v3.4: Increment participation streak
+        playerStreaks[playerIndex]++;
       } else {
-        // Pass
+        // v3.4: Escalating pass penalty (rounds 1-2: -2, rounds 3+: -4)
+        const passPenalty = gameState.round <= 2 ? 2 : 4;
+        player.audience = Math.max(0, player.audience - passPenalty);
+
+        // v3.4: Reset participation streak on pass
+        playerStreaks[playerIndex] = 0;
+
         gameState.broadcastQueue.push({
           id: `pass_${Date.now()}_${playerIndex}`,
           playerId: player.id,
@@ -133,13 +162,64 @@ export function simulateGame(personalities: AIPersonality[]): {
 
         // Award points and track bluffs
         const broadcasts = activeBroadcasts.filter(b => b.conspiracyId === conspiracyId);
-        broadcasts.forEach(broadcast => {
+
+        // Sort by timestamp to identify second broadcaster (v3.2)
+        const sortedBroadcasts = [...broadcasts].sort((a, b) => a.timestamp - b.timestamp);
+
+        broadcasts.forEach((broadcast, idx) => {
           const player = gameState.players.find(p => p.id === broadcast.playerId);
           if (!player) return;
 
           const isCorrect = broadcast.position === conspiracy.truthValue;
           const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
-          const isBluff = assignedEvidence.length === 0;
+          // v4.0: Bluff if no evidence OR all evidence are bluff cards
+          const hasRealEvidence = assignedEvidence.some(card => !card.isBluff);
+          const isBluff = assignedEvidence.length === 0 || !hasRealEvidence;
+
+          // v4.5: First broadcaster risk/reward (leadership has consequences!)
+          const isFirstBroadcaster = sortedBroadcasts[0].id === broadcast.id;
+          if (isFirstBroadcaster) {
+            if (isCorrect) {
+              player.audience += 5; // Bold leadership rewarded!
+            } else {
+              player.audience = Math.max(0, player.audience - 3); // Bad leadership punished!
+            }
+          }
+
+          // v3.2: Second broadcaster bonus (rewards joining, not leading)
+          const isSecondBroadcaster = sortedBroadcasts.length >= 2 && sortedBroadcasts[1].id === broadcast.id;
+          if (isSecondBroadcaster) {
+            player.audience += 2;
+          }
+
+          // v3.5: Coordination bonus (+3 for matching an existing broadcast's position)
+          const broadcastIndex = sortedBroadcasts.findIndex(b => b.id === broadcast.id);
+          if (broadcastIndex > 0) {
+            // Not the first broadcaster - check if we match any earlier broadcast's position
+            const matchesEarlier = sortedBroadcasts.slice(0, broadcastIndex).some(
+              b => b.position === broadcast.position
+            );
+            if (matchesEarlier) {
+              player.audience += 3;
+            }
+          }
+
+          // v3.2: Consensus bonus (if this broadcast triggered consensus)
+          if (consensusResult.consensus) {
+            player.audience += 5;
+          }
+
+          // v3.4: First consensus bonus increased (stronger race dynamic!)
+          if (consensusResult.consensus && !hasHadFirstConsensus) {
+            player.audience += 6;
+          }
+
+          // v3.4: Participation streak bonus (+2 per consecutive broadcast)
+          const playerIndex = gameState.players.findIndex(p => p.id === player.id);
+          if (playerIndex !== -1 && playerStreaks[playerIndex] > 1) {
+            const streakBonus = (playerStreaks[playerIndex] - 1) * 2;
+            player.audience += streakBonus;
+          }
 
           if (isBluff) {
             if (isCorrect) {
@@ -174,7 +254,8 @@ export function simulateGame(personalities: AIPersonality[]): {
             });
           } else {
             // Wrong guess
-            const penalty = isBluff ? 6 : 3;
+            // v4.6: Increased bluff penalty from -5 to -7 to discourage guessing
+            const penalty = isBluff ? 7 : 3;
             player.credibility = Math.max(0, player.credibility - penalty);
           }
         });
@@ -182,10 +263,25 @@ export function simulateGame(personalities: AIPersonality[]): {
         // Reveal conspiracy
         conspiracy.isRevealed = true;
         gameState.totalRevealed++;
+
+        // v3.3: Mark that first consensus has occurred
+        if (!hasHadFirstConsensus) {
+          hasHadFirstConsensus = true;
+        }
       }
     });
 
     // CLEANUP PHASE
+    // v4.5: Replace revealed conspiracies at end of round (after all broadcasts resolve)
+    gameState.conspiracies = gameState.conspiracies.map(conspiracy => {
+      if (conspiracy.isRevealed && gameState.conspiracyDeck.length > 0) {
+        const newConspiracy = gameState.conspiracyDeck[0];
+        gameState.conspiracyDeck = gameState.conspiracyDeck.slice(1);
+        return newConspiracy;
+      }
+      return conspiracy;
+    });
+
     gameState.round++;
 
     // Check win condition
@@ -474,10 +570,10 @@ export function runMonteCarloSimulation(
     // Track consensus and bluffs
     totalConsensusRate += result.analytics.consensusRate || 0;
 
-    // Track win condition
-    if (result.finalState.players.some(p => p.audience >= 60)) {
+    // Track win condition (v3 thresholds: 40 audience, 10 revealed, 5 rounds)
+    if (result.finalState.players.some(p => p.audience >= 40)) {
       stats.winConditionDistribution.audience60++;
-    } else if (result.finalState.totalRevealed >= 12) {
+    } else if (result.finalState.totalRevealed >= 10) {
       stats.winConditionDistribution.twelveRevealed++;
     } else {
       stats.winConditionDistribution.sixRounds++;

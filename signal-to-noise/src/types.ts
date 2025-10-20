@@ -21,6 +21,7 @@ export interface EvidenceCard {
   supportedConspiracies: string[]; // conspiracy IDs or "ALL"
   flavorText: string;
   excitement: -1 | 0 | 1; // BORING (-1), NEUTRAL (0), EXCITING (+1)
+  isBluff?: boolean; // v4.0: Bluff cards allow broadcasting without real evidence
 }
 
 export interface BroadcastHistoryEntry {
