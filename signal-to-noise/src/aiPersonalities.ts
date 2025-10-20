@@ -150,6 +150,32 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     preferHighTier: false,
     credibilityConscious: true,
     opportunistic: false
+  },
+
+  SABOTEUR: {
+    name: 'The Saboteur',
+    description: 'Sets traps with high evidence on wrong positions. Sacrifices credibility to punish bandwagoners.',
+    riskTolerance: 0.75,
+    bluffFrequency: 0.3,
+    evidenceThreshold: 0.3,
+    skepticism: 0.6,
+    specialization: 0.7,
+    preferHighTier: true,
+    credibilityConscious: false,
+    opportunistic: false
+  },
+
+  META_READER: {
+    name: 'The Meta-Reader',
+    description: 'Detects traps and suspicious patterns. Avoids bandwagoning on questionable broadcasts.',
+    riskTolerance: 0.5,
+    bluffFrequency: 0.2,
+    evidenceThreshold: 0.7,
+    skepticism: 0.9,
+    specialization: 0.4,
+    preferHighTier: true,
+    credibilityConscious: true,
+    opportunistic: true
   }
 };
 
@@ -187,6 +213,17 @@ export function makeAIDecision(
       // Excitement mechanic consideration
       const excitementBonus = calculateExcitementValue(player, assignedEvidence);
       score += excitementBonus * 5;
+    } else {
+      // BLUFF INCENTIVES: Score conspiracies without evidence based on personality
+
+      // High risk tolerance = willing to bluff
+      score += personality.riskTolerance * personality.bluffFrequency * 30;
+
+      // Desperate play: losing badly? Take risks!
+      const avgAudience = gameState.players.reduce((sum, p) => sum + p.audience, 0) / gameState.players.length;
+      if (player.audience < avgAudience - 10) {
+        score += 20; // Desperation bonus
+      }
     }
 
     // Tier preference
@@ -208,7 +245,8 @@ export function makeAIDecision(
         b => b.conspiracyId === conspiracy.id && !b.isPassed
       ).length;
       if (broadcastsOnThis > 0) {
-        score += broadcastsOnThis * 25;
+        // STRONG incentive to jump on consensus, even without evidence!
+        score += broadcastsOnThis * 40;
       }
     }
 

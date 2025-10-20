@@ -1,4 +1,4 @@
-import { runSimulations, simulateGame } from './gameSimulation';
+import { runSimulations, simulateGame, runMonteCarloSimulation } from './gameSimulation';
 import { AI_PERSONALITIES, getPersonalityByName } from './aiPersonalities';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -283,5 +283,140 @@ describe('AI Personality-Based Game Simulations', () => {
 
       expect(fullReport.length).toBeGreaterThan(0);
     }, 120000); // 2 minute timeout for long test
+  });
+
+  describe('Monte Carlo Simulation', () => {
+    test('Run 500 random 4-player games with comprehensive statistics', () => {
+      console.log('\n=== MONTE CARLO SIMULATION (500 GAMES) ===\n');
+      console.log('Running 500 4-player games with random AI personality selections...\n');
+
+      const allPersonalities = Object.values(AI_PERSONALITIES);
+      const stats = runMonteCarloSimulation(500, allPersonalities);
+
+      console.log('📊 GAME STATISTICS\n');
+      console.log(`Total Games: ${stats.totalGames}`);
+      console.log(`Average Game Length: ${stats.averageGameLength.toFixed(2)} rounds`);
+      console.log(`Consensus Rate: ${(stats.consensusRate * 100).toFixed(2)}%`);
+      console.log(`Bluff Rate: ${(stats.bluffRate * 100).toFixed(2)}%`);
+
+      console.log('\n🏆 WIN CONDITIONS DISTRIBUTION\n');
+      console.log(`  60 Audience Points: ${stats.winConditionDistribution.audience60} games (${((stats.winConditionDistribution.audience60 / stats.totalGames) * 100).toFixed(1)}%)`);
+      console.log(`  12 Revealed: ${stats.winConditionDistribution.twelveRevealed} games (${((stats.winConditionDistribution.twelveRevealed / stats.totalGames) * 100).toFixed(1)}%)`);
+      console.log(`  6 Rounds: ${stats.winConditionDistribution.sixRounds} games (${((stats.winConditionDistribution.sixRounds / stats.totalGames) * 100).toFixed(1)}%)`);
+
+      console.log('\n🎭 PERSONALITY USAGE & WIN RATES\n');
+
+      // Sort by win rate
+      const sortedPersonalities = Object.entries(stats.personalityWinRate)
+        .sort((a, b) => b[1].winRate - a[1].winRate);
+
+      sortedPersonalities.forEach(([name, pStats]) => {
+        const usage = stats.personalityUsage[name];
+        console.log(`${name}:`);
+        console.log(`  Games Played: ${pStats.games} (${((usage / stats.totalGames) * 100).toFixed(1)}% usage)`);
+        console.log(`  Wins: ${pStats.wins}`);
+        console.log(`  Win Rate: ${(pStats.winRate * 100).toFixed(2)}%`);
+      });
+
+      console.log('\n💰 CREDIBILITY METRICS\n');
+      console.log(`  Avg Final Credibility: ${stats.credibilityMetrics.avgFinalCredibility.toFixed(2)}`);
+      console.log(`  Avg Credibility Loss: ${stats.credibilityMetrics.avgCredibilityLoss.toFixed(2)}`);
+
+      console.log('\n📈 KEY INSIGHTS\n');
+
+      // Find best and worst performers
+      const best = sortedPersonalities[0];
+      const worst = sortedPersonalities[sortedPersonalities.length - 1];
+
+      console.log(`  🥇 Best Performer: ${best[0]} (${(best[1].winRate * 100).toFixed(1)}% win rate)`);
+      console.log(`  🥉 Worst Performer: ${worst[0]} (${(worst[1].winRate * 100).toFixed(1)}% win rate)`);
+
+      // Game balance check
+      if (stats.winConditionDistribution.sixRounds > stats.totalGames * 0.8) {
+        console.log(`  ⚠️  Game Balance Issue: ${((stats.winConditionDistribution.sixRounds / stats.totalGames) * 100).toFixed(0)}% of games timeout at 6 rounds`);
+      }
+
+      if (stats.consensusRate < 0.05) {
+        console.log(`  ⚠️  Low Consensus: Only ${(stats.consensusRate * 100).toFixed(1)}% consensus rate suggests players are too conservative`);
+      }
+
+      if (stats.bluffRate > 0.1) {
+        console.log(`  ✅ Healthy Bluffing: ${(stats.bluffRate * 100).toFixed(1)}% of broadcasts are bluffs`);
+      }
+
+      // Generate markdown report
+      let report = '# Monte Carlo Simulation Report\n\n';
+      report += `**Generated:** ${new Date().toISOString()}\n`;
+      report += `**Total Games:** ${stats.totalGames}\n\n`;
+      report += '---\n\n';
+
+      report += '## Summary Statistics\n\n';
+      report += `- **Average Game Length:** ${stats.averageGameLength.toFixed(2)} rounds\n`;
+      report += `- **Consensus Rate:** ${(stats.consensusRate * 100).toFixed(2)}%\n`;
+      report += `- **Bluff Rate:** ${(stats.bluffRate * 100).toFixed(2)}%\n`;
+      report += `- **Avg Final Credibility:** ${stats.credibilityMetrics.avgFinalCredibility.toFixed(2)}\n`;
+      report += `- **Avg Credibility Loss:** ${stats.credibilityMetrics.avgCredibilityLoss.toFixed(2)}\n\n`;
+
+      report += '## Win Conditions\n\n';
+      report += `| Condition | Games | Percentage |\n`;
+      report += `|-----------|-------|------------|\n`;
+      report += `| 60 Audience Points | ${stats.winConditionDistribution.audience60} | ${((stats.winConditionDistribution.audience60 / stats.totalGames) * 100).toFixed(1)}% |\n`;
+      report += `| 12 Conspiracies Revealed | ${stats.winConditionDistribution.twelveRevealed} | ${((stats.winConditionDistribution.twelveRevealed / stats.totalGames) * 100).toFixed(1)}% |\n`;
+      report += `| 6 Rounds Completed | ${stats.winConditionDistribution.sixRounds} | ${((stats.winConditionDistribution.sixRounds / stats.totalGames) * 100).toFixed(1)}% |\n\n`;
+
+      report += '## Personality Performance\n\n';
+      report += `| Rank | Personality | Games | Wins | Win Rate |\n`;
+      report += `|------|------------|-------|------|----------|\n`;
+
+      sortedPersonalities.forEach(([name, pStats], idx) => {
+        report += `| ${idx + 1} | ${name} | ${pStats.games} | ${pStats.wins} | ${(pStats.winRate * 100).toFixed(2)}% |\n`;
+      });
+
+      report += '\n---\n\n';
+      report += '## Game Balance Analysis\n\n';
+
+      if (stats.winConditionDistribution.sixRounds > stats.totalGames * 0.8) {
+        report += `⚠️ **Timeout Issue:** ${((stats.winConditionDistribution.sixRounds / stats.totalGames) * 100).toFixed(0)}% of games end by timeout. Consider:\n`;
+        report += `- Reducing game length to 5 rounds\n`;
+        report += `- Lowering audience win threshold\n`;
+        report += `- Increasing consensus incentives\n\n`;
+      }
+
+      if (stats.consensusRate < 0.05) {
+        report += `⚠️ **Low Activity:** Only ${(stats.consensusRate * 100).toFixed(1)}% consensus rate. Suggestions:\n`;
+        report += `- Reduce consensus threshold (2 players in 4P games)\n`;
+        report += `- Add incentives for early broadcasting\n`;
+        report += `- Penalize excessive passing\n\n`;
+      }
+
+      if (stats.bluffRate > 0.05) {
+        report += `✅ **Healthy Bluffing:** ${(stats.bluffRate * 100).toFixed(1)}% bluff rate indicates strategic depth.\n\n`;
+      }
+
+      const winRateSpread = best[1].winRate - worst[1].winRate;
+      if (winRateSpread > 0.3) {
+        report += `⚠️ **Balance Issue:** ${(winRateSpread * 100).toFixed(0)}% win rate difference between best and worst personalities.\n`;
+        report += `- ${best[0]} may be overpowered\n`;
+        report += `- ${worst[0]} may need buffs\n\n`;
+      } else {
+        report += `✅ **Good Balance:** Only ${(winRateSpread * 100).toFixed(0)}% win rate spread across personalities.\n\n`;
+      }
+
+      // Write report
+      const reportPath = path.join(__dirname, '..', 'MONTE_CARLO_REPORT.md');
+      fs.writeFileSync(reportPath, report);
+
+      console.log(`\n✅ Monte Carlo report saved: ${reportPath}\n`);
+
+      // Assertions
+      expect(stats.totalGames).toBe(500);
+      expect(stats.averageGameLength).toBeGreaterThan(0);
+      expect(stats.personalityWinRate).toBeDefined();
+
+      // Check that all personalities were used
+      Object.values(stats.personalityUsage).forEach(usage => {
+        expect(usage).toBeGreaterThan(0);
+      });
+    }, 240000); // 4 minute timeout for Monte Carlo
   });
 });

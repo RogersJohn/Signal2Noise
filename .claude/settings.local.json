@@ -11,7 +11,9 @@
       "Bash(npm test -- --testPathPattern=gameLogic.test.ts --watchAll=false)",
       "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testNamePattern=\"Comprehensive Analytics\")",
       "Bash(npm test -- --testPathPattern=aiPersonalities.test.ts --watchAll=false)",
-      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false)"
+      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false)",
+      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testNamePattern=\"High Chaos\")",
+      "Bash(npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testNamePattern=\"Monte Carlo\")"
     ],
     "deny": [],
     "ask": []

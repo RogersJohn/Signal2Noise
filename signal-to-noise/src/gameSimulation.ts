@@ -375,3 +375,155 @@ export function runSimulations(
 
   return analytics;
 }
+
+// ==================== MONTE CARLO SIMULATOR ====================
+
+export interface MonteCarloStats {
+  totalGames: number;
+  personalityUsage: { [personality: string]: number };
+  personalityWinRate: { [personality: string]: { wins: number; games: number; winRate: number } };
+  averageGameLength: number;
+  consensusRate: number;
+  bluffRate: number;
+  winConditionDistribution: {
+    audience60: number;
+    twelveRevealed: number;
+    sixRounds: number;
+  };
+  personalityMatchups: {
+    [personality: string]: {
+      bestAgainst: string[];
+      worstAgainst: string[];
+      avgPerformance: number;
+    };
+  };
+  excitementMetrics: {
+    avgFlexiblePenalties: number;
+    avgFocusedBonuses: number;
+    avgExcitementModifier: number;
+  };
+  credibilityMetrics: {
+    avgFinalCredibility: number;
+    avgCredibilityLoss: number;
+  };
+}
+
+export function runMonteCarloSimulation(
+  numGames: number,
+  availablePersonalities: AIPersonality[]
+): MonteCarloStats {
+  const stats: MonteCarloStats = {
+    totalGames: numGames,
+    personalityUsage: {},
+    personalityWinRate: {},
+    averageGameLength: 0,
+    consensusRate: 0,
+    bluffRate: 0,
+    winConditionDistribution: {
+      audience60: 0,
+      twelveRevealed: 0,
+      sixRounds: 0
+    },
+    personalityMatchups: {},
+    excitementMetrics: {
+      avgFlexiblePenalties: 0,
+      avgFocusedBonuses: 0,
+      avgExcitementModifier: 0
+    },
+    credibilityMetrics: {
+      avgFinalCredibility: 0,
+      avgCredibilityLoss: 0
+    }
+  };
+
+  // Initialize personality stats
+  availablePersonalities.forEach(p => {
+    stats.personalityUsage[p.name] = 0;
+    stats.personalityWinRate[p.name] = { wins: 0, games: 0, winRate: 0 };
+    stats.personalityMatchups[p.name] = {
+      bestAgainst: [],
+      worstAgainst: [],
+      avgPerformance: 0
+    };
+  });
+
+  let totalGameLength = 0;
+  let totalConsensusRate = 0;
+  let totalBluffs = 0;
+  let totalBroadcasts = 0;
+  let totalCredibilityStart = 0;
+  let totalCredibilityEnd = 0;
+
+  // Run simulations
+  for (let i = 0; i < numGames; i++) {
+    // Randomly select 4 personalities
+    const shuffled = [...availablePersonalities].sort(() => Math.random() - 0.5);
+    const selectedPersonalities = shuffled.slice(0, 4);
+
+    // Track usage
+    selectedPersonalities.forEach(p => {
+      stats.personalityUsage[p.name]++;
+    });
+
+    // Run game
+    const result = simulateGame(selectedPersonalities);
+
+    // Track game length
+    totalGameLength += result.finalState.round;
+
+    // Track consensus and bluffs
+    totalConsensusRate += result.analytics.consensusRate || 0;
+
+    // Track win condition
+    if (result.finalState.players.some(p => p.audience >= 60)) {
+      stats.winConditionDistribution.audience60++;
+    } else if (result.finalState.totalRevealed >= 12) {
+      stats.winConditionDistribution.twelveRevealed++;
+    } else {
+      stats.winConditionDistribution.sixRounds++;
+    }
+
+    // Track winner
+    const winnerIndex = result.finalState.players.findIndex(p => p.id === result.winner);
+    if (winnerIndex >= 0) {
+      const winnerPersonality = selectedPersonalities[winnerIndex];
+      stats.personalityWinRate[winnerPersonality.name].wins++;
+    }
+
+    // Track all participants
+    result.finalState.players.forEach((player, idx) => {
+      const personality = selectedPersonalities[idx];
+      stats.personalityWinRate[personality.name].games++;
+
+      // Track credibility
+      totalCredibilityStart += 5; // Starting credibility
+      totalCredibilityEnd += player.credibility;
+
+      // Track bluffs and broadcasts
+      player.broadcastHistory.forEach(entry => {
+        totalBroadcasts++;
+        if (entry.evidenceIds.length === 0) {
+          totalBluffs++;
+        }
+      });
+    });
+  }
+
+  // Calculate averages
+  stats.averageGameLength = totalGameLength / numGames;
+  stats.consensusRate = totalConsensusRate / numGames;
+  stats.bluffRate = totalBroadcasts > 0 ? totalBluffs / totalBroadcasts : 0;
+  stats.credibilityMetrics.avgFinalCredibility = totalCredibilityEnd / (numGames * 4);
+  stats.credibilityMetrics.avgCredibilityLoss =
+    (totalCredibilityStart - totalCredibilityEnd) / (numGames * 4);
+
+  // Calculate win rates
+  Object.keys(stats.personalityWinRate).forEach(name => {
+    const pStats = stats.personalityWinRate[name];
+    if (pStats.games > 0) {
+      pStats.winRate = pStats.wins / pStats.games;
+    }
+  });
+
+  return stats;
+}

@@ -1,6 +1,6 @@
 # Signal to Noise - Comprehensive AI Analytics Report
 
-**Generated:** 2025-10-20T13:21:13.609Z
+**Generated:** 2025-10-20T13:29:05.294Z
 **Total Scenarios:** 2
 
 ---
