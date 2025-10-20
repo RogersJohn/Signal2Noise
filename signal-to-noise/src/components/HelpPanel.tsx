@@ -20,18 +20,18 @@ export const HelpPanel: React.FC<HelpPanelProps> = ({ phase }) => {
             '3. Build strong cases: More evidence = more points if correct',
             '4. When done, click "Done Investigating" to pass to next player',
           ],
-          tip: 'Strategy: Put 3-4 evidence on one conspiracy rather than spreading thin. After all players finish, everyone draws 2 cards.'
+          tip: 'EXCITEMENT MECHANIC: FLEXIBLE cards (gray) support many conspiracies but get -2 audience when reused. FOCUSED cards (gold) support fewer conspiracies but get +2 audience per reuse (stacks!). Evidence persists across rounds - build a specialty or stay flexible!'
         };
       case 'BROADCAST':
         return {
           title: 'BROADCAST Phase',
           steps: [
             '1. Check the Broadcast Queue above - see what others claimed!',
-            '2. Select a conspiracy YOU assigned evidence to (check "Assigned Evidence")',
-            '3. Click REAL or FAKE based on whether you think they\'re right',
+            '2. Select ANY conspiracy (even without evidence - bluffing allowed!)',
+            '3. Click REAL or FAKE based on your claim',
             '4. OR click PASS to skip and draw 1 card',
           ],
-          tip: 'STRATEGY: Need 2 votes (2p) or 3 votes (3-4p) on SAME position for scoring! If 2 players agree on "REAL", you can join as 3rd to trigger scoring, or claim "FAKE" to block them.'
+          tip: '🎰 BLUFFING: Can broadcast without evidence! Wrong = -6 credibility (double penalty). Opponents can\'t see your evidence until RESOLVE. Need 2 votes (2p) or 3 votes (3-4p) on SAME position for scoring!'
         };
       case 'RESOLVE':
         return {
@@ -49,11 +49,11 @@ export const HelpPanel: React.FC<HelpPanelProps> = ({ phase }) => {
           title: 'CLEANUP Phase',
           steps: [
             '1. Revealed conspiracies are replaced with new ones',
-            '2. Your assigned evidence is cleared (start fresh next round)',
+            '2. Your assigned evidence PERSISTS (reuse next round for bonuses/penalties)',
             '3. Click "Next Round" to continue',
             '4. Game ends at: 6 rounds, 12 revealed, or 60 audience',
           ],
-          tip: 'Check player scores before next round - highest audience wins!'
+          tip: 'Evidence stays assigned! Reusing FOCUSED evidence gives bonuses, reusing FLEXIBLE evidence gives penalties. Plan your long-term strategy!'
         };
     }
   };

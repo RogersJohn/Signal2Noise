@@ -19,6 +19,15 @@ export interface EvidenceCard {
   name: string;
   supportedConspiracies: string[]; // conspiracy IDs or "ALL"
   flavorText: string;
+  excitement: -1 | 0 | 1; // BORING (-1), NEUTRAL (0), EXCITING (+1)
+}
+
+export interface BroadcastHistoryEntry {
+  round: number;
+  conspiracyId: string;
+  evidenceIds: string[];
+  position: Position;
+  wasScored: boolean; // Did consensus happen?
 }
 
 export interface PlayerState {
@@ -31,6 +40,7 @@ export interface PlayerState {
     [conspiracyId: string]: EvidenceCard[];
   };
   color: string;
+  broadcastHistory: BroadcastHistoryEntry[];
 }
 
 export interface BroadcastObject {

@@ -45,7 +45,8 @@ export function initializeGame(playerCount: number): GameState {
       audience: 0,
       evidenceHand,
       assignedEvidence: {},
-      color: playerColors[i]
+      color: playerColors[i],
+      broadcastHistory: []
     });
   }
 

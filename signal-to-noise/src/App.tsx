@@ -104,27 +104,34 @@ function App() {
       });
 
       setMessage('All players drew 2 cards. Broadcast phase begins.');
+
+      // Determine starting player for broadcast (losing player gets advantage)
+      const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, player, idx, arr) =>
+        player.audience < arr[lowestIdx].audience ? idx : lowestIdx
+      , 0);
+
       return {
         ...prev,
         players: updatedPlayers,
         evidenceDeck: updatedDeck,
         phase: 'BROADCAST',
-        currentPlayerIndex: 0
+        currentPlayerIndex: startingPlayerIndex
       };
     });
   };
 
-  // BROADCAST PHASE: Make a broadcast
+  // BROADCAST PHASE: Make a broadcast (bluffing allowed!)
   const handleBroadcast = (position: 'REAL' | 'FAKE') => {
     if (!selectedConspiracy) {
       setMessage('Select a conspiracy to broadcast about');
       return;
     }
 
-    const assignedCards = currentPlayer.assignedEvidence[selectedConspiracy];
-    if (!assignedCards || assignedCards.length === 0) {
-      setMessage('You have no evidence assigned to this conspiracy');
-      return;
+    const assignedCards = currentPlayer.assignedEvidence[selectedConspiracy] || [];
+    const isBluffing = assignedCards.length === 0;
+
+    if (isBluffing) {
+      setMessage(`⚠️ BLUFFING! ${currentPlayer.name} has NO evidence for this conspiracy. Risk: Double penalty if wrong (-6 credibility)`);
     }
 
     const broadcast: BroadcastObject = {
@@ -217,14 +224,66 @@ function App() {
               const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
               if (playerIndex >= 0) {
                 const player = { ...updatedPlayers[playerIndex] };
+                const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+
+                // Calculate excitement modifier
+                let excitementModifier = 0;
+                evidenceUsed.forEach(card => {
+                  // Check if this evidence was used in previous broadcasts
+                  const previousUses = player.broadcastHistory.filter(entry =>
+                    entry.evidenceIds.includes(card.id) && entry.wasScored
+                  ).length;
+
+                  if (card.excitement === -1 && previousUses > 0) {
+                    // BORING card on repeat: -2 penalty
+                    excitementModifier -= 2;
+                  } else if (card.excitement === 1 && previousUses > 0) {
+                    // EXCITING card on repeat: +2 bonus per previous use
+                    excitementModifier += 2 * previousUses;
+                  }
+                  // NEUTRAL (0) never adds modifier
+                });
 
                 if (broadcast.position === conspiracy.truthValue) {
-                  // Correct
-                  player.audience += broadcast.evidenceCount * conspiracy.tier;
+                  // Correct - base score + excitement modifier
+                  const baseScore = broadcast.evidenceCount * conspiracy.tier;
+                  player.audience += baseScore + excitementModifier;
                 } else {
-                  // Wrong
-                  player.credibility = Math.max(0, player.credibility - 3);
+                  // Wrong - credibility penalty (double if bluffing)
+                  const isBluff = broadcast.evidenceCount === 0;
+                  const credibilityLoss = isBluff ? 6 : 3;
+                  player.credibility = Math.max(0, player.credibility - credibilityLoss);
                 }
+
+                // Add to broadcast history
+                player.broadcastHistory = [...player.broadcastHistory, {
+                  round: prev.round,
+                  conspiracyId: conspiracy.id,
+                  evidenceIds: evidenceUsed.map(e => e.id),
+                  position: broadcast.position,
+                  wasScored: true
+                }];
+
+                updatedPlayers[playerIndex] = player;
+              }
+            });
+        } else {
+          // No consensus - still track in history but mark as not scored
+          prev.broadcastQueue
+            .filter(b => b.conspiracyId === conspiracy.id && !b.isPassed)
+            .forEach(broadcast => {
+              const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
+              if (playerIndex >= 0) {
+                const player = { ...updatedPlayers[playerIndex] };
+                const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+
+                player.broadcastHistory = [...player.broadcastHistory, {
+                  round: prev.round,
+                  conspiracyId: conspiracy.id,
+                  evidenceIds: evidenceUsed.map(e => e.id),
+                  position: broadcast.position,
+                  wasScored: false
+                }];
 
                 updatedPlayers[playerIndex] = player;
               }
@@ -264,11 +323,8 @@ function App() {
         return c;
       });
 
-      // Clear assigned evidence from all players
-      const updatedPlayers = prev.players.map(p => ({
-        ...p,
-        assignedEvidence: {}
-      }));
+      // Keep assigned evidence persistent across rounds (excitement mechanic)
+      const updatedPlayers = [...prev.players];
 
       // Check win condition
       const winCheck = checkWinCondition({
@@ -278,6 +334,11 @@ function App() {
         round: prev.round + 1
       });
 
+      // Determine starting player for next round (losing player goes first - comeback mechanic)
+      const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, player, idx, arr) =>
+        player.audience < arr[lowestIdx].audience ? idx : lowestIdx
+      , 0);
+
       return {
         ...prev,
         conspiracies: updatedConspiracies,
@@ -285,6 +346,7 @@ function App() {
         players: updatedPlayers,
         broadcastQueue: [],
         phase: winCheck.gameOver ? 'CLEANUP' : 'INVESTIGATE',
+        currentPlayerIndex: winCheck.gameOver ? prev.currentPlayerIndex : startingPlayerIndex,
         round: prev.round + 1,
         gameOver: winCheck.gameOver,
         winner: winCheck.winner

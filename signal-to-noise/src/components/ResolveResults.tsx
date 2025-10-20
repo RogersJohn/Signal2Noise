@@ -86,9 +86,33 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
 
                     <div className="scoring-breakdown">
                       {broadcasts.map(broadcast => {
+                        const player = players.find(p => p.id === broadcast.playerId);
+                        const evidenceUsed = player?.assignedEvidence[conspiracy.id] || [];
+
+                        // Calculate excitement modifier
+                        let excitementModifier = 0;
+                        const excitementDetails: string[] = [];
+
+                        evidenceUsed.forEach(card => {
+                          const previousUses = player?.broadcastHistory.filter(entry =>
+                            entry.evidenceIds.includes(card.id) && entry.wasScored
+                          ).length || 0;
+
+                          if (card.excitement === -1 && previousUses > 0) {
+                            excitementModifier -= 2;
+                            excitementDetails.push(`${card.name}: -2 (repeat flexible)`);
+                          } else if (card.excitement === 1 && previousUses > 0) {
+                            const bonus = 2 * previousUses;
+                            excitementModifier += bonus;
+                            excitementDetails.push(`${card.name}: +${bonus} (${previousUses}× focused repeat)`);
+                          }
+                        });
+
                         const wasCorrect = broadcast.position === conspiracy.truthValue;
-                        const points = wasCorrect ? broadcast.evidenceCount * conspiracy.tier : 0;
-                        const credLoss = wasCorrect ? 0 : 3;
+                        const basePoints = wasCorrect ? broadcast.evidenceCount * conspiracy.tier : 0;
+                        const totalPoints = basePoints + excitementModifier;
+                        const isBluff = broadcast.evidenceCount === 0;
+                        const credLoss = wasCorrect ? 0 : (isBluff ? 6 : 3);
 
                         return (
                           <div
@@ -105,12 +129,33 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                               ({broadcast.evidenceCount} evidence)
                             </span>
                             {wasCorrect ? (
-                              <span className="score-gain">
-                                +{points} audience ({broadcast.evidenceCount} × {conspiracy.tier}★)
-                              </span>
+                              <>
+                                <span className="score-gain">
+                                  +{totalPoints} audience
+                                  {excitementModifier !== 0 ? (
+                                    <span className="score-detail">
+                                      ({broadcast.evidenceCount} × {conspiracy.tier}★
+                                      <span className={excitementModifier > 0 ? 'excitement-bonus' : 'excitement-penalty'}>
+                                        {' '}{excitementModifier > 0 ? '+' : ''}{excitementModifier} excitement
+                                      </span>)
+                                    </span>
+                                  ) : (
+                                    <span className="score-detail">
+                                      ({broadcast.evidenceCount} × {conspiracy.tier}★)
+                                    </span>
+                                  )}
+                                </span>
+                                {excitementDetails.length > 0 && (
+                                  <div className="excitement-breakdown">
+                                    {excitementDetails.map((detail, i) => (
+                                      <div key={i} className="excitement-detail">{detail}</div>
+                                    ))}
+                                  </div>
+                                )}
+                              </>
                             ) : (
                               <span className="score-loss">
-                                -{credLoss} credibility
+                                -{credLoss} credibility {isBluff && <span className="bluff-penalty">💀 BLUFF FAILED!</span>}
                               </span>
                             )}
                           </div>

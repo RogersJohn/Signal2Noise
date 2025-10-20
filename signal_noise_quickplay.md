@@ -10,24 +10,29 @@
 
 ## Every Round (3 Steps)
 
-### 1. INVESTIGATE
-- Draw 2 evidence cards (max 5 in hand)
-- Put cards face-down under conspiracies you want to claim
-- Locked in once placed
+### 1. INVESTIGATE (losing player goes first!)
+- Assign evidence cards to conspiracies you want to claim
+- Click "Done Investigating" to pass turn to next player
+- Once all players finish: Everyone draws 2 cards (max 5 in hand)
+- **⚡ Evidence stays assigned across rounds!**
 
-### 2. BROADCAST (take turns)
+### 2. BROADCAST (losing player goes first!)
 Pick one:
 - **Broadcast:** Say "Conspiracy X is REAL/FAKE" (goes in public queue)
+  - 🎰 **Can bluff without evidence!** Wrong = -6 credibility (double penalty)
 - **Pass:** Don't broadcast, draw 1 extra card
 
 Everyone can see the queue before deciding.
 
 ### 3. RESOLVE
-- Check each conspiracy: did 3+ people claim the same thing?
+- Check each conspiracy: Did enough people claim the same thing?
+  - **2-player:** Need 2 votes
+  - **3-4 player:** Need 3 votes
 - **YES = CONSENSUS:** Reveal truth, score points
-  - Right: gain (evidence cards × conspiracy tier) audience
-  - Wrong: lose 3 credibility
-- **NO:** Nothing happens, move on
+  - Right: gain (evidence × tier ± excitement) audience
+  - Wrong with evidence: -3 credibility
+  - Wrong bluff (no evidence): **-6 credibility!**
+- **NO:** Nothing happens, evidence tracked for future bonuses
 
 Replace revealed conspiracies, start new round.
 
@@ -44,12 +49,18 @@ Game ends: 12 conspiracies revealed OR 6 rounds OR anyone hits 60 audience
 
 **The Queue Is Everything:**
 - You see what others claimed before you decide
-- 2 people already said "REAL"? Join as 3rd = consensus triggers
-- 2 people said "FAKE"? Disagree and pass, or agree and score
+- 1 person already said "REAL"? (2p: join for consensus, 3-4p: need 3rd)
+- Can't tell if they're bluffing? That's the game!
 
-**Build Strong Cases:**
-- 3-4 evidence on one conspiracy > 1 evidence on four conspiracies
-- More evidence = more points when right
+**Excitement Mechanic:**
+- **FLEXIBLE cards (gray):** Support many conspiracies, -2 audience on reuse
+- **FOCUSED cards (gold):** Support 1 conspiracy, +2 audience per reuse (stacks!)
+- Build a specialty or stay flexible - both strategies work
+
+**Bluffing:**
+- Broadcast without evidence = high risk / normal reward
+- Opponents can't see your evidence until RESOLVE
+- Double penalty if caught (-6 credibility!)
 
 **When to Pass:**
 - Queue looks wrong (avoid losing credibility)
@@ -101,10 +112,12 @@ All three were right, all scored.
 
 ## Quick Reference
 
-**Consensus trigger:** 3+ broadcasts on same conspiracy, same position  
-**Scoring:** Evidence cards × Conspiracy tier  
-**Wrong penalty:** -3 credibility  
-**Hand limit:** 5 evidence cards  
+**Consensus trigger:** 2 votes (2p) or 3 votes (3-4p) on same conspiracy, same position
+**Scoring:** Evidence cards × Conspiracy tier ± excitement modifier
+**Wrong penalty:** -3 credibility (or -6 if bluffing!)
+**Turn order:** Losing player (lowest audience) goes first each round
+**Evidence:** Persists across rounds for excitement bonuses/penalties
+**Hand limit:** 5 evidence cards
 **Pass bonus:** +1 evidence card
 
 ---

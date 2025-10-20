@@ -20,7 +20,10 @@ You are competing podcasters investigating conspiracy theories. Some conspiracie
 ### Evidence Deck
 - 60 evidence cards
 - Each card shows which conspiracies it could support (icons)
-- Evidence is worth 1 point each when revealed
+- Evidence has EXCITEMENT values:
+  - **FLEXIBLE** (-1): Supports 3+ conspiracies, -2 audience penalty on repeat use
+  - **NEUTRAL** (0): Supports 2 conspiracies, no bonuses/penalties
+  - **FOCUSED** (+1): Supports 1 conspiracy, +2 audience bonus per repeat (stacks!)
 
 ### Player Boards
 Each player has:
@@ -41,7 +44,7 @@ Each player has:
 2. Secretly assign each a truth token (Real or Fake) - flip a coin for each
 3. Shuffle evidence deck, deal 3 cards to each player
 4. Set all players' credibility to 5, audience to 0
-5. Randomly determine first player
+5. First round: Random first player. Later rounds: Losing player (lowest audience) goes first
 
 ---
 
@@ -51,22 +54,34 @@ Each round has 3 simple phases:
 
 ### Phase 1: INVESTIGATE
 
-All players simultaneously:
-1. Draw 2 evidence cards (hand limit: 5 cards)
-2. Assign evidence cards face-down to conspiracies on your board
-3. Once assigned, cards are locked in (can't move them)
+**Hot-seat turn order** (losing player goes first):
+1. Look at your evidence hand
+2. Assign evidence cards to conspiracies you want to claim
+3. Cards must support the conspiracy (check icons)
+4. Click "Done Investigating" to pass turn to next player
+5. Once all players finish: Everyone draws 2 cards (hand limit: 5)
+
+**⚡ PERSISTENCE:** Evidence stays assigned across rounds! Reusing evidence triggers excitement bonuses/penalties.
 
 *You're building your case. More evidence = more points if you're right.*
 
 ### Phase 2: BROADCAST
 
-In turn order, each player chooses ONE action:
+**Turn order:** Losing player goes first (comeback mechanic)
+
+Each player chooses ONE action:
 
 **Option A: Broadcast Episode**
-- Pick a conspiracy you have evidence for
+- Pick ANY conspiracy (even without evidence!)
 - Declare: "This conspiracy is REAL" or "This conspiracy is FAKE"
 - Your broadcast goes in the public QUEUE
 - Everyone can see: which conspiracy, your position, how many evidence cards you have
+
+**🎰 BLUFFING ALLOWED:**
+- You CAN broadcast without assigned evidence (risky!)
+- If you're wrong: **-6 credibility** (double penalty!)
+- If you're right: Normal points (no bonus for lucky guesses)
+- Bluffing adds deception - opponents never know if you're serious
 
 **Option B: Pass**
 - Don't broadcast this round
@@ -77,27 +92,36 @@ In turn order, each player chooses ONE action:
 
 ### Phase 3: RESOLVE
 
-Go through the queue in broadcast order:
-
-**For each broadcast:**
-1. Reveal your evidence cards
-2. Count your evidence: 1 point per card
-
 **Check for CONSENSUS:**
-- If 3 or more broadcasts claimed the same position on the same conspiracy → CONSENSUS!
-- Immediately reveal that conspiracy's truth value
-- **Correct broadcasts:** Gain audience = (evidence count × conspiracy tier)
-- **Wrong broadcasts:** Lose 3 credibility, no audience gained
+- **2-player games:** Need 2 votes on same position
+- **3-4 player games:** Need 3 votes on same position
+- If consensus reached → Reveal conspiracy truth!
+
+**Scoring (only if consensus):**
+
+**✅ Correct Claim:**
+- Base score: Evidence count × Conspiracy tier
+- **Excitement modifier:**
+  - FLEXIBLE cards reused: -2 audience each
+  - FOCUSED cards reused: +2 audience per previous use (STACKS!)
+  - NEUTRAL cards: No modifier
+- Total = Base + Excitement modifier
+
+**❌ Wrong Claim:**
+- Had evidence: -3 credibility
+- **Bluff (no evidence): -6 credibility** (double penalty!)
 
 **If no consensus:**
-- Broadcast is discarded (no scoring)
+- All broadcasts discarded (no scoring)
 - Conspiracy stays hidden
+- Evidence still tracked in history for excitement
 
 **Phase 4: CLEANUP**
 1. Replace any revealed conspiracies with new ones
-2. Clear the queue
-3. Pass first player marker
-4. Start next round
+2. **Evidence assignments PERSIST** (stay for next round)
+3. Clear the broadcast queue
+4. Next round starts with losing player going first
+5. Start next round
 
 ---
 

@@ -53,12 +53,16 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
             player.evidenceHand.map((card) => (
               <div
                 key={card.id}
-                className={`evidence-card ${
+                className={`evidence-card excitement-${card.excitement} ${
                   selectedCard === card.id ? 'selected' : ''
                 }`}
                 onClick={() => onCardSelect && onCardSelect(card.id)}
               >
-                <h4>{card.name}</h4>
+                <div className="card-header">
+                  <h4>{card.name}</h4>
+                  {card.excitement === -1 && <span className="excitement-badge boring">Flexible</span>}
+                  {card.excitement === 1 && <span className="excitement-badge exciting">Focused</span>}
+                </div>
                 <p className="flavor-text">{card.flavorText}</p>
                 <div className="supported-conspiracies">
                   {card.supportedConspiracies.includes('ALL') ? (
