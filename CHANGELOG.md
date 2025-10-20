@@ -4,9 +4,32 @@ All notable changes to Signal to Noise web prototype.
 
 ---
 
-## [Unreleased] - Phase 2 Polish
+## [Unreleased] - Phase 2 Core Mechanics Enhancement
 
-### Planned
+### In Progress - Evidence Excitement Mechanic ⭐
+**Problem:** 4-player consensus too difficult, evidence gets wasted
+**Solution:** Evidence persists + excitement modifiers create strategic depth
+
+**Design Complete:**
+- BORING cards (-1): Flexible (3-5 conspiracies), -2 audience on repeat broadcasts
+- NEUTRAL cards (0): Standard (2-3 conspiracies), no modifiers
+- EXCITING cards (+1): Focused (1-2 conspiracies), +2 audience bonus on repeats (stacks!)
+- Strategic archetypes: Diversify (boring) vs Specialize (exciting)
+
+**Documentation:**
+- ✅ PROJECT_STATUS.md updated with mechanic design
+- ✅ IMPLEMENTATION_PLAN.md created with step-by-step implementation guide
+- ✅ Estimated 4-6 hours implementation time
+
+**Implementation Status:**
+- [ ] Add excitement property to types
+- [ ] Assign excitement values to 60 evidence cards
+- [ ] Implement broadcast history tracking
+- [ ] Add excitement scoring to RESOLVE phase
+- [ ] Update UI to show excitement indicators
+- [ ] Update flavor text (subtle changes only)
+
+### Planned - Other Polish
 - Fix grammar issues ("1 cards" → "1 card")
 - Add card play animations
 - Add consensus progress indicators during BROADCAST phase

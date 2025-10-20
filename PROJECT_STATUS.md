@@ -73,33 +73,48 @@ npm start
 
 ## Next Steps
 
-### Phase 2: Polish & Enhancement (Estimated 10-15 hours)
+### Phase 2: Core Mechanics Enhancement (Estimated 15-20 hours)
+
+#### CRITICAL Priority
+1. **Evidence Excitement Mechanic** ⭐ NEW FEATURE
+   - **Problem:** 4-player consensus too difficult, evidence gets wasted
+   - **Solution:** Evidence persists across rounds + excitement modifiers
+   - **Mechanics:**
+     - Evidence has BORING (-1), NEUTRAL (0), or EXCITING (+1) values
+     - BORING evidence: Flexible (supports 3-5 conspiracies), no penalty on first broadcast, -2 audience on repeats
+     - EXCITING evidence: Focused (supports 1-2 conspiracies), +2 audience bonus on repeats (stacks!)
+     - Evidence persists in assignedEvidence across rounds (not cleared in CLEANUP)
+   - **Strategic depth:**
+     - Diversify (boring) vs Specialize (exciting)
+     - Build signature topics over multiple rounds
+     - "Listener fatigue" vs "Breaking new evidence" theme
+   - **Implementation:** See IMPLEMENTATION_PLAN.md
 
 #### High Priority
-1. **Improve grammar**
+2. **Improve grammar**
    - "1 cards" → "1 card" (pluralization fix)
    - Clean up any other grammar inconsistencies
 
-2. **Add animations**
+3. **Add animations**
    - Card assignment visual feedback
    - Consensus trigger celebration
    - Phase transitions
 
-3. **Sound effects** (optional)
+4. **Sound effects** (optional)
    - Card play sounds
    - Consensus "ding"
    - Wrong answer "buzzer"
 
 #### Medium Priority
-4. **Broadcast phase improvements**
+5. **Broadcast phase improvements**
    - Show live consensus progress (e.g., "2/3 votes for REAL")
    - Highlight conspiracies that are close to consensus
 
-5. **Better mobile support**
+6. **Better mobile support**
    - Responsive design improvements
    - Touch-friendly card selection
 
-6. **Game stats tracking**
+7. **Game stats tracking**
    - Track win/loss records
    - Most successful conspiracy types
    - Player statistics
