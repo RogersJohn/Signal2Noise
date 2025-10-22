@@ -26,7 +26,11 @@
       "Bash(timeout 600 bash:*)",
       "Bash(timeout 60 bash:*)",
       "Bash(git add:*)",
-      "Bash(git tag:*)"
+      "Bash(git tag:*)",
+      "Bash(timeout 300 bash:*)",
+      "Bash(timeout:*)",
+      "Bash(node generate-print-files.js:*)",
+      "Bash(jobs:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Signal to Noise - Conspiracy Cards</title>
+  <style>
+    @page { size: A4; margin: 10mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: white; }
+    .page { page-break-after: always; width: 210mm; height: 297mm; padding: 5mm; }
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3mm; height: 100%; }
+    .card {
+      border: 2px solid #000;
+      padding: 3mm;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      position: relative;
+    }
+    .card-header {
+      font-weight: bold;
+      font-size: 11pt;
+      border-bottom: 1px solid #000;
+      padding-bottom: 2mm;
+      margin-bottom: 2mm;
+      min-height: 12mm;
+    }
+    .card-tier {
+      position: absolute;
+      top: 2mm;
+      right: 2mm;
+      font-size: 20pt;
+      font-weight: bold;
+    }
+    .card-description {
+      font-size: 8pt;
+      flex-grow: 1;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+    .card-footer {
+      border-top: 1px solid #000;
+      padding-top: 2mm;
+      margin-top: 2mm;
+      font-size: 7pt;
+      text-align: center;
+    }
+    .card-back {
+      background: repeating-linear-gradient(
+        45deg,
+        #f0f0f0,
+        #f0f0f0 5mm,
+        #e0e0e0 5mm,
+        #e0e0e0 10mm
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24pt;
+      font-weight: bold;
+    }
+    @media print {
+      body { background: white; }
+      .page { page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- CONSPIRACY CARDS (FRONTS) -->
+<div class="page">
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Chemtrails Control Weather</div>
+      <div class="card-description">Wake up sheeple! Those aren\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: chemtrails</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Celebrity Death Hoax: Elvis Lives</div>
+      <div class="card-description">The King never left the building - he\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: celebrity_death</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Crop Circles Are Alien Messages</div>
+      <div class="card-description">These perfect geometric patterns appeared OVERNIGHT in wheat fields! Two drunk farmers with planks? IMPOSSIBLE. It\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: crop_circles</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Bigfoot Sighting Cover-Up</div>
+      <div class="card-description">The Forest Service keeps finding 18-inch footprints and DESTROYING THE EVIDENCE! Why? Because Bigfoot is an endangered species and acknowledging him would shut down logging. Follow the money, people!</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: bigfoot</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Subliminal Advertising in Music</div>
+      <div class="card-description">Ever wonder why you suddenly NEED that burger after hearing that song? Record labels embed SUBCONSCIOUS TRIGGERS in the mix! Play it backwards at 0.7x speed - you\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: subliminal_ads</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★</div>
+      <div class="card-header">Fluoride Mind Control</div>
+      <div class="card-description">They say it\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: fluoride</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★★</div>
+      <div class="card-header">Moon Landing Was Faked</div>
+      <div class="card-description">Look at the shadows! Look at the flag waving! We couldn\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: moon_landing</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★★</div>
+      <div class="card-header">Pharmaceutical Company Hides Cure</div>
+      <div class="card-description">A cure exists. A CURE! But Big Pharma makes billions on treatment, not cures! The lead researcher? Found dead in an "accident". All twelve of them. Different accidents. Nothing suspicious there, right? OPEN YOUR EYES!</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: pharma_coverup</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★★</div>
+      <div class="card-header">Election Rigging Software</div>
+      <div class="card-description">These voting machines run Windows XP and connect to the internet. THE INTERNET! A security researcher found the password was literally "password". But sure, totally secure. Democracy is on life support, folks.</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: election_rigging</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="page">
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-tier">★★</div>
+      <div class="card-header">Government Weather Machine</div>
+      <div class="card-description">HAARP isn\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: weather_machine</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★★★</div>
+      <div class="card-header">Mayor Embezzling City Funds</div>
+      <div class="card-description">That new "pothole repair fund"? OFFSHORE ACCOUNTS IN THE CAYMANS! The mayor bought a yacht - a YACHT - on a $95k salary! Those construction contracts? Shell companies! This goes all the way to the top. I have the receipts!</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: mayor_embezzlement</div>
+    </div>
+    <div class="card">
+      <div class="card-tier">★★★</div>
+      <div class="card-header">Tech Company Selling User Data</div>
+      <div class="card-description">Your private messages, your photos, your LOCATION DATA - all being sold to the highest bidder! That "free" social media? YOU\</div>
+      <div class="card-footer">CONSPIRACY CARD | ID: tech_data_sale</div>
+    </div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+    <div class="card" style="border: 1px dashed #ccc;"></div>
+  </div>
+</div>
+
+<!-- CONSPIRACY CARDS (BACKS) -->
+<div class="page">
+  <div class="card-grid">
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="card-grid">
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+    <div class="card card-back">
+      SIGNAL<br>TO<br>NOISE
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

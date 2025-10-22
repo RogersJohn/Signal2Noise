@@ -6,7 +6,7 @@ interface GameSetupProps {
 }
 
 export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
-  const [selectedCount, setSelectedCount] = useState<number>(2);
+  const [selectedCount, setSelectedCount] = useState<number>(4);
 
   return (
     <div className="game-setup">
@@ -18,7 +18,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
       <div className="setup-content">
         <h2>Select Player Count</h2>
         <div className="player-count-options">
-          {[2, 3, 4].map((count) => (
+          {[3, 4, 5].map((count) => (
             <button
               key={count}
               className={`player-count-btn ${
@@ -41,7 +41,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
               <strong>BROADCAST:</strong> Claim a conspiracy is REAL or FAKE (or pass)
             </li>
             <li>
-              <strong>RESOLVE:</strong> When {selectedCount === 2 ? '2' : '3'}+ players agree, reveal truth and score
+              <strong>RESOLVE:</strong> When {selectedCount === 5 ? '3' : '2'}+ players agree, reveal truth and score
             </li>
             <li>
               <strong>WIN:</strong> Most audience after 6 rounds or 12 revealed conspiracies
