@@ -27,7 +27,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Trusts no one, never bluffs, extremely cautious. Only broadcasts with overwhelming evidence.',
     riskTolerance: 0.1,
     bluffFrequency: 0.0,
-    evidenceThreshold: 0.9,
+    evidenceThreshold: 0.45,
     skepticism: 1.0,
     specialization: 0.3,
     preferHighTier: true,
@@ -39,7 +39,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     name: 'The Reckless Gambler',
     description: 'Throws caution to the wind. Bluffs frequently, broadcasts without evidence, chases high scores.',
     riskTolerance: 0.95,
-    bluffFrequency: 0.7,
+    bluffFrequency: 0.5, // Reduced from 0.7 - harsh bluff penalties make 70% unsustainable
     evidenceThreshold: 0.1,
     skepticism: 0.2,
     specialization: 0.8,
@@ -66,7 +66,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Obsessed with accuracy. Only broadcasts with strong evidence, never bluffs, methodical.',
     riskTolerance: 0.2,
     bluffFrequency: 0.0,
-    evidenceThreshold: 0.85,
+    evidenceThreshold: 0.40,
     skepticism: 0.5,
     specialization: 0.2,
     preferHighTier: false,
@@ -118,7 +118,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Academic approach. Needs extensive evidence, risk-averse, builds reputation slowly.',
     riskTolerance: 0.15,
     bluffFrequency: 0.05,
-    evidenceThreshold: 0.95,
+    evidenceThreshold: 0.50,
     skepticism: 0.4,
     specialization: 0.3,
     preferHighTier: false,
@@ -130,7 +130,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     name: 'The Chaos Agent',
     description: 'Unpredictable and erratic. Random bluffs, ignores patterns, creates confusion.',
     riskTolerance: 0.9,
-    bluffFrequency: 0.6,
+    bluffFrequency: 0.5, // Reduced from 0.6 - still chaotic but not instant death
     evidenceThreshold: 0.15,
     skepticism: 0.3,
     specialization: 0.1,
@@ -144,7 +144,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Consistent and reliable. Moderate risk, focuses on building audience over time.',
     riskTolerance: 0.4,
     bluffFrequency: 0.15,
-    evidenceThreshold: 0.65,
+    evidenceThreshold: 0.50, // Reduced from 0.65 (4 cards → 3 cards) - too high for steady play
     skepticism: 0.5,
     specialization: 0.5,
     preferHighTier: false,
@@ -170,7 +170,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Detects traps and suspicious patterns. Avoids bandwagoning on questionable broadcasts.',
     riskTolerance: 0.5,
     bluffFrequency: 0.2,
-    evidenceThreshold: 0.7,
+    evidenceThreshold: 0.55, // Reduced from 0.7 (4 cards → 3 cards) - needs to broadcast to use pattern reading
     skepticism: 0.9,
     specialization: 0.4,
     preferHighTier: true,
@@ -400,19 +400,17 @@ export function makeAIDecision(
     }
 
     // v5.0: ADVERTISE PHASE INTEGRATION - Check who advertised interest
-    // This is NEW psychological info that wasn't available before!
+    // Advertisements DON'T affect scoring, but provide psychological information
     const advertisementsOnThis = gameState.advertiseQueue.filter(
       a => a.conspiracyId === conspiracy.id && !a.isPassed
     ).length;
 
     // If multiple players advertised this, it signals potential consensus
+    // NOTE: No direct scoring bonus - advertisements are for coordination only
     if (advertisementsOnThis > 0) {
-      // Strong signal: multiple advertisements indicate bandwagon opportunity
-      score += advertisementsOnThis * 15;
-
-      // Opportunists LOVE following advertisements
+      // Opportunists LIKE following advertisements (psychological signal)
       if (personality.opportunistic) {
-        score += advertisementsOnThis * 20;
+        score += advertisementsOnThis * 10; // Reduced: psychological influence only
       }
 
       // Skeptics are suspicious of too many advertisements (possible trap?)

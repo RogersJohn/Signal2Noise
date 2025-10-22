@@ -22,7 +22,9 @@
       "Bash(node generate-evidence-html.js:*)",
       "Bash(del generate-evidence-html.js)",
       "Bash(npm test:*)",
-      "Bash(timeout 10 bash -c 'while ! netstat -ano | findstr :3000 | findstr LISTENING > /dev/null 2>&1; do sleep 1; done; echo \"\"Server is running on port 3000\"\"')"
+      "Bash(timeout 10 bash -c 'while ! netstat -ano | findstr :3000 | findstr LISTENING > /dev/null 2>&1; do sleep 1; done; echo \"\"Server is running on port 3000\"\"')",
+      "Bash(timeout 600 bash:*)",
+      "Bash(timeout 60 bash:*)"
     ],
     "deny": [],
     "ask": []

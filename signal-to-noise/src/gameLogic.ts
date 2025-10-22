@@ -49,7 +49,8 @@ export function initializeGame(playerCount: number): GameState {
       assignedEvidence: {},
       faceUpEvidence: {}, // v5.0: Late-breaking evidence
       color: playerColors[i],
-      broadcastHistory: []
+      broadcastHistory: [],
+      totalBluffs: 0 // v5.1: Track cumulative bluffs
     });
   }
 

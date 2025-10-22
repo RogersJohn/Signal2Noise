@@ -54,10 +54,10 @@ describe('GameLogic Unit Tests', () => {
       expect(game.phase).toBe('INVESTIGATE');
     });
 
-    it('should deal 3 evidence cards to each player', () => {
+    it('should deal 7 evidence cards to each player', () => {
       const game = initializeGame(3);
       game.players.forEach(player => {
-        expect(player.evidenceHand.length).toBe(3);
+        expect(player.evidenceHand.length).toBe(7);
       });
     });
 
@@ -231,8 +231,8 @@ describe('GameLogic Unit Tests', () => {
       conspiracyDeck: [],
       evidenceDeck: [],
       players: [
-        { id: 'p1', name: 'Alice', credibility: 5, audience: 10, evidenceHand: [], assignedEvidence: {}, color: '#fff', broadcastHistory: [] },
-        { id: 'p2', name: 'Bob', credibility: 5, audience: 20, evidenceHand: [], assignedEvidence: {}, color: '#fff', broadcastHistory: [] }
+        { id: 'p1', name: 'Alice', credibility: 5, audience: 10, evidenceHand: [], assignedEvidence: {}, color: '#fff', broadcastHistory: [], totalBluffs: 0 },
+        { id: 'p2', name: 'Bob', credibility: 5, audience: 20, evidenceHand: [], assignedEvidence: {}, color: '#fff', broadcastHistory: [], totalBluffs: 0 }
       ],
       currentPlayerIndex: 0,
       advertiseQueue: [],

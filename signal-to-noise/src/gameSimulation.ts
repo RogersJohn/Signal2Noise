@@ -117,6 +117,19 @@ export function simulateGame(personalities: AIPersonality[]): {
       }
     }
 
+    // POST-ADVERTISE EVIDENCE PLACEMENT PHASE
+    // After all advertisements are visible, each player can place ONE more evidence card
+    for (let i = 0; i < gameState.players.length; i++) {
+      const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
+      const player = gameState.players[playerIndex];
+      const personality = personalities[playerIndex];
+
+      // AI decides where to place bonus evidence card (if any available)
+      if (player.evidenceHand.length > 0) {
+        assignEvidenceIntelligently(player, gameState.conspiracies, personality);
+      }
+    }
+
     // BROADCAST PHASE
     // v4.5: PERSISTENCE - Keep ALL broadcasts from previous rounds
     // Conspiracies stay on board after reveal, replaced only at cleanup
@@ -129,6 +142,20 @@ export function simulateGame(personalities: AIPersonality[]): {
       const personality = personalities[playerIndex];
 
       const decision = makeAIDecision(gameState, playerIndex, personality);
+
+      // Check if player advertised a conspiracy but is now broadcasting elsewhere
+      // Penalty: -1 audience for not following through on advertisement
+      const playerAdvertisement = gameState.advertiseQueue.find(
+        a => a.playerId === player.id && !a.isPassed
+      );
+
+      if (playerAdvertisement &&
+          decision.action === 'broadcast' &&
+          decision.conspiracyId !== playerAdvertisement.conspiracyId) {
+        // Player advertised one conspiracy but is broadcasting on a different one
+        player.audience = Math.max(0, player.audience - 1);
+        console.log(`  ⚠️ ${player.name} advertised ${playerAdvertisement.conspiracyId} but broadcast on ${decision.conspiracyId} (-1 audience penalty)`);
+      }
 
       if (decision.action === 'broadcast' && decision.conspiracyId && decision.position) {
         const assignedCards = player.assignedEvidence[decision.conspiracyId] || [];
@@ -205,12 +232,24 @@ export function simulateGame(personalities: AIPersonality[]): {
           // Skip INCONCLUSIVE broadcasts for credibility adjustment
           if (broadcast.position === 'INCONCLUSIVE') return;
 
+          const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
+          const hasRealEvidence = assignedEvidence.some(card => canSupportConspiracy(card, conspiracyId));
+
+          // v5.1: ESCALATING BLUFF PENALTY - Cumulative punishment for repeat offenders
+          // 1st bluff: -2, 2nd: -3, 3rd: -4, 4th+: -5 (capped)
+          if (!hasRealEvidence) {
+            const bluffPenalty = Math.min(player.totalBluffs + 2, 5);
+            player.credibility = Math.max(0, player.credibility - bluffPenalty);
+            player.totalBluffs++; // Increment bluff counter
+            console.log(`  ⚠️ ${player.name} bluffed (bluff #${player.totalBluffs}) - ${bluffPenalty} credibility penalty`);
+          }
+
           // Majority side: +1 credibility
           if (broadcast.position === majorityPosition) {
             player.credibility = Math.min(10, player.credibility + 1);
           } else {
-            // Minority side: -1 credibility
-            player.credibility = Math.max(0, player.credibility - 1);
+            // Minority side: -3 credibility (increased from -2)
+            player.credibility = Math.max(0, player.credibility - 3);
           }
         });
 
@@ -308,8 +347,19 @@ function calculateAudiencePoints(
 
     // Excitement multiplier
     let excitementMult = 1.0;
-    if (card.excitement === 1) excitementMult = 1.5;  // Exciting
-    if (card.excitement === -1) excitementMult = 0.5; // Boring
+    if (card.excitement === 1) excitementMult = 2.0;  // Exciting (×2.0)
+    if (card.excitement === -1) excitementMult = 0.5; // Boring (×0.5)
+
+    // Apply multiplier with proper rounding
+    let multipliedValue = specificityBonus * excitementMult;
+    let roundedValue;
+    if (card.excitement === -1) {
+      // Boring cards (×0.5): Round UP on odd numbers (e.g., 3×0.5=1.5 → 2, 1×0.5=0.5 → 1)
+      roundedValue = Math.ceil(multipliedValue);
+    } else {
+      // Normal rounding for exciting and neutral cards
+      roundedValue = Math.round(multipliedValue);
+    }
 
     // Novelty bonus (first use on this conspiracy)
     const isNovel = !player.broadcastHistory.some(h =>
@@ -318,7 +368,7 @@ function calculateAudiencePoints(
     );
     const noveltyBonus = isNovel ? 2 : 0;
 
-    evidenceBonus += Math.round(specificityBonus * excitementMult) + noveltyBonus;
+    evidenceBonus += roundedValue + noveltyBonus;
   });
 
   // SUBTOTAL

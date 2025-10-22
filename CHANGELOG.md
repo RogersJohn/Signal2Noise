@@ -7,6 +7,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2025-10-22
+
+### Major Changes - Balance Overhaul & Documentation Cleanup
+
+#### Balance Changes
+
+**Excitement Multiplier Increased**
+- **Old**: ×1.5 for exciting cards
+- **New**: ×2.0 for exciting cards (★★★)
+- Boring cards (☆☆☆) now explicitly round UP on odd numbers (3→2, 1→1)
+- Makes exciting evidence significantly more valuable and strategic
+
+**Escalating Bluff Penalties**
+- **Old**: Flat -2 credibility per bluff
+- **New**: Escalating penalties for serial bluffing
+  - 1st bluff: -2 credibility
+  - 2nd bluff: -3 credibility
+  - 3rd bluff: -4 credibility
+  - 4th+ bluff: -5 credibility (capped)
+- Adds `totalBluffs` tracking to PlayerState
+- Punishes habitual bluffing while keeping occasional bluffs viable
+
+**Advertise Phase Refinements**
+- Added -1 audience penalty for advertising deception
+  - Advertise conspiracy A, broadcast on B = -1 audience
+- Added post-advertise bonus evidence placement
+  - After all ads are visible, each player places 1 card anywhere
+- Removed incorrect score bonuses from advertisements
+
+**AI Personality Fixes**
+- Reckless Gambler: bluffFrequency 0.7 → 0.5
+- Steady Builder: evidenceThreshold 0.65 → 0.50
+- Meta-Reader: evidenceThreshold 0.7 → 0.55
+- Chaos Agent: bluffFrequency 0.6 → 0.5
+
+#### Game Balance Results
+
+1000-game round robin tournament shows improved balance:
+- **V2.0.0 balance**: 78.5% win rate spread (broken)
+- **V2.1.0 balance**: 42.4% win rate spread (acceptable)
+- Top tier tightened: Reckless Gambler (50.25%), Conspiracy Theorist (49.83%), Chaos Agent (45.80%)
+- Remaining issue: Passive personalities (Truth Seeker, Paranoid Skeptic) still underperforming
+
+#### Documentation Overhaul
+
+**Created**
+- `QUICK_REFERENCE.md` - One-page print-friendly cheat sheet
+- `archives/2025-10-22-balance-testing/` - Archived outdated reports
+- Updated excitement badges in UI tooltips
+
+**Updated**
+- `README.md` - Comprehensive rulebook with all current rules
+- `signal-to-noise/README.md` - Simplified front page highlighting ADVERTISE phase
+- `TUTORIAL-MODE-README.md` - Verified current with all 5 phases
+- All documentation now consistent and accurate
+
+**Archived**
+- `ANALYTICS_REPORT.md` (outdated, pre-balance changes)
+- `MONTE_CARLO_REPORT.md` (outdated, pre-balance changes)
+- Replaced by `ROUND_ROBIN_TOURNAMENT_REPORT.md` (1000 games, current rules)
+
+#### Testing
+- All unit tests passing (gameLogic.test.ts)
+- All AI tests passing (aiPersonalities.test.ts)
+- All simulation tests passing (gameSimulation.test.ts)
+- TypeScript compilation clean
+
+### Changed
+- UI: Excitement badges now show ×2.0 multiplier
+- UI: Tooltips clarified for boring card rounding behavior
+- Test expectations: Updated from 3 to 7 initial cards per player
+
+### Fixed
+- Documentation duplication eliminated
+- Incorrect advertisement scoring removed
+- Missing advertise deception penalty added
+- Missing post-advertise evidence placement added
+
+---
+
 ## [2.0.0] - 2025-10-22
 
 ### Major Changes - ADVERTISE Phase Implementation

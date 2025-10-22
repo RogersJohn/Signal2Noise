@@ -111,21 +111,30 @@ Other players can watch you assign evidence. Stacking 4 cards on a conspiracy si
 #### 📢 Phase 2: ADVERTISE (Purple)
 
 **What Happens:**
-- Each player selects a conspiracy to signal interest in
-- Advertisements are PUBLIC and visible to all players
-- Players can also PASS to keep their intentions secret
-- This is NOT binding - players can broadcast differently later
+1. Each player (in turn order) selects a conspiracy to signal interest in
+2. Advertisements are PUBLIC and visible to all players
+3. Players can also PASS to keep their intentions secret
+4. **After all advertisements**, each player assigns ONE more evidence card to any conspiracy
+5. This is NOT binding - players can broadcast differently later
+
+**Penalty for Deception:**
+- If you advertise conspiracy A but broadcast on conspiracy B: **-1 audience penalty**
+- This discourages false signals but still allows strategic misdirection
 
 **Strategy:**
-- **Bandwagoning**: Advertise where others advertised to encourage consensus
-- **Deception**: Advertise one conspiracy but broadcast on another
-- **Traps**: Advertise without evidence to mislead opponents
-- **Secrecy**: Pass to keep plans hidden
+- **Honest Signaling**: Advertise where you have evidence, coordinate consensus safely
+- **Controlled Deception**: Advertise one conspiracy but broadcast another (-1 audience cost)
+- **Bandwagoning**: Follow others' advertisements to form consensus
+- **Secrecy**: Pass to keep plans hidden (no penalty)
+
+**Bonus Evidence:**
+- After seeing all advertisements, every player places ONE more evidence card
+- Use this to strengthen your advertised conspiracy or pivot to a new strategy
 
 **UI Indicator:** Purple border, "Signal which conspiracy interests you"
 
 **Psychological Warfare:**
-This phase is all about reading and influencing other players. Did they advertise honestly? Are they bluffing? Should you join them or avoid their trap?
+This phase is all about reading and influencing other players. Advertisements provide coordination signals, but deception carries a cost!
 
 ---
 
@@ -172,9 +181,12 @@ Base Points:
   - Bandwagoning (no evidence): 1 point
   - INCONCLUSIVE: 2 points
 
-+ Evidence Bonuses:
++ Evidence Bonuses (per card):
   - Specificity: +3 (specific cards) or +1 (ALL cards)
-  - Excitement: ×1.5 if card is EXCITING (★★★)
+  - Excitement Multiplier (applied to specificity):
+    • ★★★ EXCITING: ×2.0 (doubles specificity bonus!)
+    • ★☆☆ NEUTRAL: ×1.0 (no change)
+    • ☆☆☆ BORING: ×0.5 (half value, rounds UP on odd numbers)
   - Novelty: +2 for first-time use of evidence
 
 × Credibility Modifier:
@@ -185,10 +197,16 @@ Base Points:
 ```
 
 **Credibility Changes:**
+- **Bluffing (no real evidence): ESCALATING PENALTY**
+  - 1st bluff: -2 credibility
+  - 2nd bluff: -3 credibility
+  - 3rd bluff: -4 credibility
+  - 4th+ bluff: -5 credibility (capped)
 - Majority side: +1 credibility
-- Minority side: -1 credibility
+- Minority side: -3 credibility
 - INCONCLUSIVE: No change
-- Alone (no consensus): -3 credibility if wrong
+
+**Strategic Impact:** First-time bluffs carry the same penalty as before, but serial bluffers face exponentially worse consequences!
 
 **UI Indicator:** Green border, "Consensus reached!" or "No consensus"
 
@@ -211,9 +229,43 @@ Base Points:
 
 **UI Indicator:** Gray border, "Click Next Round to continue"
 
-**Strategic Note:** Reusing evidence has effects:
-- FLEXIBLE cards (gray): -2 audience penalty on reuse
-- FOCUSED cards (gold): +2 audience bonus per reuse (stacks!)
+**Strategic Note:** Card excitement affects scoring:
+- **EXCITING cards (★★★)**: Double your specificity bonus - seek these out!
+- **BORING cards (☆☆☆)**: Half your specificity bonus but rounds up (3→2 is still decent)
+- **Novelty bonus**: First use of any card on a conspiracy gives +2 extra points
+
+**Bluffing Strategy:**
+- **Occasional bluffs** (-2 credibility) are manageable
+- **Frequent bluffing** quickly escalates to -4 or -5 per bluff
+- Serial bluffers will tank their credibility rapidly
+- Use bluffs strategically, not habitually!
+
+---
+
+## 🎲 Physical Game Implementation Notes
+
+For the physical version of Signal to Noise, you'll need:
+
+**Tokens/Markers:**
+- **Evidence Ownership Tokens**: Color-coded markers (one color per player) to place on evidence cards, showing which player has assigned that evidence to a conspiracy
+- **Advertisement Markers**: Tokens to track which conspiracy each player advertised in the ADVERTISE phase
+- **Audience/Credibility Trackers**: Dials or sliders to track each player's current audience (0-60+) and credibility (0-10)
+- **Conspiracy Reveal Markers**: To mark which conspiracies have been revealed
+- **Turn Order Marker**: To track which player is currently acting
+
+**Physical Game Flow:**
+1. Players draw evidence cards into their hands (secret)
+2. During INVESTIGATE phase, players assign evidence cards face-down to conspiracies, placing their colored token on each assigned card
+3. During ADVERTISE phase, players place advertisement tokens on conspiracies
+4. After all advertisements are visible, players assign ONE more evidence card
+5. During BROADCAST phase, players use broadcast tokens to indicate their position
+6. During RESOLVE phase, all assigned evidence is revealed, tokens show ownership
+
+**Why Tokens Matter:**
+Evidence stays assigned across rounds, so tokens track:
+- Which player owns which evidence on each conspiracy
+- How many cards each player has assigned (visible count, not card details)
+- Who advertised what (needed to check for -1 audience penalty)
 
 ---
 
@@ -233,10 +285,10 @@ Each evidence card has:
 - **Name**: e.g., "Photo Inconsistencies"
 - **Supported Conspiracies**: Specific IDs or "ALL"
 - **Flavor Text**: Description
-- **Excitement Level**:
-  - ☆☆☆ BORING (-1): -2 audience on reuse
-  - ★☆☆ NEUTRAL (0): No reuse effect
-  - ★★★ EXCITING (+1): +2 audience per reuse (stacks!)
+- **Excitement Level** (affects scoring multiplier):
+  - ☆☆☆ **BORING** (×0.5): Half value on specificity bonus (rounds up on odd numbers: 3→2, 1→1)
+  - ★☆☆ **NEUTRAL** (×1.0): Normal value, no modifier
+  - ★★★ **EXCITING** (×2.0): **Doubles** specificity bonus (3→6, 1→2)
 
 ---
 

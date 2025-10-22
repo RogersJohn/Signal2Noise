@@ -49,6 +49,7 @@ export interface PlayerState {
   };
   color: string;
   broadcastHistory: BroadcastHistoryEntry[];
+  totalBluffs: number; // v5.1: Track cumulative bluffs for escalating penalties
 }
 
 export interface AdvertiseObject {

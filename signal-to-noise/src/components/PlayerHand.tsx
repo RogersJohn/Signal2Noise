@@ -60,8 +60,21 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               >
                 <div className="card-header">
                   <h4>{card.name}</h4>
-                  {card.excitement === -1 && <span className="excitement-badge boring">Flexible</span>}
-                  {card.excitement === 1 && <span className="excitement-badge exciting">Focused</span>}
+                  {card.excitement === -1 && (
+                    <span className="excitement-badge boring" title="×0.5 to specificity bonus (rounds up on odd numbers)">
+                      ☆☆☆ BORING (×0.5)
+                    </span>
+                  )}
+                  {card.excitement === 0 && (
+                    <span className="excitement-badge neutral" title="×1.0 to specificity bonus (no modifier)">
+                      ★☆☆ NEUTRAL (×1.0)
+                    </span>
+                  )}
+                  {card.excitement === 1 && (
+                    <span className="excitement-badge exciting" title="×2.0 to specificity bonus (doubles your points!)">
+                      ★★★ EXCITING (×2.0)
+                    </span>
+                  )}
                 </div>
 
                 {/* v5.0: Proof Value Badge */}

@@ -132,6 +132,12 @@
   border: 1px solid #6b7280;
 }
 
+.excitement-badge.neutral {
+  background: rgba(156, 163, 175, 0.2);
+  color: #e5e7eb;
+  border: 1px solid #9ca3af;
+}
+
 .excitement-badge.exciting {
   background: rgba(245, 158, 11, 0.3);
   color: #fbbf24;

@@ -433,4 +433,305 @@ describe('AI Personality-Based Game Simulations', () => {
       });
     }, 240000); // 4 minute timeout for Monte Carlo
   });
+
+  describe('Comprehensive Round Robin Tournament - All 12 Personalities', () => {
+    test('Run 1000-game tournament with full analytics', () => {
+      console.log('\n=== COMPREHENSIVE ROUND ROBIN TOURNAMENT ===\n');
+      console.log('Running 1000 games with all 12 AI personalities...\n');
+
+      const allPersonalities = Object.values(AI_PERSONALITIES);
+      const tournamentStats = runMonteCarloSimulation(1000, allPersonalities);
+
+      // Additional detailed tracking
+      const headToHeadMatrix: { [key: string]: { [key: string]: { wins: number; games: number } } } = {};
+      const personalityDetails: {
+        [key: string]: {
+          totalGames: number;
+          totalWins: number;
+          totalAudience: number;
+          totalCredibility: number;
+          totalBroadcasts: number;
+          totalBluffs: number;
+          consensusParticipation: number;
+          positionBreakdown: { REAL: number; FAKE: number; INCONCLUSIVE: number };
+        };
+      } = {};
+
+      // Initialize tracking structures
+      allPersonalities.forEach(p1 => {
+        headToHeadMatrix[p1.name] = {};
+        personalityDetails[p1.name] = {
+          totalGames: 0,
+          totalWins: 0,
+          totalAudience: 0,
+          totalCredibility: 0,
+          totalBroadcasts: 0,
+          totalBluffs: 0,
+          consensusParticipation: 0,
+          positionBreakdown: { REAL: 0, FAKE: 0, INCONCLUSIVE: 0 }
+        };
+        allPersonalities.forEach(p2 => {
+          if (p1.name !== p2.name) {
+            headToHeadMatrix[p1.name][p2.name] = { wins: 0, games: 0 };
+          }
+        });
+      });
+
+      // Run additional 1000 games with detailed tracking
+      console.log('Simulating games and collecting data...\n');
+      for (let i = 0; i < 1000; i++) {
+        if (i % 100 === 0 && i > 0) {
+          console.log(`Progress: ${i}/1000 games completed...`);
+        }
+
+        // Randomly select 4 personalities
+        const shuffled = [...allPersonalities].sort(() => Math.random() - 0.5);
+        const selectedPersonalities = shuffled.slice(0, 4);
+
+        // Run single game
+        const result = simulateGame(selectedPersonalities);
+        const winnerIndex = result.finalState.players.findIndex(p => p.id === result.winner);
+
+        // Track detailed stats
+        result.finalState.players.forEach((player, idx) => {
+          const personality = selectedPersonalities[idx];
+          const details = personalityDetails[personality.name];
+
+          details.totalGames++;
+          details.totalAudience += player.audience;
+          details.totalCredibility += player.credibility;
+
+          if (idx === winnerIndex) {
+            details.totalWins++;
+          }
+
+          // Track broadcasts
+          player.broadcastHistory.forEach(entry => {
+            details.totalBroadcasts++;
+            if (entry.evidenceIds.length === 0) {
+              details.totalBluffs++;
+            }
+            if (entry.wasScored) {
+              details.consensusParticipation++;
+            }
+            if (entry.position === 'REAL') details.positionBreakdown.REAL++;
+            else if (entry.position === 'FAKE') details.positionBreakdown.FAKE++;
+            else if (entry.position === 'INCONCLUSIVE') details.positionBreakdown.INCONCLUSIVE++;
+          });
+
+          // Track head-to-head
+          selectedPersonalities.forEach((opponent, opponentIdx) => {
+            if (idx !== opponentIdx) {
+              headToHeadMatrix[personality.name][opponent.name].games++;
+              if (idx === winnerIndex) {
+                headToHeadMatrix[personality.name][opponent.name].wins++;
+              }
+            }
+          });
+        });
+      }
+
+      console.log('Completed 1000 games!\n');
+
+      // ==================== COMPREHENSIVE ANALYSIS ====================
+
+      console.log('📊 TOURNAMENT SUMMARY\n');
+      console.log(`Total Games: ${tournamentStats.totalGames}`);
+      console.log(`Average Game Length: ${tournamentStats.averageGameLength.toFixed(2)} rounds`);
+      console.log(`Consensus Rate: ${(tournamentStats.consensusRate * 100).toFixed(2)}%`);
+      console.log(`Bluff Rate: ${(tournamentStats.bluffRate * 100).toFixed(2)}%\n`);
+
+      // Rank personalities by win rate
+      const rankings = Object.entries(personalityDetails)
+        .map(([name, stats]) => ({
+          name,
+          winRate: stats.totalWins / stats.totalGames,
+          avgAudience: stats.totalAudience / stats.totalGames,
+          avgCredibility: stats.totalCredibility / stats.totalGames,
+          bluffRate: stats.totalBroadcasts > 0 ? stats.totalBluffs / stats.totalBroadcasts : 0,
+          consensusRate: stats.totalBroadcasts > 0 ? stats.consensusParticipation / stats.totalBroadcasts : 0,
+          totalGames: stats.totalGames,
+          totalWins: stats.totalWins,
+          totalBroadcasts: stats.totalBroadcasts,
+          positionBreakdown: stats.positionBreakdown
+        }))
+        .sort((a, b) => b.winRate - a.winRate);
+
+      console.log('🏆 PERSONALITY RANKINGS\n');
+      rankings.forEach((p, idx) => {
+        console.log(`${idx + 1}. ${p.name}`);
+        console.log(`   Win Rate: ${(p.winRate * 100).toFixed(2)}% (${p.totalWins}/${p.totalGames})`);
+        console.log(`   Avg Audience: ${p.avgAudience.toFixed(1)}`);
+        console.log(`   Avg Credibility: ${p.avgCredibility.toFixed(2)}`);
+        console.log(`   Bluff Rate: ${(p.bluffRate * 100).toFixed(1)}%`);
+        console.log(`   Consensus Rate: ${(p.consensusRate * 100).toFixed(1)}%`);
+        console.log(`   Position Preference: REAL=${p.positionBreakdown.REAL}, FAKE=${p.positionBreakdown.FAKE}, INC=${p.positionBreakdown.INCONCLUSIVE}\n`);
+      });
+
+      // Analyze matchups
+      console.log('⚔️  HEAD-TO-HEAD ANALYSIS\n');
+      rankings.slice(0, 5).forEach(topPersonality => {
+        const h2h = headToHeadMatrix[topPersonality.name];
+        const matchups = Object.entries(h2h)
+          .map(([opponent, record]) => ({
+            opponent,
+            winRate: record.games > 0 ? record.wins / record.games : 0,
+            games: record.games
+          }))
+          .filter(m => m.games >= 10) // Only show matchups with 10+ games
+          .sort((a, b) => b.winRate - a.winRate);
+
+        if (matchups.length > 0) {
+          console.log(`${topPersonality.name}:`);
+          const best = matchups[0];
+          const worst = matchups[matchups.length - 1];
+          console.log(`  Best vs: ${best.opponent} (${(best.winRate * 100).toFixed(1)}% over ${best.games} games)`);
+          console.log(`  Worst vs: ${worst.opponent} (${(worst.winRate * 100).toFixed(1)}% over ${worst.games} games)\n`);
+        }
+      });
+
+      // Strategic insights
+      console.log('💡 STRATEGIC INSIGHTS\n');
+
+      const topThree = rankings.slice(0, 3);
+      const bottomThree = rankings.slice(-3);
+
+      console.log('Top Performers:');
+      topThree.forEach((p, idx) => {
+        console.log(`  ${idx + 1}. ${p.name} - ${(p.winRate * 100).toFixed(1)}% win rate`);
+      });
+
+      console.log('\nBottom Performers:');
+      bottomThree.forEach((p, idx) => {
+        console.log(`  ${idx + 1}. ${p.name} - ${(p.winRate * 100).toFixed(1)}% win rate`);
+      });
+
+      const highBluffers = rankings.filter(p => p.bluffRate > 0.3).sort((a, b) => b.bluffRate - a.bluffRate);
+      if (highBluffers.length > 0) {
+        console.log('\nAggressive Bluffers (>30% bluff rate):');
+        highBluffers.forEach(p => {
+          console.log(`  ${p.name}: ${(p.bluffRate * 100).toFixed(1)}% bluff rate, ${(p.winRate * 100).toFixed(1)}% win rate`);
+        });
+      }
+
+      const highCredibility = rankings.filter(p => p.avgCredibility >= 5.5).sort((a, b) => b.avgCredibility - a.avgCredibility);
+      if (highCredibility.length > 0) {
+        console.log('\nCredibility Masters (avg ≥5.5):');
+        highCredibility.forEach(p => {
+          console.log(`  ${p.name}: ${p.avgCredibility.toFixed(2)} avg credibility, ${(p.winRate * 100).toFixed(1)}% win rate`);
+        });
+      }
+
+      // ==================== GENERATE MARKDOWN REPORT ====================
+
+      let report = '# Comprehensive Round Robin Tournament Report\n\n';
+      report += `**Generated:** ${new Date().toISOString()}\n`;
+      report += `**Total Games:** 1000\n`;
+      report += `**Personalities:** 12\n`;
+      report += `**Format:** 4-player random matchups\n\n`;
+      report += '---\n\n';
+
+      report += '## Tournament Statistics\n\n';
+      report += `- **Average Game Length:** ${tournamentStats.averageGameLength.toFixed(2)} rounds\n`;
+      report += `- **Consensus Rate:** ${(tournamentStats.consensusRate * 100).toFixed(2)}%\n`;
+      report += `- **Bluff Rate:** ${(tournamentStats.bluffRate * 100).toFixed(2)}%\n`;
+      report += `- **Avg Final Credibility:** ${tournamentStats.credibilityMetrics.avgFinalCredibility.toFixed(2)}\n`;
+      report += `- **Avg Credibility Loss:** ${tournamentStats.credibilityMetrics.avgCredibilityLoss.toFixed(2)}\n\n`;
+
+      report += '## Win Condition Distribution\n\n';
+      report += `| Condition | Games | Percentage |\n`;
+      report += `|-----------|-------|------------|\n`;
+      report += `| 60 Audience Points | ${tournamentStats.winConditionDistribution.audience60} | ${((tournamentStats.winConditionDistribution.audience60 / 1000) * 100).toFixed(1)}% |\n`;
+      report += `| 12 Conspiracies Revealed | ${tournamentStats.winConditionDistribution.twelveRevealed} | ${((tournamentStats.winConditionDistribution.twelveRevealed / 1000) * 100).toFixed(1)}% |\n`;
+      report += `| 6 Rounds Completed | ${tournamentStats.winConditionDistribution.sixRounds} | ${((tournamentStats.winConditionDistribution.sixRounds / 1000) * 100).toFixed(1)}% |\n\n`;
+
+      report += '## Personality Rankings\n\n';
+      report += `| Rank | Personality | Win Rate | Games | Wins | Avg Audience | Avg Credibility | Bluff Rate | Consensus Rate |\n`;
+      report += `|------|-------------|----------|-------|------|--------------|-----------------|------------|----------------|\n`;
+
+      rankings.forEach((p, idx) => {
+        report += `| ${idx + 1} | ${p.name} | ${(p.winRate * 100).toFixed(2)}% | ${p.totalGames} | ${p.totalWins} | ${p.avgAudience.toFixed(1)} | ${p.avgCredibility.toFixed(2)} | ${(p.bluffRate * 100).toFixed(1)}% | ${(p.consensusRate * 100).toFixed(1)}% |\n`;
+      });
+
+      report += '\n## Detailed Performance Analysis\n\n';
+
+      rankings.forEach((p, idx) => {
+        report += `### ${idx + 1}. ${p.name}\n\n`;
+        report += `**Overall Performance:**\n`;
+        report += `- Win Rate: ${(p.winRate * 100).toFixed(2)}% (${p.totalWins} wins in ${p.totalGames} games)\n`;
+        report += `- Average Final Audience: ${p.avgAudience.toFixed(1)}\n`;
+        report += `- Average Final Credibility: ${p.avgCredibility.toFixed(2)}\n\n`;
+
+        report += `**Playstyle:**\n`;
+        report += `- Total Broadcasts: ${p.totalBroadcasts}\n`;
+        report += `- Bluff Rate: ${(p.bluffRate * 100).toFixed(1)}%\n`;
+        report += `- Consensus Participation: ${(p.consensusRate * 100).toFixed(1)}%\n`;
+        report += `- Position Breakdown: REAL=${p.positionBreakdown.REAL}, FAKE=${p.positionBreakdown.FAKE}, INCONCLUSIVE=${p.positionBreakdown.INCONCLUSIVE}\n\n`;
+
+        // Head-to-head strengths/weaknesses
+        const h2h = headToHeadMatrix[p.name];
+        const matchups = Object.entries(h2h)
+          .map(([opponent, record]) => ({
+            opponent,
+            winRate: record.games > 0 ? record.wins / record.games : 0,
+            wins: record.wins,
+            games: record.games
+          }))
+          .filter(m => m.games >= 10)
+          .sort((a, b) => b.winRate - a.winRate);
+
+        if (matchups.length > 0) {
+          const best3 = matchups.slice(0, 3);
+          const worst3 = matchups.slice(-3);
+
+          report += `**Best Matchups:**\n`;
+          best3.forEach(m => {
+            report += `- vs ${m.opponent}: ${(m.winRate * 100).toFixed(1)}% (${m.wins}/${m.games})\n`;
+          });
+
+          report += `\n**Worst Matchups:**\n`;
+          worst3.forEach(m => {
+            report += `- vs ${m.opponent}: ${(m.winRate * 100).toFixed(1)}% (${m.wins}/${m.games})\n`;
+          });
+        }
+
+        report += '\n---\n\n';
+      });
+
+      report += '## Strategic Recommendations\n\n';
+
+      report += `### Top Tier Personalities (${(topThree[0].winRate * 100).toFixed(0)}%+ win rate):\n`;
+      topThree.forEach(p => {
+        report += `- **${p.name}**: Strong overall performance with ${(p.winRate * 100).toFixed(1)}% win rate\n`;
+      });
+
+      report += `\n### Bottom Tier Personalities (<${(bottomThree[0].winRate * 100).toFixed(0)}% win rate):\n`;
+      bottomThree.forEach(p => {
+        report += `- **${p.name}**: Underperforming at ${(p.winRate * 100).toFixed(1)}% win rate\n`;
+      });
+
+      const winRateSpread = rankings[0].winRate - rankings[rankings.length - 1].winRate;
+      report += `\n### Balance Assessment\n\n`;
+      report += `- **Win Rate Spread:** ${(winRateSpread * 100).toFixed(1)}%\n`;
+      if (winRateSpread > 0.15) {
+        report += `- ⚠️ **Balance Issue Detected:** Significant disparity between top and bottom performers\n`;
+        report += `- **Recommendation:** Consider buffing ${rankings[rankings.length - 1].name} or nerfing ${rankings[0].name}\n`;
+      } else {
+        report += `- ✅ **Good Balance:** Personalities are reasonably balanced\n`;
+      }
+
+      // Write report
+      const reportPath = path.join(__dirname, '..', 'ROUND_ROBIN_TOURNAMENT_REPORT.md');
+      fs.writeFileSync(reportPath, report);
+
+      console.log(`\n✅ Tournament report saved: ${reportPath}\n`);
+
+      // Assertions
+      expect(rankings.length).toBe(12);
+      expect(tournamentStats.totalGames).toBe(1000);
+      rankings.forEach(p => {
+        expect(p.totalGames).toBeGreaterThan(0);
+      });
+    }, 600000); // 10 minute timeout for comprehensive tournament
+  });
 });
