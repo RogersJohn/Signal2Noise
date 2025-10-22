@@ -34,12 +34,11 @@ export function initializeGame(playerCount: number): GameState {
   let evidenceIndex = 0;
 
   for (let i = 0; i < playerCount; i++) {
-    // Deal 3 evidence cards to each player initially
-    // NOTE: Round 1 has 2 GATHER phases (handled in simulation/gameplay)
-    // Round 1: Players will draw 2 cards twice (4 total in Round 1)
-    // Round 2+: Players draw 2 cards once per round
-    const evidenceHand = shuffledEvidence.slice(evidenceIndex, evidenceIndex + 3);
-    evidenceIndex += 3;
+    // v5.0: Deal 7 evidence cards to each player initially (expanded deck: 164 cards)
+    // Players draw 3 cards per turn during INVESTIGATE phase
+    // Max hand size: 10 cards
+    const evidenceHand = shuffledEvidence.slice(evidenceIndex, evidenceIndex + 7);
+    evidenceIndex += 7;
 
     players.push({
       id: `player_${i + 1}`,
@@ -48,6 +47,7 @@ export function initializeGame(playerCount: number): GameState {
       audience: 0,
       evidenceHand,
       assignedEvidence: {},
+      faceUpEvidence: {}, // v5.0: Late-breaking evidence
       color: playerColors[i],
       broadcastHistory: []
     });
@@ -85,7 +85,7 @@ export function drawCards(
   count: number,
   activeConspiracies?: string[] // v4.6: Optional filter for active conspiracies
 ): { updatedPlayer: PlayerState; updatedDeck: EvidenceCard[] } {
-  const handLimit = 5; // v3.7: reverted from 7 back to original
+  const handLimit = 10; // v5.0: Increased to 10 (from 5) due to expanded evidence deck
   const currentHandSize = player.evidenceHand.length;
 
   // v4.6: Filter deck to only cards that support active conspiracies
@@ -123,6 +123,40 @@ export function canSupportConspiracy(evidence: EvidenceCard, conspiracyId: strin
     evidence.supportedConspiracies.includes('ALL') ||
     evidence.supportedConspiracies.includes(conspiracyId)
   );
+}
+
+// v5.0: Determine truth based on evidence proof values
+// Tallies REAL vs FAKE evidence, ignoring BLUFFs
+// Returns the winning position, counts, and tie status
+export function determineEvidenceTruth(evidenceCards: EvidenceCard[]): {
+  truth: 'REAL' | 'FAKE' | 'TIE';
+  realCount: number;
+  fakeCount: number;
+  bluffCount: number;
+} {
+  let realCount = 0;
+  let fakeCount = 0;
+  let bluffCount = 0;
+
+  for (const card of evidenceCards) {
+    if (card.proofValue === 'REAL') {
+      realCount++;
+    } else if (card.proofValue === 'FAKE') {
+      fakeCount++;
+    } else if (card.proofValue === 'BLUFF') {
+      bluffCount++;
+    }
+  }
+
+  // Determine truth based on majority of REAL vs FAKE (BLUFFs don't count)
+  if (realCount > fakeCount) {
+    return { truth: 'REAL', realCount, fakeCount, bluffCount };
+  } else if (fakeCount > realCount) {
+    return { truth: 'FAKE', realCount, fakeCount, bluffCount };
+  } else {
+    // Tie: equal REAL and FAKE evidence (or no evidence at all)
+    return { truth: 'TIE', realCount, fakeCount, bluffCount };
+  }
 }
 
 // Consensus detection

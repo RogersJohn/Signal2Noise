@@ -23,7 +23,8 @@ export interface EvidenceCard {
   supportedConspiracies: string[]; // conspiracy IDs or "ALL"
   flavorText: string;
   excitement: -1 | 0 | 1; // BORING (-1), NEUTRAL (0), EXCITING (+1)
-  isBluff?: boolean; // v4.0: Bluff cards allow broadcasting without real evidence
+  proofValue: 'REAL' | 'FAKE' | 'BLUFF'; // v5.0: What this evidence actually proves
+  isBluff?: boolean; // DEPRECATED - use proofValue === 'BLUFF' instead
 }
 
 export interface BroadcastHistoryEntry {
@@ -41,6 +42,9 @@ export interface PlayerState {
   audience: number; // victory points
   evidenceHand: EvidenceCard[];
   assignedEvidence: {
+    [conspiracyId: string]: EvidenceCard[];
+  };
+  faceUpEvidence?: { // v5.0: Late-breaking evidence played face-up during BROADCAST
     [conspiracyId: string]: EvidenceCard[];
   };
   color: string;

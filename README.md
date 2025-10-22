@@ -90,14 +90,19 @@ Each round consists of 5 phases:
 
 **What Happens:**
 - Each player receives evidence cards
-- Players secretly assign evidence to conspiracies on the board
-- Assignments are hidden from other players
+- Players assign evidence face-down to conspiracies on the board
+- **Evidence COUNT is visible** to all players (e.g., "Alice: 3 cards on Moon Landing")
+- **Evidence CONTENT is hidden** - cards are face-down (could be strong, weak, or bluff!)
 - After all players finish, everyone draws 2 new cards
 
 **Strategy:**
 - Assign specific evidence for higher bonuses (+3 points)
-- Spread evidence across multiple conspiracies for flexibility
-- Focus evidence on one conspiracy for a strong position
+- Stack evidence on one conspiracy to **signal confidence** (or bluff!)
+- Spread evidence thin to **hide your true target**
+- Watch what others assign - lots of evidence = they might know something (or are bluffing!)
+
+**Psychological Warfare:**
+Other players can watch you assign evidence. Stacking 4 cards on a conspiracy signals "I know something!" - but are you bluffing?
 
 **UI Indicator:** Blue border, "Assign evidence cards to conspiracies"
 

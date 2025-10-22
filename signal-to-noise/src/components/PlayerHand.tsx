@@ -24,7 +24,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
       <div className="player-stats">
         <h2 style={{ color: player.color }}>
           {player.name}'s Turn
-          <span className="hotseating-note">👤 Hot-seat: Only {player.name} should look!</span>
+          <span className="hotseating-note">👁️ Others can watch evidence placement (counts visible!)</span>
         </h2>
         <div className="stats-row">
           <div className="stat">
@@ -45,7 +45,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
       </div>
 
       <div className="evidence-section">
-        <h3>Your Evidence Hand ({player.evidenceHand.length}/5)</h3>
+        <h3>Your Evidence Hand ({player.evidenceHand.length}/10)</h3>
         <div className="evidence-cards">
           {player.evidenceHand.length === 0 ? (
             <p className="empty-message">No cards in hand</p>
@@ -63,6 +63,18 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   {card.excitement === -1 && <span className="excitement-badge boring">Flexible</span>}
                   {card.excitement === 1 && <span className="excitement-badge exciting">Focused</span>}
                 </div>
+
+                {/* v5.0: Proof Value Badge */}
+                <div className={`proof-badge proof-${card.proofValue.toLowerCase()}`}>
+                  {card.proofValue === 'BLUFF' ? (
+                    <>🎭 BLUFF!</>
+                  ) : card.proofValue === 'REAL' ? (
+                    <>✓ Proof: REAL</>
+                  ) : (
+                    <>✗ Proof: FAKE</>
+                  )}
+                </div>
+
                 <p className="flavor-text">{card.flavorText}</p>
                 <div className="supported-conspiracies">
                   {card.supportedConspiracies.includes('ALL') ? (

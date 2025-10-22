@@ -9,6 +9,7 @@ interface ConspiracyBoardProps {
   selectedConspiracy?: string | null;
   selectedCardId?: string | null;
   currentPlayer?: PlayerState;
+  allPlayers?: PlayerState[]; // NEW: Show evidence counts from all players
 }
 
 export const ConspiracyBoard: React.FC<ConspiracyBoardProps> = ({
@@ -16,7 +17,8 @@ export const ConspiracyBoard: React.FC<ConspiracyBoardProps> = ({
   onSelect,
   selectedConspiracy,
   selectedCardId,
-  currentPlayer
+  currentPlayer,
+  allPlayers = [] // Default to empty array
 }) => {
   const getTierColor = (tier: number): string => {
     switch (tier) {
@@ -72,6 +74,58 @@ export const ConspiracyBoard: React.FC<ConspiracyBoardProps> = ({
             )}
             <h3>{conspiracy.name}</h3>
             <p className="conspiracy-description">{conspiracy.description}</p>
+
+            {/* NEW: Show evidence counts per player */}
+            {allPlayers.length > 0 && (
+              <div className="evidence-markers">
+                {allPlayers.map(player => {
+                  const evidenceCount = player.assignedEvidence[conspiracy.id]?.length || 0;
+                  if (evidenceCount === 0) return null;
+
+                  return (
+                    <div key={player.id} className="player-evidence-marker" style={{ color: player.color }}>
+                      <span className="player-initial">{player.name[0]}</span>
+                      <span className="card-icons">{'🃏'.repeat(evidenceCount)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* v5.0: Show face-up evidence (late-breaking evidence) */}
+            {allPlayers.length > 0 && (
+              <div className="face-up-evidence-section">
+                {allPlayers.map(player => {
+                  const faceUpCards = player.faceUpEvidence?.[conspiracy.id] || [];
+                  if (faceUpCards.length === 0) return null;
+
+                  return faceUpCards.map((card, idx) => (
+                    <div
+                      key={`${player.id}-${card.id}-${idx}`}
+                      className="face-up-evidence-card"
+                      style={{ borderColor: player.color }}
+                    >
+                      <div className="face-up-header" style={{ backgroundColor: player.color }}>
+                        <span className="face-up-player">{player.name}</span>
+                        <span className="face-up-label">🎬 LATE-BREAKING</span>
+                      </div>
+                      <div className="face-up-name">{card.name}</div>
+                      <div className={`face-up-proof proof-${card.proofValue.toLowerCase()}`}>
+                        {card.proofValue === 'REAL' && '✓ Proof: REAL'}
+                        {card.proofValue === 'FAKE' && '✗ Proof: FAKE'}
+                        {card.proofValue === 'BLUFF' && '🎭 BLUFF!'}
+                      </div>
+                      <div className="face-up-excitement">
+                        {card.excitement === 1 && '🔥 EXCITING'}
+                        {card.excitement === 0 && '📰 NEUTRAL'}
+                        {card.excitement === -1 && '😴 BORING'}
+                      </div>
+                    </div>
+                  ));
+                })}
+              </div>
+            )}
+
             {conspiracy.isRevealed && (
               <div
                 className={`truth-value ${

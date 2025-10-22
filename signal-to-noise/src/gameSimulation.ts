@@ -72,11 +72,10 @@ export function simulateGame(personalities: AIPersonality[]): {
       for (let idx = 0; idx < gameState.players.length; idx++) {
         const player = gameState.players[idx];
 
-        // Draw cards (v3.7: reverted to draw back to 3)
+        // v5.0: Draw 3 cards per investigation phase (max hand: 10)
         // v4.6: Filter to only evidence supporting active conspiracies
-        const cardsNeeded = 3 - player.evidenceHand.length;
         const activeConspiracyIds = gameState.conspiracies.map(c => c.id);
-        const result = drawCards(player, gameState.evidenceDeck, cardsNeeded, activeConspiracyIds);
+        const result = drawCards(player, gameState.evidenceDeck, 3, activeConspiracyIds);
         gameState.players[idx] = result.updatedPlayer;
         gameState.evidenceDeck = result.updatedDeck;
 

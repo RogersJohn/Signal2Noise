@@ -49,9 +49,9 @@ The tutorial mode provides **phase-specific guidance** that updates automaticall
 
 #### 🔍 **INVESTIGATE PHASE** (Blue)
 - Explains how to look at your hand
-- Shows how to assign evidence secretly
+- Shows how to assign evidence (counts visible, content hidden)
 - Explains card details (excitement levels, specificity)
-- Strategy tips for evidence assignment
+- Strategy tips for evidence assignment (bluffing, signaling confidence)
 - When to click "Done Investigating"
 
 #### 📢 **ADVERTISE PHASE** (Purple)
@@ -203,13 +203,14 @@ Each step includes:
 
 **Tutorial Shows (Blue)**:
 1. 👀 Look at your 3 starting evidence cards
-2. 🎯 Click a card, then click a conspiracy to assign secretly
-3. 🃏 Check excitement levels (☆☆☆, ★☆☆, ★★★)
-4. 💡 Strategy: Spread or focus your evidence
-5. ✅ Click "Done Investigating" when ready
+2. 🎯 Click a card, then click a conspiracy to assign face-down
+3. 👁️ Other players see HOW MANY cards you assign (e.g., "Alice: 3 cards")
+4. 🃏 But they don't see WHAT cards (could be strong evidence or bluffs!)
+5. 💡 Strategy: Stack cards to signal confidence, or spread thin to hide your target
+6. ✅ Click "Done Investigating" when ready
 
 **You Do**:
-- Assign your 3 cards to conspiracies
+- Assign your 3 cards to conspiracies (other players can watch!)
 - Click "Done Investigating"
 - All players draw 2 cards
 

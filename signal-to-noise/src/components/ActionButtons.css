@@ -95,3 +95,47 @@
 .btn-inconclusive:hover:not(:disabled) {
   background: #4b5563;
 }
+
+/* v5.0: Broadcast Counter Display */
+.broadcast-counter {
+  width: 100%;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(16, 185, 129, 0.2) 100%);
+  border: 3px solid #3b82f6;
+  border-radius: 8px;
+  color: #93c5fd;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* v5.0: Late-Breaking Evidence Styling */
+.late-evidence-divider {
+  width: 100%;
+  text-align: center;
+  color: #a855f7;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 15px 0 10px 0;
+  letter-spacing: 1px;
+}
+
+.btn-late-evidence {
+  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  border: 2px solid #c084fc;
+  box-shadow: 0 4px 8px rgba(168, 85, 247, 0.3);
+}
+
+.btn-late-evidence:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  box-shadow: 0 6px 12px rgba(168, 85, 247, 0.5);
+}
+
+.button-hint.success {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: #10b981;
+  color: #6ee7b7;
+}

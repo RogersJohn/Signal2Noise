@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GameState, BroadcastObject, AdvertiseObject } from './types';
-import { initializeGame, drawCards, canSupportConspiracy, detectConsensus, checkWinCondition } from './gameLogic';
+import { initializeGame, drawCards, canSupportConspiracy, detectConsensus, checkWinCondition, determineEvidenceTruth } from './gameLogic';
 import { ConspiracyBoard } from './components/ConspiracyBoard';
 import { PlayerHand } from './components/PlayerHand';
 import { AdvertiseQueue } from './components/AdvertiseQueue';
@@ -20,6 +20,9 @@ function App() {
   const [selectedConspiracy, setSelectedConspiracy] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
   const [tutorialEnabled, setTutorialEnabled] = useState(false);
+  const [broadcastsMadeThisTurn, setBroadcastsMadeThisTurn] = useState(0); // v5.0: Track broadcasts (0-2 per turn)
+  const [broadcastedConspiracies, setBroadcastedConspiracies] = useState<string[]>([]); // v5.0: Track which conspiracies broadcast on
+  const [lateEvidencePlayed, setLateEvidencePlayed] = useState(false); // v5.0: Track if late-breaking evidence was used
 
   const handleStartGame = (playerCount: number) => {
     setGameState(initializeGame(playerCount));
@@ -101,12 +104,12 @@ function App() {
       // All players finished - draw cards for everyone and move to ADVERTISE
       let updatedDeck = [...prev.evidenceDeck];
       const updatedPlayers = prev.players.map(player => {
-        const result = drawCards(player, updatedDeck, 2);
+        const result = drawCards(player, updatedDeck, 3); // v5.0: Increased from 2 to 3 cards
         updatedDeck = result.updatedDeck;
         return result.updatedPlayer;
       });
 
-      setMessage('All players drew 2 cards. Advertise phase begins - signal your interests!');
+      setMessage('All players drew 3 cards. Advertise phase begins - signal your interests!');
 
       // Determine starting player for advertise (losing player gets advantage)
       const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, player, idx, arr) =>
@@ -189,6 +192,12 @@ function App() {
       return;
     }
 
+    // v5.0: Check if already broadcast on this conspiracy
+    if (broadcastedConspiracies.includes(selectedConspiracy)) {
+      setMessage('You already broadcast on this conspiracy! Choose a different one.');
+      return;
+    }
+
     const assignedCards = currentPlayer.assignedEvidence[selectedConspiracy] || [];
     const isBandwagoning = assignedCards.length === 0;
 
@@ -207,58 +216,169 @@ function App() {
       timestamp: Date.now()
     };
 
+    // v5.0: Track this broadcast
+    const newBroadcastCount = broadcastsMadeThisTurn + 1;
+    setBroadcastsMadeThisTurn(newBroadcastCount);
+    setBroadcastedConspiracies([...broadcastedConspiracies, selectedConspiracy]);
+
+    // v5.0: Only move to next player after 2 broadcasts
+    const shouldMoveToNextPlayer = newBroadcastCount >= 2;
+
     setGameState(prev => {
       if (!prev) return prev;
       const updatedQueue = [...prev.broadcastQueue, broadcast];
-      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
-      const allPlayersWent = nextPlayerIndex === 0;
 
-      return {
-        ...prev,
-        broadcastQueue: updatedQueue,
-        currentPlayerIndex: nextPlayerIndex,
-        phase: allPlayersWent ? 'RESOLVE' : 'BROADCAST'
-      };
+      if (shouldMoveToNextPlayer) {
+        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        const allPlayersWent = nextPlayerIndex === 0;
+
+        return {
+          ...prev,
+          broadcastQueue: updatedQueue,
+          currentPlayerIndex: nextPlayerIndex,
+          phase: allPlayersWent ? 'RESOLVE' : 'BROADCAST'
+        };
+      } else {
+        // Same player continues
+        return {
+          ...prev,
+          broadcastQueue: updatedQueue
+        };
+      }
     });
 
     setSelectedConspiracy(null);
-    setMessage(`${currentPlayer.name} broadcast: ${selectedConspiracy} is ${position}`);
+
+    if (shouldMoveToNextPlayer) {
+      setBroadcastsMadeThisTurn(0);
+      setBroadcastedConspiracies([]);
+      setLateEvidencePlayed(false); // v5.0: Reset late evidence flag
+      setMessage(`${currentPlayer.name} completed 2 broadcasts. Next player's turn.`);
+    } else {
+      setMessage(`${currentPlayer.name} broadcast ${newBroadcastCount}/2: ${selectedConspiracy} is ${position}`);
+    }
   };
 
-  // BROADCAST PHASE: Pass
-  const handlePass = () => {
-    const passBroadcast: BroadcastObject = {
-      id: `pass_${Date.now()}_${currentPlayer.id}`,
-      playerId: currentPlayer.id,
-      conspiracyId: '',
-      position: 'REAL',
-      evidenceCount: 0,
-      timestamp: Date.now(),
-      isPassed: true
-    };
+  // BROADCAST PHASE: Play Late-Breaking Evidence (Face-Up)
+  // v5.0: Player can play ONE face-up evidence card on a conspiracy they're broadcasting on
+  const handlePlayLateEvidence = () => {
+    if (!selectedCard) {
+      setMessage('Select an evidence card from your hand');
+      return;
+    }
+
+    if (!selectedConspiracy) {
+      setMessage('Select a conspiracy you are broadcasting on');
+      return;
+    }
+
+    // Check if they've already broadcast on this conspiracy
+    if (!broadcastedConspiracies.includes(selectedConspiracy)) {
+      setMessage('You can only play late-breaking evidence on a conspiracy you are broadcasting on!');
+      return;
+    }
+
+    if (lateEvidencePlayed) {
+      setMessage('You already played your late-breaking evidence this turn!');
+      return;
+    }
+
+    const cardToPlay = currentPlayer.evidenceHand.find(c => c.id === selectedCard);
+    if (!cardToPlay) {
+      setMessage('Card not found in hand');
+      return;
+    }
+
+    // Check if card supports this conspiracy
+    if (!canSupportConspiracy(cardToPlay, selectedConspiracy)) {
+      setMessage('This evidence card does not support the selected conspiracy');
+      return;
+    }
 
     setGameState(prev => {
       if (!prev) return prev;
-      // Draw 1 card
-      const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
       const updatedPlayers = [...prev.players];
-      updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+      const player = { ...updatedPlayers[prev.currentPlayerIndex] };
 
-      const updatedQueue = [...prev.broadcastQueue, passBroadcast];
+      // Remove card from hand
+      player.evidenceHand = player.evidenceHand.filter(c => c.id !== selectedCard);
+
+      // Add to face-up evidence
+      if (!player.faceUpEvidence) {
+        player.faceUpEvidence = {};
+      }
+      if (!player.faceUpEvidence[selectedConspiracy]) {
+        player.faceUpEvidence[selectedConspiracy] = [];
+      }
+      player.faceUpEvidence[selectedConspiracy] = [...player.faceUpEvidence[selectedConspiracy], cardToPlay];
+
+      updatedPlayers[prev.currentPlayerIndex] = player;
+
+      return {
+        ...prev,
+        players: updatedPlayers
+      };
+    });
+
+    setLateEvidencePlayed(true);
+    setSelectedCard(null);
+    setSelectedConspiracy(null);
+    setMessage(`${currentPlayer.name} played LATE-BREAKING EVIDENCE (FACE-UP): ${cardToPlay.name} on ${selectedConspiracy}`);
+  };
+
+  // BROADCAST PHASE: Done Broadcasting (Pass)
+  // v5.0: Player can finish their turn after 0, 1, or 2 broadcasts
+  const handlePass = () => {
+    // v5.0: If player made 0 broadcasts, add a pass marker and draw 1 card
+    const noBroadcastsMade = broadcastsMadeThisTurn === 0;
+
+    setGameState(prev => {
+      if (!prev) return prev;
+      let updatedPlayers = [...prev.players];
+      let updatedDeck = prev.evidenceDeck;
+      let updatedQueue = [...prev.broadcastQueue];
+
+      // If completely passed (0 broadcasts), add pass marker and draw 1 card
+      if (noBroadcastsMade) {
+        const passBroadcast: BroadcastObject = {
+          id: `pass_${Date.now()}_${currentPlayer.id}`,
+          playerId: currentPlayer.id,
+          conspiracyId: '',
+          position: 'REAL',
+          evidenceCount: 0,
+          timestamp: Date.now(),
+          isPassed: true
+        };
+
+        const result = drawCards(currentPlayer, prev.evidenceDeck, 1);
+        updatedPlayers[prev.currentPlayerIndex] = result.updatedPlayer;
+        updatedDeck = result.updatedDeck;
+        updatedQueue.push(passBroadcast);
+      }
+
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const allPlayersWent = nextPlayerIndex === 0;
 
       return {
         ...prev,
         players: updatedPlayers,
-        evidenceDeck: result.updatedDeck,
+        evidenceDeck: updatedDeck,
         broadcastQueue: updatedQueue,
         currentPlayerIndex: nextPlayerIndex,
         phase: allPlayersWent ? 'RESOLVE' : 'BROADCAST'
       };
     });
 
-    setMessage(`${currentPlayer.name} passed and drew 1 card`);
+    // Reset broadcast tracking
+    setBroadcastsMadeThisTurn(0);
+    setBroadcastedConspiracies([]);
+    setLateEvidencePlayed(false); // v5.0: Reset late evidence flag
+
+    if (noBroadcastsMade) {
+      setMessage(`${currentPlayer.name} passed (0 broadcasts) and drew 1 card`);
+    } else {
+      setMessage(`${currentPlayer.name} finished with ${broadcastsMadeThisTurn} broadcast(s)`);
+    }
   };
 
   // RESOLVE PHASE: Process all broadcasts and check consensus
@@ -365,6 +485,51 @@ function App() {
                   player.credibility = Math.min(10, player.credibility + 1);
                 } else {
                   // Minority side: -1 credibility
+                  player.credibility = Math.max(0, player.credibility - 1);
+                }
+              }
+
+              updatedPlayers[playerIndex] = player;
+            }
+          });
+
+          // STEP 3 (v5.0): Truth bonus/penalties based on evidence proof values
+          // Collect ALL evidence assigned to this conspiracy by ALL players
+          const allEvidenceOnConspiracy: any[] = [];
+          updatedPlayers.forEach(player => {
+            const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+            allEvidenceOnConspiracy.push(...evidenceUsed);
+          });
+
+          // Determine truth based on evidence proof values
+          const { truth, realCount, fakeCount, bluffCount } = determineEvidenceTruth(allEvidenceOnConspiracy);
+
+          // Apply truth bonuses and penalties
+          broadcasts.forEach(broadcast => {
+            const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
+            if (playerIndex >= 0) {
+              const player = { ...updatedPlayers[playerIndex] };
+              const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+              const hasBluffs = evidenceUsed.some(card => card.proofValue === 'BLUFF');
+
+              if (truth === 'TIE') {
+                // TIE: Everyone gets +2 audience, bluffers get -1 credibility
+                player.audience += 2;
+                if (hasBluffs) {
+                  player.credibility = Math.max(0, player.credibility - 1);
+                }
+              } else {
+                // Truth determined: +3 bonus for matching, -1 credibility for wrong position
+                if (broadcast.position === truth) {
+                  // Broadcast matches evidence truth: +3 audience bonus
+                  player.audience += 3;
+                } else if (broadcast.position !== 'INCONCLUSIVE') {
+                  // Broadcast contradicts evidence truth: -1 credibility penalty
+                  player.credibility = Math.max(0, player.credibility - 1);
+                }
+
+                // Bluff penalty: -1 credibility regardless of position
+                if (hasBluffs) {
                   player.credibility = Math.max(0, player.credibility - 1);
                 }
               }
@@ -512,6 +677,7 @@ function App() {
         selectedConspiracy={selectedConspiracy}
         selectedCardId={selectedCard}
         currentPlayer={currentPlayer}
+        allPlayers={gameState.players}
       />
 
       {(gameState.phase === 'ADVERTISE' || gameState.phase === 'BROADCAST') && (
@@ -550,6 +716,7 @@ function App() {
             onAdvertise={handleAdvertise}
             onAdvertisePass={handleAdvertisePass}
             onBroadcast={handleBroadcast}
+            onPlayLateEvidence={handlePlayLateEvidence}
             onPass={handlePass}
             onContinue={
               gameState.phase === 'INVESTIGATE'
@@ -558,7 +725,10 @@ function App() {
             }
             canAssign={!!selectedCard && !!selectedConspiracy}
             canAdvertise={!!selectedConspiracy}
-            canBroadcast={!!selectedConspiracy}
+            canBroadcast={!!selectedConspiracy && !broadcastedConspiracies.includes(selectedConspiracy)}
+            canPlayLateEvidence={!!selectedCard && !!selectedConspiracy && broadcastedConspiracies.includes(selectedConspiracy || '') && !lateEvidencePlayed}
+            broadcastCount={broadcastsMadeThisTurn}
+            lateEvidencePlayed={lateEvidencePlayed}
           />
         </>
       )}

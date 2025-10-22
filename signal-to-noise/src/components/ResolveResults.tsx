@@ -1,6 +1,6 @@
 import React from 'react';
 import { ConspiracyCard, PlayerState, BroadcastObject } from '../types';
-import { detectConsensus } from '../gameLogic';
+import { detectConsensus, determineEvidenceTruth } from '../gameLogic';
 import './ResolveResults.css';
 
 interface ResolveResultsProps {
@@ -150,13 +150,78 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                       In this game, there is NO objective truth - the consensus BECOMES reality! All players who broadcast score points.
                     </div>
 
+                    {/* v5.0: Truth Tally based on Evidence Proof Values */}
+                    {(() => {
+                      // Collect ALL evidence assigned to this conspiracy by ALL players
+                      const allEvidenceOnConspiracy: any[] = [];
+                      players.forEach(player => {
+                        const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+                        allEvidenceOnConspiracy.push(...evidenceUsed);
+                      });
+
+                      if (allEvidenceOnConspiracy.length > 0) {
+                        const { truth, realCount, fakeCount, bluffCount } = determineEvidenceTruth(allEvidenceOnConspiracy);
+
+                        return (
+                          <div className="truth-tally-section">
+                            <div className="truth-tally-header">🔬 Evidence Truth Analysis (v5.0)</div>
+                            <div className="truth-tally-explanation">
+                              All evidence on this conspiracy has been revealed and tallied:
+                            </div>
+                            <div className="proof-counts">
+                              <div className="proof-count real">
+                                <span className="proof-label">Proof: REAL</span>
+                                <span className="proof-number">{realCount}</span>
+                              </div>
+                              <div className="proof-count fake">
+                                <span className="proof-label">Proof: FAKE</span>
+                                <span className="proof-number">{fakeCount}</span>
+                              </div>
+                              {bluffCount > 0 && (
+                                <div className="proof-count bluff">
+                                  <span className="proof-label">BLUFFs</span>
+                                  <span className="proof-number">{bluffCount}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className={`truth-verdict ${truth.toLowerCase()}`}>
+                              {truth === 'TIE' ? (
+                                <>
+                                  ⚖️ <strong>TIE:</strong> Equal REAL and FAKE evidence! All broadcasters get +2 audience bonus.
+                                  {bluffCount > 0 && ' Bluffers get -1 credibility.'}
+                                </>
+                              ) : (
+                                <>
+                                  {truth === 'REAL' ? '✓' : '✗'} <strong>Evidence says: {truth}!</strong>
+                                  {' '}Broadcasters who called {truth} get +3 audience bonus. Wrong callers get -1 credibility.
+                                  {bluffCount > 0 && ' Bluffers get -1 credibility.'}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+
                     <div className="scoring-breakdown">
                       <div className="scoring-header">💰 Scoring Breakdown</div>
-                      {broadcasts.map(broadcast => {
-                        const player = players.find(p => p.id === broadcast.playerId);
-                        if (!player) return null;
+                      {(() => {
+                        // v5.0: Calculate truth once for all players
+                        const allEvidenceOnConspiracy: any[] = [];
+                        players.forEach(p => {
+                          const evidenceUsed = p.assignedEvidence[conspiracy.id] || [];
+                          allEvidenceOnConspiracy.push(...evidenceUsed);
+                        });
+                        const truthResult = allEvidenceOnConspiracy.length > 0
+                          ? determineEvidenceTruth(allEvidenceOnConspiracy)
+                          : null;
 
-                        const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+                        return broadcasts.map(broadcast => {
+                          const player = players.find(p => p.id === broadcast.playerId);
+                          if (!player) return null;
+
+                          const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
 
                         // CONSENSUS-BASED SCORING CALCULATION (matches App.tsx)
                         // BASE POINTS
@@ -293,10 +358,44 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                                   {credChangeText}
                                 </span>
                               </div>
+
+                              {/* v5.0: Truth Bonus/Penalty Display */}
+                              {truthResult && (
+                                <>
+                                  {truthResult.truth === 'TIE' ? (
+                                    <div className="score-line truth-bonus">
+                                      <span className="label">Truth Bonus (TIE):</span>
+                                      <span className="value positive">+2 pts</span>
+                                      <span className="explanation">(equal REAL/FAKE evidence)</span>
+                                    </div>
+                                  ) : broadcast.position === truthResult.truth ? (
+                                    <div className="score-line truth-bonus">
+                                      <span className="label">Truth Bonus:</span>
+                                      <span className="value positive">+3 pts</span>
+                                      <span className="explanation">(broadcast matches evidence!)</span>
+                                    </div>
+                                  ) : broadcast.position !== 'INCONCLUSIVE' && (
+                                    <div className="score-line truth-penalty">
+                                      <span className="label">Truth Penalty:</span>
+                                      <span className="value negative">-1 credibility</span>
+                                      <span className="explanation">(broadcast contradicts evidence)</span>
+                                    </div>
+                                  )}
+
+                                  {evidenceUsed.some(card => card.proofValue === 'BLUFF') && (
+                                    <div className="score-line bluff-penalty">
+                                      <span className="label">Bluff Penalty:</span>
+                                      <span className="value negative">-1 credibility</span>
+                                      <span className="explanation">(used BLUFF cards)</span>
+                                    </div>
+                                  )}
+                                </>
+                              )}
                             </div>
                           </div>
                         );
-                      })}
+                      });
+                      })()}
                     </div>
 
                     <div className="persistence-reminder">

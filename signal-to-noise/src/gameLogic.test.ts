@@ -86,7 +86,8 @@ describe('GameLogic Unit Tests', () => {
       name: 'Test Card 1',
       supportedConspiracies: ['ALL'],
       flavorText: 'Test',
-      excitement: 0
+      excitement: 0,
+      proofValue: 'REAL'
     };
 
     const mockCard2: EvidenceCard = {
@@ -94,7 +95,8 @@ describe('GameLogic Unit Tests', () => {
       name: 'Test Card 2',
       supportedConspiracies: ['ALL'],
       flavorText: 'Test',
-      excitement: 0
+      excitement: 0,
+      proofValue: 'FAKE'
     };
 
     it('should draw cards up to hand limit', () => {
@@ -103,20 +105,20 @@ describe('GameLogic Unit Tests', () => {
       const deck = [mockCard1, mockCard2];
 
       const result = drawCards(player, deck, 2);
-      expect(result.updatedPlayer.evidenceHand.length).toBe(5); // 3 starting + 2 drawn
+      expect(result.updatedPlayer.evidenceHand.length).toBe(9); // 7 starting + 2 drawn
       expect(result.updatedDeck.length).toBe(0);
     });
 
-    it('should respect hand limit of 5', () => {
+    it('should respect hand limit of 10', () => {
       const game = initializeGame(3);
       const player = {
         ...game.players[0],
-        evidenceHand: [mockCard1, mockCard1, mockCard1, mockCard1, mockCard1]
+        evidenceHand: [mockCard1, mockCard1, mockCard1, mockCard1, mockCard1, mockCard1, mockCard1, mockCard1, mockCard1, mockCard1]
       };
       const deck = [mockCard2];
 
       const result = drawCards(player, deck, 1);
-      expect(result.updatedPlayer.evidenceHand.length).toBe(5);
+      expect(result.updatedPlayer.evidenceHand.length).toBe(10);
       expect(result.updatedDeck.length).toBe(1); // Card not drawn
     });
 
@@ -126,7 +128,7 @@ describe('GameLogic Unit Tests', () => {
       const deck: EvidenceCard[] = [];
 
       const result = drawCards(player, deck, 2);
-      expect(result.updatedPlayer.evidenceHand.length).toBe(3); // Unchanged
+      expect(result.updatedPlayer.evidenceHand.length).toBe(7); // Unchanged
       expect(result.updatedDeck.length).toBe(0);
     });
   });
@@ -138,7 +140,8 @@ describe('GameLogic Unit Tests', () => {
         name: 'Test',
         supportedConspiracies: ['ALL'],
         flavorText: 'Test',
-        excitement: 0
+        excitement: 0,
+        proofValue: 'REAL'
       };
       expect(canSupportConspiracy(card, 'any_conspiracy')).toBe(true);
     });
@@ -149,7 +152,8 @@ describe('GameLogic Unit Tests', () => {
         name: 'Test',
         supportedConspiracies: ['chemtrails', 'moon_landing'],
         flavorText: 'Test',
-        excitement: 1
+        excitement: 1,
+        proofValue: 'FAKE'
       };
       expect(canSupportConspiracy(card, 'chemtrails')).toBe(true);
       expect(canSupportConspiracy(card, 'moon_landing')).toBe(true);
@@ -161,7 +165,8 @@ describe('GameLogic Unit Tests', () => {
         name: 'Test',
         supportedConspiracies: ['chemtrails'],
         flavorText: 'Test',
-        excitement: 1
+        excitement: 1,
+        proofValue: 'REAL'
       };
       expect(canSupportConspiracy(card, 'bigfoot')).toBe(false);
     });

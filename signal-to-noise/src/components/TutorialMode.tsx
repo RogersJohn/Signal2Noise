@@ -40,8 +40,13 @@ export const TutorialMode: React.FC<TutorialModeProps> = ({
             },
             {
               emoji: '🎯',
-              title: 'Assign Evidence Secretly',
-              description: `${currentPlayerName}, select a card from your hand, then click a conspiracy on the board. This assignment is SECRET - other players won't see which evidence you placed.`
+              title: 'Assign Evidence Face-Down',
+              description: `${currentPlayerName}, select a card from your hand, then click a conspiracy on the board. The card is placed face-down - you know what it is, but others don't!`
+            },
+            {
+              emoji: '👁️',
+              title: 'Visible Counts, Hidden Content',
+              description: 'Other players can SEE how many cards you assign to each conspiracy (e.g., "Alice: 3 cards on Moon Landing"), but they can\'t see WHAT those cards are. Are you confident or bluffing?'
             },
             {
               emoji: '🃏',
@@ -50,8 +55,8 @@ export const TutorialMode: React.FC<TutorialModeProps> = ({
             },
             {
               emoji: '💡',
-              title: 'Strategy Tip',
-              description: 'You can assign multiple cards to one conspiracy for a strong position, or spread them across multiple conspiracies to keep options open.'
+              title: 'Strategy: Signal or Hide',
+              description: 'Stack many cards on ONE conspiracy to signal confidence (or bluff!). Spread cards thin across MULTIPLE conspiracies to hide your true target. Others are watching!'
             },
             {
               emoji: '✅',
