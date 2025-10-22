@@ -1,50 +1,55 @@
 # Monte Carlo Simulation Report
 
-**Generated:** 2025-10-20T19:00:26.544Z
+**Generated:** 2025-10-22T00:21:32.713Z
 **Total Games:** 500
 
 ---
 
 ## Summary Statistics
 
-- **Average Game Length:** 4.93 rounds
-- **Consensus Rate:** 20.14%
-- **Bluff Rate:** 96.07%
-- **Avg Final Credibility:** 4.13
-- **Avg Credibility Loss:** 0.87
+- **Average Game Length:** 7.00 rounds
+- **Consensus Rate:** 89.35%
+- **Bluff Rate:** 100.00%
+- **Avg Final Credibility:** 7.23
+- **Avg Credibility Loss:** -2.23
 
 ## Win Conditions
 
 | Condition | Games | Percentage |
 |-----------|-------|------------|
-| 60 Audience Points | 146 | 29.2% |
+| 60 Audience Points | 0 | 0.0% |
 | 12 Conspiracies Revealed | 0 | 0.0% |
-| 6 Rounds Completed | 354 | 70.8% |
+| 6 Rounds Completed | 500 | 100.0% |
 
 ## Personality Performance
 
 | Rank | Personality | Games | Wins | Win Rate |
 |------|------------|-------|------|----------|
-| 1 | The Reckless Gambler | 203 | 104 | 51.23% |
-| 2 | The Chaos Agent | 138 | 51 | 36.96% |
-| 3 | The Conspiracy Theorist | 136 | 42 | 30.88% |
-| 4 | The Opportunist | 158 | 48 | 30.38% |
-| 5 | The Calculated Strategist | 166 | 46 | 27.71% |
-| 6 | The Paranoid Skeptic | 219 | 52 | 23.74% |
-| 7 | The Professional Analyst | 153 | 32 | 20.92% |
-| 8 | The Cautious Scholar | 178 | 31 | 17.42% |
-| 9 | The Saboteur | 147 | 25 | 17.01% |
-| 10 | The Truth Seeker | 179 | 29 | 16.20% |
-| 11 | The Meta-Reader | 175 | 25 | 14.29% |
-| 12 | The Steady Builder | 148 | 15 | 10.14% |
+| 1 | The Reckless Gambler | 202 | 156 | 77.23% |
+| 2 | The Chaos Agent | 144 | 94 | 65.28% |
+| 3 | The Conspiracy Theorist | 130 | 59 | 45.38% |
+| 4 | The Opportunist | 161 | 47 | 29.19% |
+| 5 | The Saboteur | 150 | 41 | 27.33% |
+| 6 | The Calculated Strategist | 159 | 27 | 16.98% |
+| 7 | The Professional Analyst | 173 | 28 | 16.18% |
+| 8 | The Meta-Reader | 160 | 18 | 11.25% |
+| 9 | The Cautious Scholar | 174 | 13 | 7.47% |
+| 10 | The Steady Builder | 143 | 9 | 6.29% |
+| 11 | The Truth Seeker | 170 | 5 | 2.94% |
+| 12 | The Paranoid Skeptic | 234 | 3 | 1.28% |
 
 ---
 
 ## Game Balance Analysis
 
-✅ **Healthy Bluffing:** 96.1% bluff rate indicates strategic depth.
+⚠️ **Timeout Issue:** 100% of games end by timeout. Consider:
+- Reducing game length to 5 rounds
+- Lowering audience win threshold
+- Increasing consensus incentives
 
-⚠️ **Balance Issue:** 41% win rate difference between best and worst personalities.
+✅ **Healthy Bluffing:** 100.0% bluff rate indicates strategic depth.
+
+⚠️ **Balance Issue:** 76% win rate difference between best and worst personalities.
 - The Reckless Gambler may be overpowered
-- The Steady Builder may need buffs
+- The Paranoid Skeptic may need buffs
 

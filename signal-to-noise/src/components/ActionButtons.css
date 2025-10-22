@@ -87,3 +87,11 @@
 .btn-fake:hover:not(:disabled) {
   background: #dc2626;
 }
+
+.btn-inconclusive {
+  background: #6b7280;
+}
+
+.btn-inconclusive:hover:not(:disabled) {
+  background: #4b5563;
+}

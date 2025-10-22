@@ -34,7 +34,10 @@ export function initializeGame(playerCount: number): GameState {
   let evidenceIndex = 0;
 
   for (let i = 0; i < playerCount; i++) {
-    // Deal 3 evidence cards to each player (v3.7: reverted from 7 back to original)
+    // Deal 3 evidence cards to each player initially
+    // NOTE: Round 1 has 2 GATHER phases (handled in simulation/gameplay)
+    // Round 1: Players will draw 2 cards twice (4 total in Round 1)
+    // Round 2+: Players draw 2 cards once per round
     const evidenceHand = shuffledEvidence.slice(evidenceIndex, evidenceIndex + 3);
     evidenceIndex += 3;
 
@@ -59,6 +62,7 @@ export function initializeGame(playerCount: number): GameState {
     evidenceDeck,
     players,
     currentPlayerIndex: 0,
+    advertiseQueue: [],
     broadcastQueue: [],
     phase: 'INVESTIGATE',
     round: 1,
@@ -123,21 +127,26 @@ export function canSupportConspiracy(evidence: EvidenceCard, conspiracyId: strin
 
 // Consensus detection
 export function detectConsensus(
-  queue: { conspiracyId: string; position: 'REAL' | 'FAKE'; isPassed?: boolean }[],
+  queue: { conspiracyId: string; position: 'REAL' | 'FAKE' | 'INCONCLUSIVE'; isPassed?: boolean }[],
   conspiracyId: string,
   playerCount: number
 ): { consensus: boolean; position: 'REAL' | 'FAKE' | null } {
+  // Filter to only broadcasts on this conspiracy that aren't passed
+  // ALSO exclude INCONCLUSIVE broadcasts - they don't count toward consensus
   const broadcasts = queue.filter(
-    b => b.conspiracyId === conspiracyId && !b.isPassed
+    b => b.conspiracyId === conspiracyId &&
+         !b.isPassed &&
+         b.position !== 'INCONCLUSIVE'
   );
 
   const realCount = broadcasts.filter(b => b.position === 'REAL').length;
   const fakeCount = broadcasts.filter(b => b.position === 'FAKE').length;
 
-  // v4.6: Consensus threshold = 3 broadcasts (increased from 2)
-  // Gives more time for evidence gathering before reveals
-  // 3P: 3 (100% - rare), 4P: 3 (75%), 5P: 3 (60%)
-  const threshold = 3;
+  // NEW: Majority threshold = Math.ceil(playerCount / 2)
+  // 3 players: 2 needed (majority)
+  // 4 players: 2 needed (majority)
+  // 5 players: 3 needed (majority)
+  const threshold = Math.ceil(playerCount / 2);
 
   if (realCount >= threshold) {
     return { consensus: true, position: 'REAL' };
@@ -154,20 +163,9 @@ export function checkWinCondition(gameState: GameState): {
   gameOver: boolean;
   winner: string | null;
 } {
-  // End if 10 conspiracies revealed (v3: reduced from 12)
-  if (gameState.totalRevealed >= 10) {
-    return determineWinner(gameState.players);
-  }
-
-  // End if playerCount rounds completed (v3.3: reduced from playerCount + 1)
-  const maxRounds = gameState.players.length;
-  if (gameState.round > maxRounds) {
-    return determineWinner(gameState.players);
-  }
-
-  // End if any player reaches 50 audience (v3.2: increased from 40)
-  const hasWinner = gameState.players.some(p => p.audience >= 50);
-  if (hasWinner) {
+  // NEW: ONLY win condition is completing 6 rounds
+  // After Round 6, highest audience wins (tiebreak: credibility)
+  if (gameState.round > 6) {
     return determineWinner(gameState.players);
   }
 

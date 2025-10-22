@@ -34,14 +34,14 @@ describe('GameLogic Unit Tests', () => {
 
   describe('initializeGame', () => {
     it('should throw error for invalid player count', () => {
-      expect(() => initializeGame(1)).toThrow('Game requires 2-4 players');
-      expect(() => initializeGame(5)).toThrow('Game requires 2-4 players');
+      expect(() => initializeGame(2)).toThrow('Game requires 3-5 players');
+      expect(() => initializeGame(6)).toThrow('Game requires 3-5 players');
     });
 
-    it('should create valid game state for 2 players', () => {
-      const game = initializeGame(2);
-      expect(game.players.length).toBe(2);
-      expect(game.conspiracies.length).toBe(6);
+    it('should create valid game state for 3 players', () => {
+      const game = initializeGame(3);
+      expect(game.players.length).toBe(3);
+      expect(game.conspiracies.length).toBe(5);  // v4.5: changed from 6 to 5
       expect(game.phase).toBe('INVESTIGATE');
       expect(game.round).toBe(1);
       expect(game.gameOver).toBe(false);
@@ -50,7 +50,7 @@ describe('GameLogic Unit Tests', () => {
     it('should create valid game state for 4 players', () => {
       const game = initializeGame(4);
       expect(game.players.length).toBe(4);
-      expect(game.conspiracies.length).toBe(6);
+      expect(game.conspiracies.length).toBe(5);  // v4.5: changed from 6 to 5
       expect(game.phase).toBe('INVESTIGATE');
     });
 
@@ -62,7 +62,7 @@ describe('GameLogic Unit Tests', () => {
     });
 
     it('should initialize players with correct starting values', () => {
-      const game = initializeGame(2);
+      const game = initializeGame(3);
       game.players.forEach(player => {
         expect(player.credibility).toBe(5);
         expect(player.audience).toBe(0);
@@ -98,7 +98,7 @@ describe('GameLogic Unit Tests', () => {
     };
 
     it('should draw cards up to hand limit', () => {
-      const game = initializeGame(2);
+      const game = initializeGame(3);
       const player = game.players[0];
       const deck = [mockCard1, mockCard2];
 
@@ -108,7 +108,7 @@ describe('GameLogic Unit Tests', () => {
     });
 
     it('should respect hand limit of 5', () => {
-      const game = initializeGame(2);
+      const game = initializeGame(3);
       const player = {
         ...game.players[0],
         evidenceHand: [mockCard1, mockCard1, mockCard1, mockCard1, mockCard1]
@@ -121,7 +121,7 @@ describe('GameLogic Unit Tests', () => {
     });
 
     it('should handle empty deck', () => {
-      const game = initializeGame(2);
+      const game = initializeGame(3);
       const player = game.players[0];
       const deck: EvidenceCard[] = [];
 
@@ -178,9 +178,8 @@ describe('GameLogic Unit Tests', () => {
       expect(result.position).toBe('REAL');
     });
 
-    it('should detect consensus in 4-player game (3 votes required)', () => {
+    it('should detect consensus in 4-player game (2 votes required)', () => {
       const queue = [
-        { conspiracyId: 'chemtrails', position: 'FAKE' as const, isPassed: false },
         { conspiracyId: 'chemtrails', position: 'FAKE' as const, isPassed: false },
         { conspiracyId: 'chemtrails', position: 'FAKE' as const, isPassed: false }
       ];
@@ -204,11 +203,11 @@ describe('GameLogic Unit Tests', () => {
         { conspiracyId: 'test', position: 'REAL' as const, isPassed: true },
         { conspiracyId: 'test', position: 'REAL' as const, isPassed: false }
       ];
-      const result = detectConsensus(queue, 'test', 2);
-      expect(result.consensus).toBe(false); // Only 1 non-passed vote
+      const result = detectConsensus(queue, 'test', 3);
+      expect(result.consensus).toBe(false); // Only 1 non-passed vote (threshold is 2 for 3 players)
     });
 
-    it('should handle split votes', () => {
+    it('should handle split votes with consensus', () => {
       const queue = [
         { conspiracyId: 'test', position: 'REAL' as const, isPassed: false },
         { conspiracyId: 'test', position: 'REAL' as const, isPassed: false },
@@ -216,7 +215,8 @@ describe('GameLogic Unit Tests', () => {
         { conspiracyId: 'test', position: 'FAKE' as const, isPassed: false }
       ];
       const result = detectConsensus(queue, 'test', 4);
-      expect(result.consensus).toBe(false); // 2 REAL, 2 FAKE = no consensus
+      expect(result.consensus).toBe(true); // 2 REAL = consensus (threshold is 2 for 4 players)
+      expect(result.position).toBe('REAL');
     });
   });
 
@@ -230,6 +230,7 @@ describe('GameLogic Unit Tests', () => {
         { id: 'p2', name: 'Bob', credibility: 5, audience: 20, evidenceHand: [], assignedEvidence: {}, color: '#fff', broadcastHistory: [] }
       ],
       currentPlayerIndex: 0,
+      advertiseQueue: [],
       broadcastQueue: [],
       phase: 'INVESTIGATE',
       round: 1,
@@ -244,27 +245,12 @@ describe('GameLogic Unit Tests', () => {
       totalRevealed: 0
     });
 
-    it('should end game when player reaches 60 audience', () => {
-      const game = createMockGameState();
-      game.players[0].audience = 60;
-      const result = checkWinCondition(game);
-      expect(result.gameOver).toBe(true);
-      expect(result.winner).toBe('p1');
-    });
-
     it('should end game after 6 rounds', () => {
       const game = createMockGameState();
       game.round = 7;
       const result = checkWinCondition(game);
       expect(result.gameOver).toBe(true);
       expect(result.winner).toBe('p2'); // Bob has higher audience
-    });
-
-    it('should end game when 12 conspiracies revealed', () => {
-      const game = createMockGameState();
-      game.totalRevealed = 12;
-      const result = checkWinCondition(game);
-      expect(result.gameOver).toBe(true);
     });
 
     it('should continue game if no win condition met', () => {

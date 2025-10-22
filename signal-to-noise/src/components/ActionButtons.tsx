@@ -5,11 +5,14 @@ import './ActionButtons.css';
 interface ActionButtonsProps {
   phase: Phase;
   onAssignEvidence?: () => void;
-  onBroadcast?: (position: 'REAL' | 'FAKE') => void;
+  onAdvertise?: () => void;
+  onAdvertisePass?: () => void;
+  onBroadcast?: (position: 'REAL' | 'FAKE' | 'INCONCLUSIVE') => void;
   onPass?: () => void;
   onNextBroadcast?: () => void;
   onContinue?: () => void;
   canAssign?: boolean;
+  canAdvertise?: boolean;
   canBroadcast?: boolean;
   canPass?: boolean;
 }
@@ -17,11 +20,14 @@ interface ActionButtonsProps {
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
   phase,
   onAssignEvidence,
+  onAdvertise,
+  onAdvertisePass,
   onBroadcast,
   onPass,
   onNextBroadcast,
   onContinue,
   canAssign = true,
+  canAdvertise = true,
   canBroadcast = true,
   canPass = true
 }) => {
@@ -47,6 +53,30 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         </>
       )}
 
+      {phase === 'ADVERTISE' && (
+        <>
+          {!canAdvertise && (
+            <div className="button-hint">
+              👆 Select a conspiracy to signal your interest (or pass)
+            </div>
+          )}
+          <button
+            className="btn btn-primary"
+            onClick={onAdvertise}
+            disabled={!canAdvertise}
+          >
+            📢 Advertise Interest
+          </button>
+          <button
+            className="btn btn-warning"
+            onClick={onAdvertisePass}
+            disabled={!canPass}
+          >
+            Pass (No Advertisement)
+          </button>
+        </>
+      )}
+
       {phase === 'BROADCAST' && (
         <>
           {!canBroadcast && (
@@ -59,14 +89,21 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
             onClick={() => onBroadcast && onBroadcast('REAL')}
             disabled={!canBroadcast}
           >
-            Broadcast: REAL
+            Broadcast: REAL ✓
           </button>
           <button
             className="btn btn-fake"
             onClick={() => onBroadcast && onBroadcast('FAKE')}
             disabled={!canBroadcast}
           >
-            Broadcast: FAKE
+            Broadcast: FAKE ✗
+          </button>
+          <button
+            className="btn btn-inconclusive"
+            onClick={() => onBroadcast && onBroadcast('INCONCLUSIVE')}
+            disabled={!canBroadcast}
+          >
+            Broadcast: INCONCLUSIVE ???
           </button>
           <button
             className="btn btn-warning"

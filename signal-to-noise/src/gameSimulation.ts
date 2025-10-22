@@ -1,6 +1,6 @@
-import { GameState, PlayerState, EvidenceCard, ConspiracyCard, BroadcastObject, Position } from './types';
+import { GameState, PlayerState, EvidenceCard, ConspiracyCard, BroadcastObject, AdvertiseObject, Position } from './types';
 import { initializeGame, drawCards, canSupportConspiracy, detectConsensus, checkWinCondition } from './gameLogic';
-import { AIPersonality, makeAIDecision, PERSONALITY_NAMES, getPersonalityByName } from './aiPersonalities';
+import { AIPersonality, makeAIDecision, makeAdvertiseDecision, PERSONALITY_NAMES, getPersonalityByName } from './aiPersonalities';
 
 // Simulation Analytics
 export interface GameAnalytics {
@@ -58,15 +58,9 @@ export function simulateGame(personalities: AIPersonality[]): {
   const gameState = initializeGame(personalities.length);
   let totalBroadcasts = 0;
   let consensusCount = 0;
-  let totalBluffs = 0;
-  let successfulBluffs = 0;
-  let hasHadFirstConsensus = false; // v3.3: Track first consensus bonus
 
-  // v3.4: Track participation streaks for each player (consecutive broadcasts)
-  const playerStreaks = new Array(gameState.players.length).fill(0);
-
-  // Simulate game until win condition (v3.3: dynamic rounds = playerCount)
-  const maxRounds = gameState.players.length;
+  // NEW: Game always runs for 6 rounds
+  const maxRounds = 6;
   while (!gameState.gameOver && gameState.round <= maxRounds) {
     // v4.2: MULTI-INVESTIGATION PHASES (refined)
     // Round 1: 2 investigations (build your case!)
@@ -92,6 +86,35 @@ export function simulateGame(personalities: AIPersonality[]): {
         // This simulates "reinforce existing case OR start new investigation"
         const personality = personalities[idx];
         assignEvidenceIntelligently(gameState.players[idx], gameState.conspiracies, personality);
+      }
+    }
+
+    // ADVERTISE PHASE (v5.0: NEW PHASE for psychological warfare)
+    // Players signal which conspiracy interests them
+    // This creates opportunities for bandwagoning or sets traps
+    for (let i = 0; i < gameState.players.length; i++) {
+      const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
+      const personality = personalities[playerIndex];
+
+      const advertiseDecision = makeAdvertiseDecision(gameState, playerIndex, personality);
+
+      if (advertiseDecision.action === 'advertise' && advertiseDecision.conspiracyId) {
+        gameState.advertiseQueue.push({
+          id: `advertise_${Date.now()}_${playerIndex}`,
+          playerId: gameState.players[playerIndex].id,
+          conspiracyId: advertiseDecision.conspiracyId,
+          timestamp: Date.now(),
+          isPassed: false
+        });
+      } else {
+        // Player passes on advertising (keeps plans secret)
+        gameState.advertiseQueue.push({
+          id: `advertise_pass_${Date.now()}_${playerIndex}`,
+          playerId: gameState.players[playerIndex].id,
+          conspiracyId: '',
+          timestamp: Date.now(),
+          isPassed: true
+        });
       }
     }
 
@@ -122,19 +145,10 @@ export function simulateGame(personalities: AIPersonality[]): {
         });
 
         totalBroadcasts++;
-        if (decision.isBluff) {
-          totalBluffs++;
-        }
-
-        // v3.4: Increment participation streak
-        playerStreaks[playerIndex]++;
       } else {
-        // v3.4: Escalating pass penalty (rounds 1-2: -2, rounds 3+: -4)
-        const passPenalty = gameState.round <= 2 ? 2 : 4;
+        // Pass penalty: lose 2 audience points
+        const passPenalty = 2;
         player.audience = Math.max(0, player.audience - passPenalty);
-
-        // v3.4: Reset participation streak on pass
-        playerStreaks[playerIndex] = 0;
 
         gameState.broadcastQueue.push({
           id: `pass_${Date.now()}_${playerIndex}`,
@@ -160,114 +174,70 @@ export function simulateGame(personalities: AIPersonality[]): {
         const conspiracy = gameState.conspiracies.find(c => c.id === conspiracyId);
         if (!conspiracy) return;
 
-        // Award points and track bluffs
+        // NEW: Consensus-based scoring (NO truth checking!)
         const broadcasts = activeBroadcasts.filter(b => b.conspiracyId === conspiracyId);
+        const majorityPosition = consensusResult.position; // 'REAL' or 'FAKE'
 
-        // Sort by timestamp to identify second broadcaster (v3.2)
-        const sortedBroadcasts = [...broadcasts].sort((a, b) => a.timestamp - b.timestamp);
-
-        broadcasts.forEach((broadcast, idx) => {
+        // STEP 1: Award audience points to ALL broadcasters (regardless of position)
+        broadcasts.forEach((broadcast) => {
           const player = gameState.players.find(p => p.id === broadcast.playerId);
           if (!player) return;
 
-          const isCorrect = broadcast.position === conspiracy.truthValue;
+          // Calculate audience points using new formula
+          const audienceGain = calculateAudiencePoints(broadcast, player, conspiracy);
+          player.audience += audienceGain;
+
+          // Track broadcast history
           const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
-          // v4.0: Bluff if no evidence OR all evidence are bluff cards
-          const hasRealEvidence = assignedEvidence.some(card => !card.isBluff);
-          const isBluff = assignedEvidence.length === 0 || !hasRealEvidence;
+          player.broadcastHistory.push({
+            round: gameState.round,
+            conspiracyId,
+            evidenceIds: assignedEvidence.map(e => e.id),
+            position: broadcast.position,
+            wasScored: true
+          });
+        });
 
-          // v4.5: First broadcaster risk/reward (leadership has consequences!)
-          const isFirstBroadcaster = sortedBroadcasts[0].id === broadcast.id;
-          if (isFirstBroadcaster) {
-            if (isCorrect) {
-              player.audience += 5; // Bold leadership rewarded!
-            } else {
-              player.audience = Math.max(0, player.audience - 3); // Bad leadership punished!
-            }
-          }
+        // STEP 2: Adjust credibility based on consensus majority/minority
+        broadcasts.forEach((broadcast) => {
+          const player = gameState.players.find(p => p.id === broadcast.playerId);
+          if (!player) return;
 
-          // v3.2: Second broadcaster bonus (rewards joining, not leading)
-          const isSecondBroadcaster = sortedBroadcasts.length >= 2 && sortedBroadcasts[1].id === broadcast.id;
-          if (isSecondBroadcaster) {
-            player.audience += 2;
-          }
+          // Skip INCONCLUSIVE broadcasts for credibility adjustment
+          if (broadcast.position === 'INCONCLUSIVE') return;
 
-          // v3.5: Coordination bonus (+3 for matching an existing broadcast's position)
-          const broadcastIndex = sortedBroadcasts.findIndex(b => b.id === broadcast.id);
-          if (broadcastIndex > 0) {
-            // Not the first broadcaster - check if we match any earlier broadcast's position
-            const matchesEarlier = sortedBroadcasts.slice(0, broadcastIndex).some(
-              b => b.position === broadcast.position
-            );
-            if (matchesEarlier) {
-              player.audience += 3;
-            }
-          }
-
-          // v3.2: Consensus bonus (if this broadcast triggered consensus)
-          if (consensusResult.consensus) {
-            player.audience += 5;
-          }
-
-          // v3.4: First consensus bonus increased (stronger race dynamic!)
-          if (consensusResult.consensus && !hasHadFirstConsensus) {
-            player.audience += 6;
-          }
-
-          // v3.4: Participation streak bonus (+2 per consecutive broadcast)
-          const playerIndex = gameState.players.findIndex(p => p.id === player.id);
-          if (playerIndex !== -1 && playerStreaks[playerIndex] > 1) {
-            const streakBonus = (playerStreaks[playerIndex] - 1) * 2;
-            player.audience += streakBonus;
-          }
-
-          if (isBluff) {
-            if (isCorrect) {
-              successfulBluffs++;
-            }
-          }
-
-          if (isCorrect) {
-            // Calculate excitement modifier
-            let excitementMod = 0;
-            assignedEvidence.forEach(card => {
-              const previousUses = player.broadcastHistory.filter(h =>
-                h.evidenceIds.includes(card.id) && h.wasScored
-              ).length;
-
-              if (card.excitement === -1 && previousUses > 0) {
-                excitementMod -= 2;
-              } else if (card.excitement === 1 && previousUses > 0) {
-                excitementMod += 2 * previousUses;
-              }
-            });
-
-            player.audience += Math.max(0, conspiracy.tier * 5 + excitementMod);
-
-            // Track broadcast history
-            player.broadcastHistory.push({
-              round: gameState.round,
-              conspiracyId,
-              evidenceIds: assignedEvidence.map(e => e.id),
-              position: broadcast.position,
-              wasScored: true
-            });
+          // Majority side: +1 credibility
+          if (broadcast.position === majorityPosition) {
+            player.credibility = Math.min(10, player.credibility + 1);
           } else {
-            // Wrong guess
-            // v4.6: Increased bluff penalty from -5 to -7 to discourage guessing
-            const penalty = isBluff ? 7 : 3;
-            player.credibility = Math.max(0, player.credibility - penalty);
+            // Minority side: -1 credibility
+            player.credibility = Math.max(0, player.credibility - 1);
+          }
+        });
+
+        // STEP 3: Evidence revelation - ALL players reveal their evidence on this conspiracy
+        console.log(`\n=== Consensus reached on "${conspiracy.name}": ${majorityPosition} ===`);
+        console.log('Evidence revealed:');
+        gameState.players.forEach(p => {
+          const evidence = p.assignedEvidence[conspiracyId] || [];
+          if (evidence.length > 0) {
+            const evidenceNames = evidence.map(e => e.name).join(', ');
+            console.log(`  ${p.name}: [${evidenceNames}]`);
+
+            // Check for bluffs (evidence that doesn't support this conspiracy)
+            const bluffs = evidence.filter(e => !canSupportConspiracy(e, conspiracyId));
+            if (bluffs.length > 0) {
+              console.log(`    ⚠️ BLUFFING: ${bluffs.map(b => b.name).join(', ')}`);
+              if (bluffs.length === evidence.length) {
+                console.log(`    ⚠️ ${p.name} had NO real evidence!`);
+              }
+            }
           }
         });
 
         // Reveal conspiracy
         conspiracy.isRevealed = true;
         gameState.totalRevealed++;
-
-        // v3.3: Mark that first consensus has occurred
-        if (!hasHadFirstConsensus) {
-          hasHadFirstConsensus = true;
-        }
       }
     });
 
@@ -281,6 +251,9 @@ export function simulateGame(personalities: AIPersonality[]): {
       }
       return conspiracy;
     });
+
+    // v5.0: Clear advertise queue for next round (advertisements only relevant for current round)
+    gameState.advertiseQueue = [];
 
     gameState.round++;
 
@@ -305,9 +278,63 @@ export function simulateGame(personalities: AIPersonality[]): {
     finalState: gameState,
     analytics: {
       consensusRate: totalBroadcasts > 0 ? consensusCount / totalBroadcasts : 0,
-      bluffSuccessRate: totalBluffs > 0 ? successfulBluffs / totalBluffs : 0,
     }
   };
+}
+
+// NEW: Calculate audience points using consensus-based formula
+function calculateAudiencePoints(
+  broadcast: BroadcastObject,
+  player: PlayerState,
+  conspiracy: ConspiracyCard
+): number {
+  const assignedEvidence = player.assignedEvidence[broadcast.conspiracyId] || [];
+
+  // BASE POINTS
+  let basePoints = 0;
+  if (broadcast.position === 'INCONCLUSIVE') {
+    basePoints = 2; // Safe option
+  } else if (assignedEvidence.length > 0) {
+    basePoints = 3; // Broadcasting with evidence
+  } else {
+    basePoints = 1; // Bandwagoning (no evidence)
+  }
+
+  // EVIDENCE BONUS
+  let evidenceBonus = 0;
+
+  assignedEvidence.forEach(card => {
+    // Specificity bonus
+    const specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
+
+    // Excitement multiplier
+    let excitementMult = 1.0;
+    if (card.excitement === 1) excitementMult = 1.5;  // Exciting
+    if (card.excitement === -1) excitementMult = 0.5; // Boring
+
+    // Novelty bonus (first use on this conspiracy)
+    const isNovel = !player.broadcastHistory.some(h =>
+      h.conspiracyId === broadcast.conspiracyId &&
+      h.evidenceIds.includes(card.id)
+    );
+    const noveltyBonus = isNovel ? 2 : 0;
+
+    evidenceBonus += Math.round(specificityBonus * excitementMult) + noveltyBonus;
+  });
+
+  // SUBTOTAL
+  const subtotal = basePoints + evidenceBonus;
+
+  // CREDIBILITY MODIFIER
+  let finalScore = subtotal;
+  if (player.credibility >= 7) {
+    finalScore = Math.round(subtotal * 1.5); // High credibility: +50% bonus
+  } else if (player.credibility <= 3) {
+    finalScore = Math.round(subtotal * 0.75); // Low credibility: -25% penalty
+  }
+  // Medium credibility (4-6): no modifier
+
+  return finalScore;
 }
 
 function assignEvidenceIntelligently(

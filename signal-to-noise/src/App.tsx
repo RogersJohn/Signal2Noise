@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { GameState, BroadcastObject } from './types';
+import { GameState, BroadcastObject, AdvertiseObject } from './types';
 import { initializeGame, drawCards, canSupportConspiracy, detectConsensus, checkWinCondition } from './gameLogic';
 import { ConspiracyBoard } from './components/ConspiracyBoard';
 import { PlayerHand } from './components/PlayerHand';
+import { AdvertiseQueue } from './components/AdvertiseQueue';
 import { BroadcastQueue } from './components/BroadcastQueue';
 import { PhaseIndicator } from './components/PhaseIndicator';
 import { ActionButtons } from './components/ActionButtons';
 import { GameSetup } from './components/GameSetup';
 import { HelpPanel } from './components/HelpPanel';
 import { ResolveResults } from './components/ResolveResults';
+import { TutorialMode } from './components/TutorialMode';
 import './App.css';
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [selectedConspiracy, setSelectedConspiracy] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
+  const [tutorialEnabled, setTutorialEnabled] = useState(false);
 
   const handleStartGame = (playerCount: number) => {
     setGameState(initializeGame(playerCount));
@@ -95,7 +98,7 @@ function App() {
         };
       }
 
-      // All players finished - draw cards for everyone and move to BROADCAST
+      // All players finished - draw cards for everyone and move to ADVERTISE
       let updatedDeck = [...prev.evidenceDeck];
       const updatedPlayers = prev.players.map(player => {
         const result = drawCards(player, updatedDeck, 2);
@@ -103,9 +106,9 @@ function App() {
         return result.updatedPlayer;
       });
 
-      setMessage('All players drew 2 cards. Broadcast phase begins.');
+      setMessage('All players drew 2 cards. Advertise phase begins - signal your interests!');
 
-      // Determine starting player for broadcast (losing player gets advantage)
+      // Determine starting player for advertise (losing player gets advantage)
       const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, player, idx, arr) =>
         player.audience < arr[lowestIdx].audience ? idx : lowestIdx
       , 0);
@@ -114,24 +117,85 @@ function App() {
         ...prev,
         players: updatedPlayers,
         evidenceDeck: updatedDeck,
-        phase: 'BROADCAST',
+        phase: 'ADVERTISE',
         currentPlayerIndex: startingPlayerIndex
       };
     });
   };
 
+  // ADVERTISE PHASE: Signal interest in a conspiracy
+  const handleAdvertise = () => {
+    if (!selectedConspiracy) {
+      setMessage('Select a conspiracy to advertise interest in');
+      return;
+    }
+
+    const advertise: AdvertiseObject = {
+      id: `advertise_${Date.now()}_${currentPlayer.id}`,
+      playerId: currentPlayer.id,
+      conspiracyId: selectedConspiracy,
+      timestamp: Date.now()
+    };
+
+    setGameState(prev => {
+      if (!prev) return prev;
+      const updatedQueue = [...prev.advertiseQueue, advertise];
+      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+      const allPlayersWent = nextPlayerIndex === 0;
+
+      return {
+        ...prev,
+        advertiseQueue: updatedQueue,
+        currentPlayerIndex: nextPlayerIndex,
+        phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+      };
+    });
+
+    setSelectedConspiracy(null);
+    setMessage(`${currentPlayer.name} advertised interest in: ${selectedConspiracy}`);
+  };
+
+  // ADVERTISE PHASE: Pass
+  const handleAdvertisePass = () => {
+    const passAdvertise: AdvertiseObject = {
+      id: `advertise_pass_${Date.now()}_${currentPlayer.id}`,
+      playerId: currentPlayer.id,
+      conspiracyId: '',
+      timestamp: Date.now(),
+      isPassed: true
+    };
+
+    setGameState(prev => {
+      if (!prev) return prev;
+      const updatedQueue = [...prev.advertiseQueue, passAdvertise];
+      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+      const allPlayersWent = nextPlayerIndex === 0;
+
+      return {
+        ...prev,
+        advertiseQueue: updatedQueue,
+        currentPlayerIndex: nextPlayerIndex,
+        phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+      };
+    });
+
+    setMessage(`${currentPlayer.name} passed on advertising`);
+  };
+
   // BROADCAST PHASE: Make a broadcast (bluffing allowed!)
-  const handleBroadcast = (position: 'REAL' | 'FAKE') => {
+  const handleBroadcast = (position: 'REAL' | 'FAKE' | 'INCONCLUSIVE') => {
     if (!selectedConspiracy) {
       setMessage('Select a conspiracy to broadcast about');
       return;
     }
 
     const assignedCards = currentPlayer.assignedEvidence[selectedConspiracy] || [];
-    const isBluffing = assignedCards.length === 0;
+    const isBandwagoning = assignedCards.length === 0;
 
-    if (isBluffing) {
-      setMessage(`⚠️ BLUFFING! ${currentPlayer.name} has NO evidence for this conspiracy. Risk: Double penalty if wrong (-6 credibility)`);
+    if (position === 'INCONCLUSIVE') {
+      setMessage(`${currentPlayer.name} broadcasts INCONCLUSIVE (???). Safe choice: 2 base points, no credibility risk.`);
+    } else if (isBandwagoning) {
+      setMessage(`⚠️ BANDWAGONING! ${currentPlayer.name} has NO evidence. Low reward: Only 1 base point vs 3 with evidence.`);
     }
 
     const broadcast: BroadcastObject = {
@@ -217,56 +281,97 @@ function App() {
             totalRevealed++;
           }
 
-          // Score all broadcasts on this conspiracy
-          prev.broadcastQueue
-            .filter(b => b.conspiracyId === conspiracy.id && !b.isPassed)
-            .forEach(broadcast => {
-              const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
-              if (playerIndex >= 0) {
-                const player = { ...updatedPlayers[playerIndex] };
-                const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+          // Get all broadcasts on this conspiracy
+          const broadcasts = prev.broadcastQueue.filter(
+            b => b.conspiracyId === conspiracy.id && !b.isPassed
+          );
 
-                // Calculate excitement modifier
-                let excitementModifier = 0;
-                evidenceUsed.forEach(card => {
-                  // Check if this evidence was used in previous broadcasts
-                  const previousUses = player.broadcastHistory.filter(entry =>
-                    entry.evidenceIds.includes(card.id) && entry.wasScored
-                  ).length;
+          // STEP 1: Award audience points (CONSENSUS-BASED, NO TRUTH CHECKING!)
+          broadcasts.forEach(broadcast => {
+            const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
+            if (playerIndex >= 0) {
+              const player = { ...updatedPlayers[playerIndex] };
+              const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
 
-                  if (card.excitement === -1 && previousUses > 0) {
-                    // BORING card on repeat: -2 penalty
-                    excitementModifier -= 2;
-                  } else if (card.excitement === 1 && previousUses > 0) {
-                    // EXCITING card on repeat: +2 bonus per previous use
-                    excitementModifier += 2 * previousUses;
-                  }
-                  // NEUTRAL (0) never adds modifier
-                });
+              // Calculate audience points using consensus-based formula
+              let audiencePoints = 0;
 
-                if (broadcast.position === conspiracy.truthValue) {
-                  // Correct - base score + excitement modifier
-                  const baseScore = broadcast.evidenceCount * conspiracy.tier;
-                  player.audience += baseScore + excitementModifier;
-                } else {
-                  // Wrong - credibility penalty (double if bluffing)
-                  const isBluff = broadcast.evidenceCount === 0;
-                  const credibilityLoss = isBluff ? 6 : 3;
-                  player.credibility = Math.max(0, player.credibility - credibilityLoss);
-                }
-
-                // Add to broadcast history
-                player.broadcastHistory = [...player.broadcastHistory, {
-                  round: prev.round,
-                  conspiracyId: conspiracy.id,
-                  evidenceIds: evidenceUsed.map(e => e.id),
-                  position: broadcast.position,
-                  wasScored: true
-                }];
-
-                updatedPlayers[playerIndex] = player;
+              // BASE POINTS
+              if (broadcast.position === 'INCONCLUSIVE') {
+                audiencePoints = 2; // Safe option
+              } else if (evidenceUsed.length > 0) {
+                audiencePoints = 3; // Broadcasting with evidence
+              } else {
+                audiencePoints = 1; // Bandwagoning (no evidence)
               }
-            });
+
+              // EVIDENCE BONUS
+              let evidenceBonus = 0;
+              evidenceUsed.forEach(card => {
+                // Specificity bonus
+                const specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
+
+                // Excitement multiplier
+                let excitementMult = 1.0;
+                if (card.excitement === 1) excitementMult = 1.5;
+                if (card.excitement === -1) excitementMult = 0.5;
+
+                // Novelty bonus (first use on this conspiracy)
+                const isNovel = !player.broadcastHistory.some(h =>
+                  h.conspiracyId === conspiracy.id &&
+                  h.evidenceIds.includes(card.id)
+                );
+                const noveltyBonus = isNovel ? 2 : 0;
+
+                evidenceBonus += Math.round(specificityBonus * excitementMult) + noveltyBonus;
+              });
+
+              // SUBTOTAL
+              const subtotal = audiencePoints + evidenceBonus;
+
+              // CREDIBILITY MODIFIER
+              let finalScore = subtotal;
+              if (player.credibility >= 7) {
+                finalScore = Math.round(subtotal * 1.5); // +50% bonus
+              } else if (player.credibility <= 3) {
+                finalScore = Math.round(subtotal * 0.75); // -25% penalty
+              }
+
+              player.audience += finalScore;
+
+              // Add to broadcast history
+              player.broadcastHistory = [...player.broadcastHistory, {
+                round: prev.round,
+                conspiracyId: conspiracy.id,
+                evidenceIds: evidenceUsed.map(e => e.id),
+                position: broadcast.position,
+                wasScored: true
+              }];
+
+              updatedPlayers[playerIndex] = player;
+            }
+          });
+
+          // STEP 2: Adjust credibility based on majority/minority
+          broadcasts.forEach(broadcast => {
+            const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
+            if (playerIndex >= 0) {
+              const player = { ...updatedPlayers[playerIndex] };
+
+              // Skip INCONCLUSIVE broadcasts
+              if (broadcast.position !== 'INCONCLUSIVE') {
+                // Majority side: +1 credibility
+                if (broadcast.position === position) {
+                  player.credibility = Math.min(10, player.credibility + 1);
+                } else {
+                  // Minority side: -1 credibility
+                  player.credibility = Math.max(0, player.credibility - 1);
+                }
+              }
+
+              updatedPlayers[playerIndex] = player;
+            }
+          });
         } else {
           // No consensus - still track in history but mark as not scored
           prev.broadcastQueue
@@ -344,6 +449,7 @@ function App() {
         conspiracies: updatedConspiracies,
         conspiracyDeck: updatedDeck,
         players: updatedPlayers,
+        advertiseQueue: [],
         broadcastQueue: [],
         phase: winCheck.gameOver ? 'CLEANUP' : 'INVESTIGATE',
         currentPlayerIndex: winCheck.gameOver ? prev.currentPlayerIndex : startingPlayerIndex,
@@ -408,6 +514,14 @@ function App() {
         currentPlayer={currentPlayer}
       />
 
+      {(gameState.phase === 'ADVERTISE' || gameState.phase === 'BROADCAST') && (
+        <AdvertiseQueue
+          queue={gameState.advertiseQueue}
+          players={gameState.players}
+          conspiracies={gameState.conspiracies}
+        />
+      )}
+
       <BroadcastQueue
         queue={gameState.broadcastQueue}
         players={gameState.players}
@@ -433,6 +547,8 @@ function App() {
           <ActionButtons
             phase={gameState.phase}
             onAssignEvidence={handleAssignEvidence}
+            onAdvertise={handleAdvertise}
+            onAdvertisePass={handleAdvertisePass}
             onBroadcast={handleBroadcast}
             onPass={handlePass}
             onContinue={
@@ -441,10 +557,19 @@ function App() {
                 : handleCleanup
             }
             canAssign={!!selectedCard && !!selectedConspiracy}
+            canAdvertise={!!selectedConspiracy}
             canBroadcast={!!selectedConspiracy}
           />
         </>
       )}
+
+      <TutorialMode
+        phase={gameState.phase}
+        round={gameState.round}
+        currentPlayerName={currentPlayer.name}
+        isEnabled={tutorialEnabled}
+        onToggle={() => setTutorialEnabled(!tutorialEnabled)}
+      />
     </div>
   );
 }

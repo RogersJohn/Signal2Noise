@@ -1,0 +1,102 @@
+.advertise-queue {
+  background: #111827;
+  border: 2px solid #8b5cf6;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.advertise-queue h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+  color: #c4b5fd;
+}
+
+.queue-description {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 0 0 15px 0;
+  padding: 10px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 4px;
+  border-left: 3px solid #8b5cf6;
+}
+
+.empty-queue {
+  color: #6b7280;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.advertise-item {
+  background: #1f2937;
+  border-left: 4px solid;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  transition: all 0.2s;
+}
+
+.advertise-item:hover {
+  background: #374151;
+  transform: translateX(4px);
+}
+
+.advertise-number {
+  background: #8b5cf6;
+  color: white;
+  font-weight: bold;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.advertise-content {
+  flex: 1;
+}
+
+.advertise-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 1rem;
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 1.05rem;
+}
+
+.signal-text {
+  color: #9ca3af;
+  font-size: 0.95rem;
+}
+
+.conspiracy-name {
+  color: #c4b5fd;
+  font-weight: 600;
+  background: rgba(139, 92, 246, 0.2);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.action {
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 1.05rem;
+}

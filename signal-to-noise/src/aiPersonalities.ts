@@ -189,6 +189,144 @@ export interface AIDecision {
   confidence: number; // 0-1, how confident the AI is in this decision
 }
 
+export interface AIAdvertiseDecision {
+  action: 'advertise' | 'pass';
+  conspiracyId?: string;
+  confidence: number; // 0-1, how confident the AI is in this decision
+  isTrap: boolean; // True if advertising without evidence (psychological warfare)
+}
+
+// ==================== ADVERTISE PHASE DECISION ====================
+// New phase where players signal their intentions to influence others
+
+export function makeAdvertiseDecision(
+  gameState: GameState,
+  playerIndex: number,
+  personality: AIPersonality
+): AIAdvertiseDecision {
+  const player = gameState.players[playerIndex];
+  const availableConspiracies = gameState.conspiracies;
+
+  // Evaluate each conspiracy for advertising
+  const evaluations = availableConspiracies.map(conspiracy => {
+    const assignedEvidence = player.assignedEvidence[conspiracy.id] || [];
+    const hasEvidence = assignedEvidence.length > 0;
+    const evidenceCount = assignedEvidence.length;
+    const realEvidence = assignedEvidence.filter(card => !card.isBluff);
+    const hasRealEvidence = realEvidence.length > 0;
+
+    let score = 0;
+
+    // STRATEGY 1: Advertise where we have strong evidence (honest signaling)
+    if (hasRealEvidence) {
+      score += realEvidence.length * 30;
+
+      // High-tier conspiracies more attractive for advertising
+      if (personality.preferHighTier) {
+        score += conspiracy.tier * 15;
+      }
+
+      // Specialization: advertise our focus area
+      if (personality.specialization > 0.5) {
+        const previousBroadcasts = player.broadcastHistory.filter(
+          h => h.conspiracyId === conspiracy.id
+        ).length;
+        score += previousBroadcasts * 20;
+      }
+    }
+
+    // STRATEGY 2: Deceptive advertising (traps) - advertise WITHOUT evidence
+    // Some personalities use this to mislead opponents
+    if (!hasRealEvidence && personality.bluffFrequency > 0.4) {
+      // Riskier personalities may advertise false signals
+      score += personality.riskTolerance * personality.bluffFrequency * 25;
+
+      // Saboteur and Chaos Agent love setting traps
+      if (personality.name === 'The Saboteur' || personality.name === 'The Chaos Agent') {
+        score += 30;
+      }
+    }
+
+    // STRATEGY 3: Follow the crowd (bandwagoning)
+    // Check what others have advertised
+    const advertisementsOnThis = gameState.advertiseQueue.filter(
+      a => a.conspiracyId === conspiracy.id && !a.isPassed
+    ).length;
+
+    if (advertisementsOnThis > 0) {
+      // Opportunists join popular conspiracies
+      if (personality.opportunistic) {
+        score += advertisementsOnThis * 20;
+      }
+
+      // Low-skepticism personalities easily influenced
+      if (personality.skepticism < 0.5) {
+        score += advertisementsOnThis * 15;
+      }
+
+      // High-skepticism personalities suspicious of popular choices
+      if (personality.skepticism > 0.7) {
+        score -= advertisementsOnThis * 10;
+      }
+    }
+
+    // STRATEGY 4: Counter-signaling (contrarians)
+    // Some personalities deliberately avoid what others advertise
+    if (advertisementsOnThis > 0 && personality.skepticism > 0.8) {
+      score *= 0.5; // Reduce appeal of popular choices
+    }
+
+    return {
+      conspiracy,
+      score,
+      hasEvidence,
+      evidenceCount,
+      hasRealEvidence,
+      isTrap: !hasRealEvidence
+    };
+  });
+
+  // Sort by score
+  evaluations.sort((a, b) => b.score - a.score);
+  const bestOption = evaluations[0];
+
+  if (!bestOption) {
+    return { action: 'pass', confidence: 1.0, isTrap: false };
+  }
+
+  // DECISION: Advertise or Pass?
+
+  // Very cautious personalities may pass to stay hidden
+  if (personality.riskTolerance < 0.2 && Math.random() < 0.4) {
+    return { action: 'pass', confidence: 0.7, isTrap: false };
+  }
+
+  // Paranoid Skeptic rarely advertises (keeps plans secret)
+  if (personality.name === 'The Paranoid Skeptic' && Math.random() < 0.6) {
+    return { action: 'pass', confidence: 0.8, isTrap: false };
+  }
+
+  // Cautious Scholar sometimes passes to observe
+  if (personality.name === 'The Cautious Scholar' && !bestOption.hasRealEvidence) {
+    return { action: 'pass', confidence: 0.6, isTrap: false };
+  }
+
+  // Meta-Reader may pass to observe others' patterns
+  if (personality.name === 'The Meta-Reader' && gameState.advertiseQueue.length < 2 && Math.random() < 0.3) {
+    return { action: 'pass', confidence: 0.5, isTrap: false };
+  }
+
+  // ADVERTISE on best option
+  return {
+    action: 'advertise',
+    conspiracyId: bestOption.conspiracy.id,
+    confidence: bestOption.hasRealEvidence ? 0.8 : 0.4,
+    isTrap: bestOption.isTrap
+  };
+}
+
+// ==================== BROADCAST PHASE DECISION ====================
+
 export function makeAIDecision(
   gameState: GameState,
   playerIndex: number,
@@ -261,7 +399,35 @@ export function makeAIDecision(
       score += previousBroadcasts * personality.specialization * 15;
     }
 
-    // v3.8: Enhanced Bandwagon Mechanics - ALL personalities can see and react to queue
+    // v5.0: ADVERTISE PHASE INTEGRATION - Check who advertised interest
+    // This is NEW psychological info that wasn't available before!
+    const advertisementsOnThis = gameState.advertiseQueue.filter(
+      a => a.conspiracyId === conspiracy.id && !a.isPassed
+    ).length;
+
+    // If multiple players advertised this, it signals potential consensus
+    if (advertisementsOnThis > 0) {
+      // Strong signal: multiple advertisements indicate bandwagon opportunity
+      score += advertisementsOnThis * 15;
+
+      // Opportunists LOVE following advertisements
+      if (personality.opportunistic) {
+        score += advertisementsOnThis * 20;
+      }
+
+      // Skeptics are suspicious of too many advertisements (possible trap?)
+      if (personality.skepticism > 0.7 && advertisementsOnThis >= 2) {
+        score -= advertisementsOnThis * 10;
+      }
+
+      // Meta-Reader detects traps: if someone advertised but likely has no evidence
+      if (personality.name === 'The Meta-Reader' && advertisementsOnThis > 0 && !hasEvidence) {
+        // Be cautious - might be a trap
+        score *= 0.7;
+      }
+    }
+
+    // v3.8: Enhanced Bandwagon Mechanics - Check actual broadcasts too
     // Check if others have already broadcast on this conspiracy (bandwagon effect)
     const broadcastsOnThis = gameState.broadcastQueue.filter(
       b => b.conspiracyId === conspiracy.id && !b.isPassed
@@ -362,41 +528,71 @@ function choosePosition(
   player: PlayerState,
   gameState: GameState
 ): Position {
-  // v3.8: Check if there's a dominant position in the queue (bandwagon consensus)
+  // NEW: Consensus-based position selection (NO truth seeking!)
+  // AI focuses on building/joining consensus, not finding objective truth
+
   const broadcastsOnThis = gameState.broadcastQueue.filter(
-    b => b.conspiracyId === conspiracy.id && !b.isPassed
+    b => b.conspiracyId === conspiracy.id && !b.isPassed && b.position !== 'INCONCLUSIVE'
   );
 
-  if (broadcastsOnThis.length > 0) {
-    const realCount = broadcastsOnThis.filter(b => b.position === 'REAL').length;
-    const fakeCount = broadcastsOnThis.filter(b => b.position === 'FAKE').length;
+  const realCount = broadcastsOnThis.filter(b => b.position === 'REAL').length;
+  const fakeCount = broadcastsOnThis.filter(b => b.position === 'FAKE').length;
+  const totalBroadcasts = realCount + fakeCount;
 
-    // If there's a clear majority, follow it (especially if no evidence)
-    if (realCount > fakeCount && realCount >= 1) {
-      // Strong bias to follow REAL consensus
-      if (!hasEvidence) return 'REAL'; // Bluffers always follow
-      if (Math.random() < 0.7) return 'REAL'; // 70% chance with evidence
+  // STRATEGY 1: Follow existing majority (bandwagoning)
+  if (totalBroadcasts > 0) {
+    const majorityThreshold = Math.ceil(gameState.players.length / 2);
+    const closeToConsensus = Math.max(realCount, fakeCount) >= majorityThreshold - 1;
+
+    // BANDWAGONER behavior (low skepticism, or no evidence)
+    if (!hasEvidence || personality.skepticism < 0.4) {
+      // Always join the majority if one exists
+      if (realCount > fakeCount) return 'REAL';
+      if (fakeCount > realCount) return 'FAKE';
+      // Tied: pick randomly
+      return Math.random() > 0.5 ? 'REAL' : 'FAKE';
     }
-    if (fakeCount > realCount && fakeCount >= 1) {
-      // Strong bias to follow FAKE consensus
-      if (!hasEvidence) return 'FAKE'; // Bluffers always follow
-      if (Math.random() < 0.7) return 'FAKE'; // 70% chance with evidence
+
+    // OPPORTUNIST behavior (join if close to consensus for quick points)
+    if (personality.opportunistic && closeToConsensus) {
+      if (realCount > fakeCount) return 'REAL';
+      if (fakeCount > realCount) return 'FAKE';
+    }
+
+    // CONTRARIAN behavior (high skepticism)
+    if (personality.skepticism > 0.8 && hasEvidence) {
+      // Sometimes oppose the majority to differentiate
+      if (realCount > fakeCount && Math.random() < 0.4) return 'FAKE';
+      if (fakeCount > realCount && Math.random() < 0.4) return 'REAL';
+    }
+
+    // DEFAULT: Likely follow majority, but with some independent thought
+    if (realCount > fakeCount) {
+      return Math.random() < 0.75 ? 'REAL' : 'FAKE';
+    }
+    if (fakeCount > realCount) {
+      return Math.random() < 0.75 ? 'FAKE' : 'REAL';
     }
   }
 
-  // If bluffing and no queue guidance, choose randomly with personality bias
-  if (!hasEvidence) {
-    // Reckless players might guess high-tier as REAL more often
-    if (personality.riskTolerance > 0.7 && conspiracy.tier >= 2) {
-      return Math.random() > 0.4 ? 'REAL' : 'FAKE';
-    }
+  // STRATEGY 2: No existing broadcasts - make first move based on personality
+
+  // Conspiracy theorist: believes most things are REAL
+  if (personality.name === 'The Conspiracy Theorist') {
+    return Math.random() < 0.7 ? 'REAL' : 'FAKE';
+  }
+
+  // Paranoid skeptic: thinks most things are FAKE
+  if (personality.name === 'The Paranoid Skeptic') {
+    return Math.random() < 0.7 ? 'FAKE' : 'REAL';
+  }
+
+  // Saboteur: intentionally makes unpredictable moves
+  if (personality.name === 'The Saboteur') {
     return Math.random() > 0.5 ? 'REAL' : 'FAKE';
   }
 
-  // With evidence, make educated guess based on context clues
-  // In real game, AI doesn't know truth value, so this simulates deduction
-
-  // Check broadcast history for patterns
+  // STRATEGY 3: Balanced approach - vary positions for credibility/diversity
   const previousReal = player.broadcastHistory.filter(
     h => h.position === 'REAL' && h.wasScored
   ).length;
@@ -404,26 +600,27 @@ function choosePosition(
     h => h.position === 'FAKE' && h.wasScored
   ).length;
 
-  // Balanced play: alternate if possible
+  // Professional analyst: balanced portfolio of positions
   if (personality.name === 'The Professional Analyst') {
     if (previousReal > previousFake + 1) return 'FAKE';
     if (previousFake > previousReal + 1) return 'REAL';
   }
 
-  // Conspiracy theorist believes everything is real
-  if (personality.skepticism < 0.3) {
-    return 'REAL';
+  // STRATEGY 4: Consider using INCONCLUSIVE (very cautious personalities)
+  // INCONCLUSIVE = safe option, scores 2 points, doesn't affect credibility
+  if (personality.evidenceThreshold > 0.85 && !hasEvidence && Math.random() < 0.3) {
+    return 'INCONCLUSIVE';
   }
 
-  // Paranoid skeptic thinks everything is fake
-  if (personality.skepticism > 0.9) {
-    return 'FAKE';
+  // If ultra-cautious and low credibility, signal interest without committing
+  if (personality.credibilityConscious && player.credibility < 4 && Math.random() < 0.25) {
+    return 'INCONCLUSIVE';
   }
 
-  // Default: educated guess (50/50 but influenced by tier)
-  // Higher tier = more likely to be sensational/fake in this game's theme
-  const fakeChance = 0.5 + (conspiracy.tier - 2) * 0.1;
-  return Math.random() < fakeChance ? 'FAKE' : 'REAL';
+  // DEFAULT: Random choice with personality bias
+  // Reckless personalities lean REAL, cautious lean FAKE
+  const realBias = 0.5 + (personality.riskTolerance - 0.5) * 0.2;
+  return Math.random() < realBias ? 'REAL' : 'FAKE';
 }
 
 function calculateExcitementValue(

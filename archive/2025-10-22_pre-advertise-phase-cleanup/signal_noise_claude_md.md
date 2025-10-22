@@ -4,9 +4,13 @@
 
 Build a simplified, accessible web-based prototype. Base game first (simple), then add advanced modules as optional toggles.
 
-**Target:** 40 hours for base game MVP, +10 hours per advanced module  
-**Tech Stack:** React with hooks, local state only  
-**Players:** 2-4 (hot-seat multiplayer)
+**Target:** 40 hours for base game MVP, +10 hours per advanced module
+**Tech Stack:** React with hooks, local state only
+**Players:** 3-5 (hot-seat multiplayer)
+
+**NOTE**: This document is an old implementation guide. For current game rules, see:
+- **GAME-RULES.md** - Complete game rules with consensus mechanics
+- **SCORING-FORMULA.md** - Audience point calculation details
 
 ---
 
@@ -19,7 +23,8 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
   name: string,
   description: string,
   tier: 1 | 2 | 3,
-  truthValue: 'REAL' | 'FAKE',
+  truthValue: 'REAL' | 'FAKE',  // Used ONLY for "Truth Matters" variant mode
+                                 // In base game, consensus determines outcome
   isRevealed: boolean
 }
 ```
@@ -56,9 +61,10 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
   id: string,
   playerId: string,
   conspiracyId: string,
-  position: 'REAL' | 'FAKE',
+  position: 'REAL' | 'FAKE' | 'INCONCLUSIVE',  // Added INCONCLUSIVE (???) option
   evidenceCount: number,  // don't need full cards, just count
-  timestamp: number
+  timestamp: number,
+  isPassed?: boolean  // true if player passed instead of broadcasting
 }
 ```
 
@@ -111,39 +117,59 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
 
 4. **Consensus detection** (3 hours)
    ```javascript
-   function detectConsensus(queue, conspiracyId) {
-     const broadcasts = queue.filter(b => b.conspiracyId === conspiracyId);
+   function detectConsensus(queue, conspiracyId, playerCount) {
+     // Filter out INCONCLUSIVE and PASSED broadcasts
+     const broadcasts = queue.filter(b =>
+       b.conspiracyId === conspiracyId &&
+       !b.isPassed &&
+       b.position !== 'INCONCLUSIVE'
+     );
+
      const realCount = broadcasts.filter(b => b.position === 'REAL').length;
      const fakeCount = broadcasts.filter(b => b.position === 'FAKE').length;
-     
-     if (realCount >= 3) return { consensus: true, position: 'REAL' };
-     if (fakeCount >= 3) return { consensus: true, position: 'FAKE' };
-     return { consensus: false };
+
+     // Majority threshold: 3P = 2, 4P = 2, 5P = 3
+     const threshold = Math.ceil(playerCount / 2);
+
+     if (realCount >= threshold) return { consensus: true, position: 'REAL' };
+     if (fakeCount >= threshold) return { consensus: true, position: 'FAKE' };
+     return { consensus: false, position: null };
    }
    ```
 
 5. **Scoring calculator** (3 hours)
    ```javascript
-   function scoreConsensus(broadcasts, conspiracy) {
+   function scoreConsensus(broadcasts, conspiracy, majorityPosition) {
+     // STEP 1: Award audience points (NO truth checking!)
      broadcasts.forEach(broadcast => {
        const player = getPlayer(broadcast.playerId);
-       if (broadcast.position === conspiracy.truthValue) {
-         // Correct
-         player.audience += broadcast.evidenceCount * conspiracy.tier;
+       const audiencePoints = calculateAudiencePoints(broadcast, player, conspiracy);
+       player.audience += audiencePoints;
+     });
+
+     // STEP 2: Adjust credibility based on majority/minority
+     broadcasts.forEach(broadcast => {
+       const player = getPlayer(broadcast.playerId);
+       if (broadcast.position === 'INCONCLUSIVE') return;  // Skip INCONCLUSIVE
+
+       if (broadcast.position === majorityPosition) {
+         player.credibility = Math.min(10, player.credibility + 1);  // Majority
        } else {
-         // Wrong
-         player.credibility -= 3;
+         player.credibility = Math.max(0, player.credibility - 1);  // Minority
        }
      });
    }
+
+   // See SCORING-FORMULA.md for complete audience calculation details
    ```
 
 6. **Win condition** (2 hours)
-   - Check after each round: 12 conspiracies revealed? 6 rounds? 60 audience?
-   - Calculate winner (highest audience, tiebreak credibility)
+   - Check after each round: Has round 6 completed?
+   - Game ends ONLY after 6 rounds
+   - Winner: Highest audience points (tiebreak: credibility)
 
 7. **Validation helpers** (2 hours)
-   - Can player broadcast? (must have evidence for that conspiracy)
+   - Can player broadcast? (can broadcast with OR without evidence)
    - Is action legal for current phase?
    - Hand limit enforcement (5 cards max)
 
@@ -167,7 +193,7 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
 
 11. **Action buttons** (3 hours)
     - INVESTIGATE phase: "Assign Evidence" (select card, select conspiracy), "Done Investigating"
-    - BROADCAST phase: "Broadcast" (select conspiracy, select position), "Pass"
+    - BROADCAST phase: "REAL", "FAKE", "INCONCLUSIVE (???)", "Pass"
     - RESOLVE phase: "Next Broadcast" (step through), "Continue to Cleanup"
     - Always show current phase prominently
 
@@ -181,18 +207,19 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
 
 13. **Broadcast phase** (3 hours)
     - Current player's turn
-    - Select conspiracy from their assignment area (must have evidence there)
-    - Click REAL or FAKE button
+    - Select conspiracy (can broadcast with OR without evidence)
+    - Click REAL, FAKE, or INCONCLUSIVE (???) button
     - Broadcast added to queue (visible to all)
     - Auto-advance to next player
-    - OR click Pass (draw 1 card, add PASS marker to queue)
+    - OR click Pass (no broadcast, credibility safe)
 
 14. **Resolution phase** (3 hours)
     - Button to step through queue one broadcast at a time
     - For each broadcast:
       - Highlight the broadcast
       - Check for consensus on that conspiracy
-      - If consensus: reveal truth, calculate scores, show updates
+      - If consensus: reveal ALL evidence, calculate scores, show updates
+      - Consensus determines outcome (not objective truth)
       - If no consensus: "No resolution" message
     - After all broadcasts processed: "Continue" button
 
@@ -209,10 +236,10 @@ Build a simplified, accessible web-based prototype. Base game first (simple), th
 ## Minimal UI Design
 
 **Color scheme:**
-- Conspiracy tiers: 1★ = green, 2★ = yellow, 3★ = red
-- Players: 4 distinct colors (blue, red, green, purple)
+- Conspiracy tiers: 1★ = tan, 2★ = red, 3★ = blue
+- Players: 5 distinct colors (blue, red, green, purple, orange)
 - Phase indicator: big banner at top
-- Truth values: REAL = green checkmark, FAKE = red X
+- Broadcast positions: REAL = green checkmark, FAKE = red X, INCONCLUSIVE = ???
 
 **Layout:**
 ```

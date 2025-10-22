@@ -2,14 +2,16 @@
 
 export type TruthValue = 'REAL' | 'FAKE';
 export type Tier = 1 | 2 | 3;
-export type Phase = 'INVESTIGATE' | 'BROADCAST' | 'RESOLVE' | 'CLEANUP';
-export type Position = 'REAL' | 'FAKE';
+export type Phase = 'INVESTIGATE' | 'ADVERTISE' | 'BROADCAST' | 'RESOLVE' | 'CLEANUP';
+export type Position = 'REAL' | 'FAKE' | 'INCONCLUSIVE';
 
 export interface ConspiracyCard {
   id: string;
   name: string;
   description: string;
   tier: Tier;
+  // truthValue is used ONLY for "Truth Matters" variant mode
+  // In base game, consensus determines outcome, not objective truth
   truthValue: TruthValue;
   isRevealed: boolean;
   icon?: string; // Emoji/Unicode icon for visual identity
@@ -45,6 +47,14 @@ export interface PlayerState {
   broadcastHistory: BroadcastHistoryEntry[];
 }
 
+export interface AdvertiseObject {
+  id: string;
+  playerId: string;
+  conspiracyId: string;
+  timestamp: number;
+  isPassed?: boolean; // true if player passed in advertise phase
+}
+
 export interface BroadcastObject {
   id: string;
   playerId: string;
@@ -68,6 +78,7 @@ export interface GameState {
   evidenceDeck: EvidenceCard[];
   players: PlayerState[];
   currentPlayerIndex: number;
+  advertiseQueue: AdvertiseObject[]; // NEW: Players signal which conspiracy they're interested in
   broadcastQueue: BroadcastObject[];
   phase: Phase;
   round: number;
