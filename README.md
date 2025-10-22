@@ -496,4 +496,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 **Built with React + TypeScript** | **Game Design: Consensus-Based Social Deduction**
 
-**Current Version:** 2.0.0 (ADVERTISE Phase Update)
+**Current Version:** 1.0.0 - Ready for Human Playtesting
