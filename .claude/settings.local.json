@@ -30,7 +30,9 @@
       "Bash(timeout 300 bash:*)",
       "Bash(timeout:*)",
       "Bash(node generate-print-files.js:*)",
-      "Bash(jobs:*)"
+      "Bash(jobs:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []
