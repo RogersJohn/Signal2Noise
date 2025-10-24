@@ -45,9 +45,15 @@
 Each conspiracy card includes:
 - **Name**: The conspiracy theory title
 - **Description**: Humorous flavor text
-- **Tier**: 1 (6 cards), 2 (4 cards), or 3 (2 cards)
+- **Tier**: 1 (6 cards), 2 (4 cards), or 3 (2 cards) - **AFFECTS SCORING!**
 - **Truth Value**: Used only in variant "Truth Matters" mode
 - **Icon**: Visual identifier
+
+**Tier System (v2.3.0):**
+- **Tier 1**: Easy conspiracies with LOTS of available evidence (6-12 cards each)
+- **Tier 2**: Medium conspiracies with MODERATE evidence (4-6 cards each)
+- **Tier 3**: Hard conspiracies with SCARCE evidence (2-4 cards each)
+- Higher tiers award MORE points to reward difficulty!
 
 **Tier 1 Conspiracies (6):**
 - Chemtrails Control Weather
@@ -340,11 +346,19 @@ BASE POINTS:
   1 = Bandwagoning (no evidence)
   2 = INCONCLUSIVE (always scores, immune to consensus)
 
++ TIER BONUS (difficulty bonus):
+  +1 = Tier 1 conspiracies (easy - lots of evidence available)
+  +2 = Tier 2 conspiracies (medium - moderate evidence)
+  +3 = Tier 3 conspiracies (hard - scarce evidence)
+
 + EVIDENCE BONUSES (per card assigned to this conspiracy):
 
-  Specificity Bonus:
-    +3 = Specific cards (supports 1-5 conspiracies)
-    +1 = ALL cards (supports any conspiracy)
+  Specificity Bonus (with diminishing returns):
+    First card:
+      +3 = Specific cards (supports 1-5 conspiracies)
+      +1 = ALL cards (supports any conspiracy)
+    Subsequent cards:
+      +1 = All additional cards (diminishing returns)
 
   × Excitement Multiplier (applied to specificity bonus):
     ×2.0 = EXCITING (★★★) - Doubles the bonus!
@@ -352,8 +366,8 @@ BASE POINTS:
     ×0.5 = BORING (☆☆☆) - Half value, rounds UP (3→2, 1→1)
 
   + Novelty Bonus:
-    +2 = First time this evidence used on ANY conspiracy
-    +0 = Evidence previously used
+    +2 = First time this evidence used on THIS CONSPIRACY
+    +0 = Evidence previously used on this conspiracy
 
 × CREDIBILITY MODIFIER (applied to total):
   ×1.5 = High credibility (7-10)
@@ -368,23 +382,30 @@ BASE POINTS:
 
 #### Scoring Examples
 
-**Example 1: Strong Evidence Play**
+**Example 1: Strong Evidence Play (Tier 1 Conspiracy)**
 
 - Base: 3 (with evidence)
-- Evidence 1: "Flight Path Analysis" (specific to Chemtrails, EXCITING)
-  - Specificity: +3
+- Tier Bonus: +1 (Tier 1 conspiracy - Chemtrails)
+- Evidence 1: "Flight Path Analysis" (specific to Chemtrails, EXCITING) - **FIRST CARD**
+  - Specificity: +3 (full bonus for first card)
   - Excitement: ×2.0 → 3 × 2 = 6
-  - Novelty: +2 (first use)
+  - Novelty: +2 (first use on this conspiracy)
   - Total: 6 + 2 = 8
-- Evidence 2: "Pilot Reports" (specific to Chemtrails, EXCITING)
-  - Specificity: +3
-  - Excitement: ×2.0 → 3 × 2 = 6
-  - Novelty: +2 (first use)
-  - Total: 6 + 2 = 8
-- Subtotal: 3 + 8 + 8 = 19
-- Credibility (8): ×1.5 → 19 × 1.5 = 28.5 → 29 points
+- Evidence 2: "Pilot Reports" (specific to Chemtrails, EXCITING) - **SECOND CARD**
+  - Specificity: +1 (diminishing returns!)
+  - Excitement: ×2.0 → 1 × 2 = 2
+  - Novelty: +2 (first use on this conspiracy)
+  - Total: 2 + 2 = 4
+- Subtotal: 4 + 8 + 4 = 16
+- Credibility (8): ×1.5 → 16 × 1.5 = 24 points
 - Advertised correctly: No penalty
-- **FINAL: 29 audience points**
+- **FINAL: 24 audience points**
+
+**Example 1b: Same Play on Tier 3 Conspiracy**
+- Same evidence on "Mayor Embezzlement" (Tier 3):
+- Base: 3, Tier Bonus: +3, Evidence: 12
+- Subtotal: 18 × 1.5 = 27 points (vs 24 for Tier 1!)
+- **Higher risk (less evidence available) = higher reward!**
 
 **Example 2: Bandwagon Play**
 

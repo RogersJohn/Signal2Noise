@@ -235,7 +235,7 @@ describe('Personality Behavioral Tests', () => {
     const personality = AI_PERSONALITIES.RECKLESS_GAMBLER;
 
     expect(personality.riskTolerance).toBeGreaterThan(0.8);
-    expect(personality.bluffFrequency).toBeGreaterThan(0.5);
+    expect(personality.bluffFrequency).toBeGreaterThanOrEqual(0.5); // v2.1.0: reduced from 0.7 to 0.5
     expect(personality.credibilityConscious).toBe(false);
   });
 

@@ -181,13 +181,14 @@ Base Points:
   - Bandwagoning (no evidence): 1 point
   - INCONCLUSIVE: 2 points
 
-+ Evidence Bonuses (per card):
-  - Specificity: +3 (specific cards) or +1 (ALL cards)
++ Evidence Bonuses (with diminishing returns):
+  - Specificity (first card): +3 (specific) or +1 (ALL)
+  - Specificity (subsequent cards): +1 (diminishing returns)
   - Excitement Multiplier (applied to specificity):
     • ★★★ EXCITING: ×2.0 (doubles specificity bonus!)
     • ★☆☆ NEUTRAL: ×1.0 (no change)
     • ☆☆☆ BORING: ×0.5 (half value, rounds UP on odd numbers)
-  - Novelty: +2 for first-time use of evidence
+  - Novelty: +2 for first use on each conspiracy
 
 × Credibility Modifier:
   - High credibility (7+): ×1.5 to all points

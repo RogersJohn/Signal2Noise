@@ -126,4 +126,4 @@ See `ROUND_ROBIN_TOURNAMENT_REPORT.md` for detailed matchup data.
 
 ---
 
-**Built with React + TypeScript** | **Version 2.1.0** | **Game Design: Consensus-Based Social Deduction**
+**Built with React + TypeScript** | **Version 2.3.0** | **Game Design: Consensus-Based Social Deduction**

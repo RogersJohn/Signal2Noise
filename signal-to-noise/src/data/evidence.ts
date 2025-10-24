@@ -307,16 +307,16 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_037',
     name: 'Photo Inconsistencies',
-    supportedConspiracies: ['moon_landing'],
-    flavorText: 'Shadows going in THREE directions. The sun is ONE light source. BASIC PHYSICS, PEOPLE.',
+    supportedConspiracies: ['bigfoot'],
+    flavorText: 'Shadows going in THREE directions. Outdoor photography. BASIC PHOTOGRAPHY, PEOPLE.',
     excitement: 1,
     proofValue: 'REAL'
   },
   {
     id: 'ev_038',
-    name: 'Missing Moon Rocks',
-    supportedConspiracies: ['moon_landing'],
-    flavorText: 'They gave Netherlands "moon rock" - turned out to be PETRIFIED WOOD. Oops!',
+    name: 'Missing Physical Evidence',
+    supportedConspiracies: ['crop_circles'],
+    flavorText: 'Physical samples mysteriously disappeared from the lab. Convenient!',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -349,16 +349,16 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_042',
     name: 'Patent Applications',
-    supportedConspiracies: ['pharma_coverup'],
-    flavorText: 'Filed in 1997. Approved in 1998. Never manufactured. They buried it!',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'Filed in 1997. Approved in 1998. Water additive formula. Never used. They buried it!',
     excitement: 1,
     proofValue: 'REAL'
   },
   {
     id: 'ev_043',
     name: 'Revenue Projections',
-    supportedConspiracies: ['pharma_coverup'],
-    flavorText: 'Internal memo: "Cure would cost us $40B annually in treatment revenue." FORTY BILLION.',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: 'Internal memo: "Subliminal layer could boost sales $40B annually." FORTY BILLION.',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -375,8 +375,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_045',
     name: 'Statistical Impossibilities',
-    supportedConspiracies: ['election_rigging'],
-    flavorText: 'Benford\'s Law violation. 0.000001% chance naturally. But sure, totally legit!',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'IQ data correlation. 0.000001% chance naturally. But sure, totally NOT fluoride!',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -409,8 +409,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_049',
     name: 'Employee NDA Violations',
-    supportedConspiracies: ['tech_data_sale'],
-    flavorText: '"I had to sign an NDA to work in data exports. That should tell you everything." - Ex-employee',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: '"I had to sign an NDA about the frequency layer. That should tell you everything." - Ex-producer',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -425,8 +425,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_051',
     name: 'Foreign Government Contracts',
-    supportedConspiracies: ['tech_data_sale'],
-    flavorText: '$280M contract with a government that censors the internet. For what? DATA MINING.',
+    supportedConspiracies: ['chemtrails'],
+    flavorText: '$280M contract with a foreign military. Aerial dispersion systems. For what? WEATHER CONTROL.',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -435,8 +435,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_052',
     name: 'Offshore Bank Records',
-    supportedConspiracies: ['mayor_embezzlement'],
-    flavorText: 'Panama Papers, page 1,847. Account #472819. Mayor\'s wife\'s maiden name. Boom.',
+    supportedConspiracies: ['chemtrails'],
+    flavorText: 'Panama Papers, page 1,847. Account #472819. Aerial dispersion program funding. Boom.',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -451,16 +451,16 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_054',
     name: 'Luxury Purchases',
-    supportedConspiracies: ['mayor_embezzlement'],
-    flavorText: '$2.1M yacht. $95K salary. "Family money" they say. Family money from WHERE?!',
+    supportedConspiracies: ['celebrity_death'],
+    flavorText: '$2.1M yacht spotted with "deceased" celebrity. They say family reunion. Family from WHERE?!',
     excitement: 1,
     proofValue: 'REAL'
   },
   {
     id: 'ev_055',
     name: 'Accounting Audit',
-    supportedConspiracies: ['mayor_embezzlement'],
-    flavorText: 'Independent CPA found "irregularities" - code word for FRAUD - in 73% of expense reports.',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'Independent CPA found "irregularities" - code word for FRAUD - in 73% of water department expenses.',
     excitement: 1,
     proofValue: 'REAL'
   },
@@ -946,16 +946,16 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_115',
     name: 'Photo Inconsistencies',
-    supportedConspiracies: ['moon_landing'],
+    supportedConspiracies: ['bigfoot'],
     flavorText: 'Shadows consistent with uneven terrain and wide-angle lens. Photography 101.',
     excitement: 1,
     proofValue: 'FAKE'
   },
   {
     id: 'ev_116',
-    name: 'Missing Moon Rocks',
-    supportedConspiracies: ['moon_landing'],
-    flavorText: 'One misidentified sample out of thousands. Other 99.9% verified as lunar. FAKE MOON!',
+    name: 'Missing Physical Evidence',
+    supportedConspiracies: ['crop_circles'],
+    flavorText: 'One misidentified sample out of thousands. Other 99.9% verified as plant matter.',
     excitement: 1,
     proofValue: 'FAKE'
   },
@@ -986,16 +986,16 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_120',
     name: 'Patent Applications',
-    supportedConspiracies: ['pharma_coverup'],
-    flavorText: 'Patent for snake oil cure. Never manufactured because it DIDN\'T WORK. Science!',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'Patent for water treatment compound. Never manufactured because it DIDN\'T WORK. Science!',
     excitement: 1,
     proofValue: 'FAKE'
   },
   {
     id: 'ev_121',
     name: 'Revenue Projections',
-    supportedConspiracies: ['pharma_coverup'],
-    flavorText: 'Memo about theoretical revenue impact of breakthrough. Normal business planning.',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: 'Memo about theoretical revenue impact of new ad format. Normal business planning.',
     excitement: 1,
     proofValue: 'FAKE'
   },
@@ -1010,8 +1010,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_123',
     name: 'Statistical Impossibilities',
-    supportedConspiracies: ['election_rigging'],
-    flavorText: 'Benford\'s Law doesn\'t apply to this dataset. Misapplied statistics. Still FRAUD!',
+    supportedConspiracies: ['fluoride'],
+    flavorText: 'Correlation doesn\'t equal causation. Misapplied statistics. Still POISONING!',
     excitement: 1,
     proofValue: 'FAKE'
   },
@@ -1042,8 +1042,8 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_127',
     name: 'Employee NDA Violations',
-    supportedConspiracies: ['tech_data_sale'],
-    flavorText: 'Standard employment NDA. Protects trade secrets. DEFINITELY hiding crimes!',
+    supportedConspiracies: ['subliminal_ads'],
+    flavorText: 'Standard employment NDA. Protects trade secrets. DEFINITELY hiding subliminal techniques!',
     excitement: 1,
     proofValue: 'FAKE'
   },
@@ -1058,15 +1058,15 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_129',
     name: 'Foreign Government Contracts',
-    supportedConspiracies: ['tech_data_sale'],
-    flavorText: 'Contract to provide cloud services. Governments use servers too. DATA MINING!',
+    supportedConspiracies: ['chemtrails'],
+    flavorText: 'Contract for civilian aircraft. Governments buy planes too. WEATHER CONTROL!',
     excitement: 1,
     proofValue: 'FAKE'
   },
   {
     id: 'ev_130',
     name: 'Offshore Bank Records',
-    supportedConspiracies: ['mayor_embezzlement'],
+    supportedConspiracies: ['chemtrails'],
     flavorText: 'Account belongs to different person with same last name. Common surname.',
     excitement: 1,
     proofValue: 'FAKE'
@@ -1082,15 +1082,15 @@ export const EVIDENCE_DECK: EvidenceCard[] = [
   {
     id: 'ev_132',
     name: 'Luxury Purchases',
-    supportedConspiracies: ['mayor_embezzlement'],
-    flavorText: 'Family actually does have money. Inheritance documented. But EMBEZZLEMENT!',
+    supportedConspiracies: ['celebrity_death'],
+    flavorText: 'Lookalike has money. Resemblance documented. But DEATH HOAX!',
     excitement: 1,
     proofValue: 'FAKE'
   },
   {
     id: 'ev_133',
     name: 'Accounting Audit',
-    supportedConspiracies: ['mayor_embezzlement'],
+    supportedConspiracies: ['fluoride'],
     flavorText: '"Irregularities" = minor paperwork errors. All corrected. No fraud found.',
     excitement: 1,
     proofValue: 'FAKE'

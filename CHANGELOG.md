@@ -7,6 +7,92 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.3.0] - 2025-10-24
+
+### Added
+- **Q33 - Tier-Based Point Bonuses**
+  - Tier 1 conspiracies: +1 base point (easy - lots of evidence)
+  - Tier 2 conspiracies: +2 base points (medium - moderate evidence)
+  - Tier 3 conspiracies: +3 base points (hard - scarce evidence)
+  - Rewards players for successfully building consensus on difficult conspiracies with less evidence
+  - Applied to both App.tsx and gameSimulation.ts
+
+### Changed
+- **Evidence Distribution Rebalanced** - 20 cards reassigned to create inverse tier-difficulty relationship
+  - **Tier 1 conspiracies** (low points): Now have MORE evidence (6-12 cards each, avg 8.3)
+  - **Tier 2 conspiracies** (medium points): Moderate evidence (4-6 cards each, avg 5.0)
+  - **Tier 3 conspiracies** (high points): Less evidence (2-4 cards each, avg 3.0)
+  - All reassignments maintain thematic consistency
+
+- **Evidence Reassignments from Tier 3 → Tier 1** (8 cards):
+  - Offshore Bank Records (2) → chemtrails
+  - Luxury Purchases (2) → celebrity_death
+  - Accounting Audit (2) → fluoride
+  - Employee NDA Violations (2) → subliminal_ads
+
+- **Evidence Reassignments from Tier 2 → Tier 1** (12 cards):
+  - Photo Inconsistencies (2) → bigfoot
+  - Missing Physical Evidence (2) → crop_circles
+  - Patent Applications (2) → fluoride
+  - Revenue Projections (2) → subliminal_ads
+  - Statistical Impossibilities (2) → fluoride
+  - Foreign Government Contracts (2) → chemtrails
+
+### Documentation
+- Updated COMPREHENSIVE_GAME_RULES.md with tier system explanation and updated scoring examples
+- Updated README.md version to 2.3.0
+- Updated QUICK_REFERENCE.md with tier bonus in scoring formula
+- Created EVIDENCE_REASSIGNMENT_PLAN.md documenting strategic reassignment decisions
+- Created TIER_DISTRIBUTION_FINAL.md showing final evidence counts per tier
+
+### Impact
+- Higher risk (scarce evidence) now yields higher reward (tier bonus)
+- Encourages players to pursue difficult conspiracies for bonus points
+- Makes tier system mechanically meaningful beyond cosmetic flavor
+- Adds strategic depth to conspiracy selection
+
+---
+
+## [2.2.0] - 2025-10-24
+
+### Changed
+- **Q27 - Diminishing Returns for Evidence Stacking**
+  - First evidence card on a conspiracy gets full specificity bonus (+3 for specific, +1 for ALL)
+  - All subsequent cards on same conspiracy get reduced +1 bonus only
+  - Encourages distributing evidence across conspiracies rather than stacking on one
+  - Applied to both App.tsx and gameSimulation.ts
+
+- **Q26 - Novelty Bonus Clarification**
+  - Novelty bonus (+2) is per conspiracy, not global
+  - Each evidence card earns novelty bonus first time used on each specific conspiracy
+  - Documentation clarified to reflect existing behavior (code was already correct)
+
+### Fixed
+- **Excitement Multiplier Bug**: EXCITING cards now correctly get ×2.0 multiplier
+  - Was incorrectly set to ×1.5 in App.tsx
+  - gameSimulation.ts already had correct ×2.0 value
+  - All scoring examples updated to reflect correct calculations
+
+### Documentation
+- Updated COMPREHENSIVE_GAME_RULES.md with new scoring formula and examples
+- Updated README.md scoring section
+- Updated QUICK_REFERENCE.md with condensed new rules
+- Created GAME_DESIGNER_QUESTIONS.md with 100 design questions and answers
+- Reorganized test results into signal-to-noise/test-results/ folder
+
+### Evaluated but Not Implemented
+- **Q33 - Tier-Based Point Bonuses**: NOT implemented
+  - Condition: "only if higher tier cards have less specific evidence"
+  - Analysis showed: Higher tiers have MORE evidence (Tier 1: ~5, Tier 2: ~7.5, Tier 3: 8)
+  - Decision: Keep conspiracy tiers as cosmetic flavor only
+
+### Testing
+- All TypeScript compilation passes
+- All gameLogic.test.ts unit tests pass (23/23)
+- Game balance will need re-testing with new diminishing returns mechanic
+
+---
+
 ## [2.1.0] - 2025-10-22
 
 ### Major Changes - Balance Overhaul & Documentation Cleanup

@@ -425,18 +425,29 @@ function App() {
                 audiencePoints = 1; // Bandwagoning (no evidence)
               }
 
+              // Q33: TIER BONUS (harder conspiracies with less evidence get bonus points)
+              const tierBonus = conspiracy.tier; // Tier 1: +1, Tier 2: +2, Tier 3: +3
+              audiencePoints += tierBonus;
+
               // EVIDENCE BONUS
               let evidenceBonus = 0;
-              evidenceUsed.forEach(card => {
-                // Specificity bonus
-                const specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
+              evidenceUsed.forEach((card, index) => {
+                // Q27: Diminishing returns - first card full bonus, subsequent cards reduced to +1
+                let specificityBonus;
+                if (index === 0) {
+                  // First card: full specificity bonus
+                  specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
+                } else {
+                  // Subsequent cards: reduced to +1 (diminishing returns)
+                  specificityBonus = 1;
+                }
 
-                // Excitement multiplier
+                // Excitement multiplier (FIXED: 2.0x for EXCITING)
                 let excitementMult = 1.0;
-                if (card.excitement === 1) excitementMult = 1.5;
-                if (card.excitement === -1) excitementMult = 0.5;
+                if (card.excitement === 1) excitementMult = 2.0;  // EXCITING: 2.0x multiplier
+                if (card.excitement === -1) excitementMult = 0.5; // BORING: 0.5x multiplier
 
-                // Novelty bonus (first use on this conspiracy)
+                // Novelty bonus (first use on this specific conspiracy, not global)
                 const isNovel = !player.broadcastHistory.some(h =>
                   h.conspiracyId === conspiracy.id &&
                   h.evidenceIds.includes(card.id)

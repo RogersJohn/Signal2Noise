@@ -24,10 +24,16 @@ Base Points:
   1 = Bandwagoning (no evidence)
   2 = INCONCLUSIVE (always safe)
 
-+ Evidence Bonuses (per card):
-  Specificity: +3 (specific) or +1 (ALL cards)
++ Tier Bonus (difficulty reward):
+  +1 = Tier 1 (easy - lots of evidence available)
+  +2 = Tier 2 (medium - moderate evidence)
+  +3 = Tier 3 (hard - scarce evidence)
+
++ Evidence Bonuses (with diminishing returns):
+  Specificity (1st card): +3 (specific) or +1 (ALL)
+  Specificity (2nd+ cards): +1 (diminishing returns)
   × Excitement: ×2.0 (★★★), ×1.0 (★☆☆), ×0.5 (☆☆☆, rounds UP)
-  Novelty: +2 (first use)
+  Novelty: +2 (first use per conspiracy)
 
 × Credibility Modifier:
   ×1.5 (credibility 7-10)
@@ -152,4 +158,4 @@ Base Points:
 
 **Print this page for quick reference during gameplay!**
 
-**Version 2.1.0** | See README.md for full rules
+**Version 2.3.0** | See README.md for full rules
