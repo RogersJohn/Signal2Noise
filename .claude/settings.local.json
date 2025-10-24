@@ -32,7 +32,8 @@
       "Bash(node generate-print-files.js:*)",
       "Bash(jobs:*)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

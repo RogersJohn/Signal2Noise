@@ -18,13 +18,13 @@ const conspiracies = conspiracyMatches.map(match => ({
 }));
 
 // Extract evidence cards
-const evidenceMatches = [...evidenceFile.matchAll(/\{[\s\S]*?id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?supportedConspiracies:\s*\[([^\]]+)\][\s\S]*?flavorText:\s*'([\s\S]*?)'[\s\S]*?excitement:\s*(-?\d+)[\s\S]*?\}/g)];
+const evidenceMatches = [...evidenceFile.matchAll(/\{[\s\S]*?id:\s*'([^']+)'[\s\S]*?name:\s*'([^']+)'[\s\S]*?supportedConspiracies:\s*\[([^\]]+)\][\s\S]*?flavorText:\s*'([\s\S]*?)',\s*excitement:\s*(-?\d+)[\s\S]*?\}/g)];
 
 const evidence = evidenceMatches.map(match => ({
   id: match[1],
   name: match[2],
   supportedConspiracies: match[3].replace(/'/g, '').split(',').map(s => s.trim()),
-  flavorText: match[4].replace(/\\'/g, "'").replace(/\\n/g, ' '),
+  flavorText: match[4].replace(/\\'/g, "'").replace(/\\"/g, '"').replace(/\\n/g, ' ').trim(),
   excitement: parseInt(match[5])
 }));
 
@@ -40,77 +40,120 @@ function generateConspiracyCards() {
   <style>
     @page { size: A4; margin: 10mm; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: white; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Arial, sans-serif; background: white; }
     .page { page-break-after: always; width: 210mm; height: 297mm; padding: 5mm; }
     .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3mm; height: 100%; }
 
     .conspiracy-card {
-      border: 2px solid #000;
-      border-radius: 4mm;
-      padding: 3mm;
-      position: relative;
       background: white;
+      border: 3px solid #000;
+      border-radius: 4mm;
+      padding: 4mm;
+      position: relative;
       display: flex;
       flex-direction: column;
+      color: #000;
+      overflow: hidden;
     }
 
     .tier-badge {
       position: absolute;
       top: 2mm;
       right: 2mm;
+      padding: 1.5mm 3mm;
+      border-radius: 2mm;
+      font-weight: bold;
+      font-size: 11pt;
+      color: white;
+      border: 2px solid #000;
+      letter-spacing: 0.5pt;
+      z-index: 2;
+    }
+
+    .tier-1 { background: #10b981; border-color: #10b981; }
+    .tier-2 { background: #f59e0b; border-color: #f59e0b; }
+    .tier-3 { background: #ef4444; border-color: #ef4444; }
+
+    .tier-bonus {
+      position: absolute;
+      top: 2mm;
+      left: 2mm;
+      padding: 1.5mm 3mm;
+      border-radius: 2mm;
       font-weight: bold;
       font-size: 10pt;
-      padding: 1mm 2mm;
-      border: 1px solid #000;
-      border-radius: 2mm;
-      background: #f5f5f5;
+      color: white;
+      background: #3b82f6;
+      border: 2px solid #1e40af;
+      z-index: 2;
     }
 
     .conspiracy-icon {
-      font-size: 20pt;
+      font-size: 32pt;
       text-align: center;
-      margin: 8mm 0 3mm 0;
+      margin: 12mm 0 4mm 0;
       line-height: 1;
     }
 
     .conspiracy-name {
       font-weight: bold;
-      font-size: 9pt;
+      font-size: 11pt;
       text-align: center;
-      margin-bottom: 2mm;
-      line-height: 1.2;
+      margin-bottom: 3mm;
+      line-height: 1.3;
       min-height: 10mm;
-      border-bottom: 1px solid #ccc;
       padding-bottom: 2mm;
+      border-bottom: 2px solid #000;
+      color: #000;
     }
 
     .conspiracy-description {
-      font-size: 6.5pt;
-      line-height: 1.3;
+      font-size: 8pt;
+      line-height: 1.4;
       flex-grow: 1;
       font-style: italic;
       color: #333;
-      padding: 0 1mm;
+      padding: 2mm 2mm 0 3mm;
       overflow: hidden;
+      border-left: 2px solid #ccc;
     }
 
     .card-back {
-      border: 2px solid #000;
+      background: white;
+      border: 3px solid #000;
       border-radius: 4mm;
-      background: repeating-linear-gradient(
-        45deg,
-        #f0f0f0,
-        #f0f0f0 3mm,
-        #e0e0e0 3mm,
-        #e0e0e0 6mm
-      );
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 14pt;
+      font-size: 16pt;
       text-align: center;
-      line-height: 1.3;
+      line-height: 1.5;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 3pt;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-back::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
+      background: repeating-linear-gradient(
+        45deg,
+        #f0f0f0,
+        #f0f0f0 5mm,
+        #e5e5e5 5mm,
+        #e5e5e5 10mm
+      );
+      transform: rotate(-45deg);
+    }
+
+    .card-back-content {
+      z-index: 1;
     }
 
     @media print {
@@ -128,13 +171,14 @@ ${Array.from({ length: Math.ceil(conspiracies.length / 9) }).map((_, pageIndex) 
 
   return `<div class="page">
   <div class="card-grid">
-${pageCards.map(card => `    <div class="conspiracy-card">
+${pageCards.map(card => `    <div class="conspiracy-card tier-${card.tier}">
+      <div class="tier-bonus">+${card.tier} pts</div>
       <div class="tier-badge">${'★'.repeat(card.tier)}</div>
       <div class="conspiracy-icon">${card.icon}</div>
       <div class="conspiracy-name">${card.name}</div>
       <div class="conspiracy-description">${card.description}</div>
     </div>`).join('\n')}
-${Array.from({ length: 9 - pageCards.length }).map(() => '    <div class="conspiracy-card" style="border: 1px dashed #ccc;"></div>').join('\n')}
+${Array.from({ length: 9 - pageCards.length }).map(() => '    <div style="border: 1px dashed #ccc; border-radius: 4mm;"></div>').join('\n')}
   </div>
 </div>`;
 }).join('\n\n')}
@@ -144,7 +188,9 @@ ${Array.from({ length: Math.ceil(conspiracies.length / 9) }).map(() => {
   return `<div class="page">
   <div class="card-grid">
 ${Array.from({ length: 9 }).map(() => `    <div class="card-back">
-      SIGNAL<br>TO<br>NOISE
+      <div class="card-back-content">
+        SIGNAL<br>TO<br>NOISE
+      </div>
     </div>`).join('\n')}
   </div>
 </div>`;
@@ -168,84 +214,164 @@ function generateEvidenceCards() {
   <style>
     @page { size: A4; margin: 10mm; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: white; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', Arial, sans-serif; background: white; }
     .page { page-break-after: always; width: 210mm; height: 297mm; padding: 5mm; }
     .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3mm; height: 100%; }
 
     .evidence-card {
-      border: 2px solid #000;
-      border-radius: 4mm;
-      padding: 3mm;
-      position: relative;
       background: white;
+      border: 3px solid #000;
+      border-radius: 3mm;
+      padding: 4mm;
+      position: relative;
       display: flex;
       flex-direction: column;
+      color: #000;
+      min-height: 85mm;
     }
 
     .excitement-badge {
       position: absolute;
-      top: 2mm;
+      bottom: 2mm;
       right: 2mm;
-      font-size: 9pt;
+      font-size: 8pt;
       padding: 1mm 2mm;
-      border: 1px solid #000;
       border-radius: 2mm;
       font-weight: bold;
-      background: #f5f5f5;
+      border: 2px solid #000;
+      z-index: 10;
+    }
+
+    .excitement-exciting {
+      background: #ef4444;
+      color: white;
+    }
+
+    .excitement-neutral {
+      background: #6b7280;
+      color: white;
+    }
+
+    .excitement-boring {
+      background: #d1d5db;
+      color: #000;
     }
 
     .evidence-name {
       font-weight: bold;
-      font-size: 8pt;
-      padding-right: 12mm;
+      font-size: 10pt;
       margin-bottom: 2mm;
-      line-height: 1.2;
-      min-height: 9mm;
-      border-bottom: 1px solid #ccc;
+      line-height: 1.3;
+      min-height: 10mm;
+      border-bottom: 2px solid #000;
       padding-bottom: 2mm;
+      color: #000;
+      padding-right: 2mm;
+    }
+
+    .proof-badge {
+      font-size: 8pt;
+      padding: 1.5mm 2.5mm;
+      border-radius: 2mm;
+      font-weight: bold;
+      margin-bottom: 2mm;
+      text-align: center;
+      letter-spacing: 0.3pt;
+      border: 2px solid;
+    }
+
+    .proof-real {
+      background: #d1fae5;
+      color: #065f46;
+      border-color: #10b981;
+    }
+
+    .proof-fake {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #ef4444;
+    }
+
+    .proof-bluff {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #f59e0b;
     }
 
     .flavor-text {
-      font-size: 6pt;
-      line-height: 1.25;
-      font-style: italic;
+      font-size: 8pt;
+      line-height: 1.4;
       flex-grow: 1;
-      color: #333;
-      padding: 1mm 0;
-      overflow: hidden;
+      color: #000;
+      padding: 2mm 0;
+      min-height: 25mm;
     }
 
     .supports-section {
-      border-top: 1px solid #ccc;
-      padding-top: 1mm;
-      margin-top: 1mm;
-      font-size: 5.5pt;
-      line-height: 1.2;
-      max-height: 8mm;
-      overflow: hidden;
+      border-top: 2px solid #000;
+      padding-top: 2mm;
+      margin-top: 2mm;
+      padding-bottom: 10mm;
+      font-size: 7.5pt;
+      line-height: 1.35;
+      color: #000;
     }
 
     .supports-label {
       font-weight: bold;
-      margin-bottom: 0.5mm;
+      margin-bottom: 1mm;
+      color: #000;
+      font-size: 8pt;
+    }
+
+    .supports-all {
+      color: #065f46;
+      font-weight: bold;
+      font-size: 8pt;
+    }
+
+    .supports-conspiracies {
+      font-size: 7.5pt;
+      line-height: 1.4;
+      color: #000;
     }
 
     .card-back {
-      border: 2px solid #000;
-      border-radius: 4mm;
+      background: white;
+      border: 3px solid #000;
+      border-radius: 3mm;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14pt;
+      text-align: center;
+      line-height: 1.5;
+      color: #000;
+      text-transform: uppercase;
+      letter-spacing: 2pt;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-back::before {
+      content: '';
+      position: absolute;
+      width: 120%;
+      height: 120%;
       background: repeating-linear-gradient(
         -45deg,
         #f0f0f0,
-        #f0f0f0 3mm,
-        #e0e0e0 3mm,
-        #e0e0e0 6mm
+        #f0f0f0 5mm,
+        #e5e5e5 5mm,
+        #e5e5e5 10mm
       );
-      display: flex;
-      align-items: center;
-      justify-center;
-      font-weight: bold;
-      font-size: 12pt;
-      text-align: center;
+      transform: rotate(-45deg);
+    }
+
+    .card-back-content {
+      z-index: 1;
     }
 
     @media print {
@@ -264,24 +390,53 @@ ${Array.from({ length: pagesNeeded }).map((_, pageIndex) => {
   return `<div class="page">
   <div class="card-grid">
 ${pageCards.map(card => {
-  const excitementSymbol = card.excitement === 1 ? '★★★' : card.excitement === 0 ? '★☆☆' : '☆☆☆';
+  // Excitement badge
+  let excitementClass = 'excitement-neutral';
+  let excitementText = '★☆☆ NEUTRAL';
+  if (card.excitement === 1) {
+    excitementClass = 'excitement-exciting';
+    excitementText = '★★★ EXCITING';
+  } else if (card.excitement === -1) {
+    excitementClass = 'excitement-boring';
+    excitementText = '☆☆☆ BORING';
+  }
 
+  // Proof badge (random assignment for print - in actual game this is dynamic)
+  const proofValues = ['REAL', 'FAKE', 'BLUFF'];
+  const proofValue = proofValues[Math.abs(card.id.charCodeAt(3)) % 3];
+  let proofBadge = '';
+  if (proofValue === 'REAL') {
+    proofBadge = '<div class="proof-badge proof-real">✓ Proof: REAL</div>';
+  } else if (proofValue === 'FAKE') {
+    proofBadge = '<div class="proof-badge proof-fake">✗ Proof: FAKE</div>';
+  } else {
+    proofBadge = '<div class="proof-badge proof-bluff">🎭 BLUFF!</div>';
+  }
+
+  // Supports text - make conspiracy names readable
   let supportsText = '';
   if (card.supportedConspiracies.includes('ALL')) {
-    supportsText = '<div class="supports-label">Supports:</div>ALL CONSPIRACIES';
+    supportsText = '<div class="supports-label">Supports:</div><div class="supports-all">✓ ALL CONSPIRACIES</div>';
   } else {
-    const ids = card.supportedConspiracies.slice(0, 5);
-    supportsText = `<div class="supports-label">Supports:</div>${ids.join(', ')}${ids.length < card.supportedConspiracies.length ? '...' : ''}`;
+    // Get conspiracy names, not IDs
+    const conspNames = card.supportedConspiracies.map(id => {
+      const consp = conspiracies.find(c => c.id === id);
+      return consp ? consp.name : id;
+    });
+    const displayNames = conspNames.slice(0, 3); // Show max 3
+    const remaining = conspNames.length - displayNames.length;
+    supportsText = `<div class="supports-label">Supports:</div><div class="supports-conspiracies">${displayNames.join(', ')}${remaining > 0 ? ` +${remaining} more` : ''}</div>`;
   }
 
   return `    <div class="evidence-card">
-      <div class="excitement-badge">${excitementSymbol}</div>
+      <div class="excitement-badge ${excitementClass}">${excitementText}</div>
       <div class="evidence-name">${card.name}</div>
+      ${proofBadge}
       <div class="flavor-text">${card.flavorText}</div>
       <div class="supports-section">${supportsText}</div>
     </div>`;
 }).join('\n')}
-${Array.from({ length: 9 - pageCards.length }).map(() => '    <div class="evidence-card" style="border: 1px dashed #ccc;"></div>').join('\n')}
+${Array.from({ length: 9 - pageCards.length }).map(() => '    <div style="border: 1px dashed #ccc; border-radius: 3mm;"></div>').join('\n')}
   </div>
 </div>`;
 }).join('\n\n')}
@@ -291,7 +446,9 @@ ${Array.from({ length: pagesNeeded }).map(() => {
   return `<div class="page">
   <div class="card-grid">
 ${Array.from({ length: 9 }).map(() => `    <div class="card-back">
-      EVIDENCE<br>CARD
+      <div class="card-back-content">
+        EVIDENCE<br>CARD
+      </div>
     </div>`).join('\n')}
   </div>
 </div>`;
@@ -424,13 +581,21 @@ function generatePlayerAids() {
       </div>
 
       <div class="scoring-box">
+        <strong>Tier Bonus (v2.3.0):</strong><br>
+        • Tier 1 (★): +1 pt (easy - lots of evidence)<br>
+        • Tier 2 (★★): +2 pts (medium - some evidence)<br>
+        • Tier 3 (★★★): +3 pts (hard - scarce evidence)
+      </div>
+
+      <div class="scoring-box">
         <strong>Evidence Bonuses:</strong><br>
         • Specificity: +3 (specific) or +1 (ALL)<br>
+        • Diminishing Returns: 1st card full, 2nd+ = +1<br>
         • Excitement Multiplier:<br>
         &nbsp;&nbsp;★★★ EXCITING: ×2.0<br>
         &nbsp;&nbsp;★☆☆ NEUTRAL: ×1.0<br>
         &nbsp;&nbsp;☆☆☆ BORING: ×0.5<br>
-        • Novelty: +2 (first use)
+        • Novelty: +2 (first use per conspiracy)
       </div>
 
       <div class="scoring-box">
