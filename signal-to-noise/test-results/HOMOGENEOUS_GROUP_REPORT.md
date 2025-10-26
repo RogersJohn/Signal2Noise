@@ -1,6 +1,6 @@
 # Homogeneous Group Simulation Report
 
-**Generated:** 2025-10-22T11:08:08.227Z
+**Generated:** 2025-10-26T00:59:04.798Z
 **Test Type:** Monte Carlo Simulation (100 games × 12 personality types)
 **Player Count:** 4 players per game (all identical personality)
 
@@ -12,10 +12,10 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 
 ### Key Findings
 
-- **Average Consensus Rate:** 28.2%
-- **Average Winner/Loser Gap:** 1.1 points
-- **Average Score Variance:** 2.2
-- **Degenerate Strategies:** 3/12 personality types
+- **Average Consensus Rate:** 27.8%
+- **Average Winner/Loser Gap:** 19.9 points
+- **Average Score Variance:** 11.6
+- **Degenerate Strategies:** 1/12 personality types
 
 ---
 
@@ -27,25 +27,23 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 0.7% |
-| Avg Winner Score | 4.5 |
-| Avg Loser Score | 1.8 |
-| Score Gap | 2.7 |
-| Score Variance (σ) | 18.9 |
-| Avg Credibility | 4.96 |
-| Bluff Rate | 0.0% |
+| Consensus Rate | 31.8% |
+| Avg Winner Score | 24.8 |
+| Avg Loser Score | 1.7 |
+| Score Gap | 23.1 |
+| Score Variance (σ) | 13.6 |
+| Avg Credibility | 6.40 |
+| Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 3%
+- 60 Points: 5%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Very low consensus - players clash frequently
-- � Very few bluffs - evidence-based play dominates
+- Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Reckless Gambler
 
@@ -53,26 +51,24 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 33.5% |
-| Avg Winner Score | 1.9 |
-| Avg Loser Score | 0.4 |
-| Score Gap | 1.5 |
-| Score Variance (σ) | 0.9 |
-| Avg Credibility | 1.48 |
+| Consensus Rate | 22.5% |
+| Avg Winner Score | 34.3 |
+| Avg Loser Score | 7.7 |
+| Score Gap | 26.6 |
+| Score Variance (σ) | 14.2 |
+| Avg Credibility | 6.91 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 6%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
-- Low average credibility - lots of bluffing/minority positions
+- Very low consensus - players clash frequently
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Calculated Strategist
 
@@ -80,12 +76,12 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 40.9% |
-| Avg Winner Score | 1.1 |
-| Avg Loser Score | 0.1 |
-| Score Gap | 1.0 |
-| Score Variance (σ) | 0.6 |
-| Avg Credibility | 3.05 |
+| Consensus Rate | 32.7% |
+| Avg Winner Score | 17.1 |
+| Avg Loser Score | 1.6 |
+| Score Gap | 15.6 |
+| Score Variance (σ) | 9.5 |
+| Avg Credibility | 6.51 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
@@ -98,7 +94,6 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 - Tight score distribution - extremely balanced outcomes
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Truth Seeker
 
@@ -106,13 +101,13 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 0.0% |
-| Avg Winner Score | 0.0 |
-| Avg Loser Score | 0.0 |
-| Score Gap | 0.0 |
-| Score Variance (σ) | 0.0 |
-| Avg Credibility | 5.00 |
-| Bluff Rate | 0.0% |
+| Consensus Rate | 18.6% |
+| Avg Winner Score | 3.0 |
+| Avg Loser Score | 0.2 |
+| Score Gap | 2.8 |
+| Score Variance (σ) | 3.9 |
+| Avg Credibility | 5.41 |
+| Bluff Rate | 100.0% |
 
 **Win Conditions:**
 - 60 Points: 0%
@@ -123,7 +118,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 - Games go to full duration - slow scoring or balanced competition
 - Very low consensus - players clash frequently
 - Tight score distribution - extremely balanced outcomes
-- � Very few bluffs - evidence-based play dominates
+- Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
 - Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
@@ -133,26 +128,24 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 32.2% |
-| Avg Winner Score | 2.0 |
-| Avg Loser Score | 0.5 |
-| Score Gap | 1.6 |
-| Score Variance (σ) | 1.0 |
-| Avg Credibility | 1.47 |
+| Consensus Rate | 23.2% |
+| Avg Winner Score | 32.0 |
+| Avg Loser Score | 8.7 |
+| Score Gap | 23.3 |
+| Score Variance (σ) | 13.7 |
+| Avg Credibility | 6.93 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 2%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
-- Low average credibility - lots of bluffing/minority positions
+- Very low consensus - players clash frequently
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Professional Analyst
 
@@ -160,12 +153,12 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 40.7% |
-| Avg Winner Score | 1.0 |
-| Avg Loser Score | 0.1 |
-| Score Gap | 0.9 |
-| Score Variance (σ) | 0.6 |
-| Avg Credibility | 3.22 |
+| Consensus Rate | 33.6% |
+| Avg Winner Score | 14.0 |
+| Avg Loser Score | 1.1 |
+| Score Gap | 12.9 |
+| Score Variance (σ) | 8.3 |
+| Avg Credibility | 6.35 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
@@ -178,7 +171,6 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 - Tight score distribution - extremely balanced outcomes
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Opportunist
 
@@ -186,26 +178,25 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 38.8% |
-| Avg Winner Score | 1.2 |
-| Avg Loser Score | 0.2 |
-| Score Gap | 1.0 |
-| Score Variance (σ) | 0.7 |
-| Avg Credibility | 2.77 |
+| Consensus Rate | 23.7% |
+| Avg Winner Score | 39.7 |
+| Avg Loser Score | 7.5 |
+| Score Gap | 32.2 |
+| Score Variance (σ) | 17.1 |
+| Avg Credibility | 6.84 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 11%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
-- Low average credibility - lots of bluffing/minority positions
+- Very low consensus - players clash frequently
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
+- Large winner/loser gap - skill/luck creates clear separation
 
 ### The Cautious Scholar
 
@@ -213,12 +204,12 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 13.9% |
-| Avg Winner Score | 0.3 |
-| Avg Loser Score | 0.0 |
-| Score Gap | 0.3 |
-| Score Variance (σ) | 0.4 |
-| Avg Credibility | 4.70 |
+| Consensus Rate | 31.8% |
+| Avg Winner Score | 16.7 |
+| Avg Loser Score | 1.5 |
+| Score Gap | 15.2 |
+| Score Variance (σ) | 8.8 |
+| Avg Credibility | 6.56 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
@@ -228,11 +219,9 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Very low consensus - players clash frequently
 - Tight score distribution - extremely balanced outcomes
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Chaos Agent
 
@@ -240,26 +229,24 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 33.1% |
-| Avg Winner Score | 2.0 |
-| Avg Loser Score | 0.4 |
-| Score Gap | 1.6 |
-| Score Variance (σ) | 0.9 |
-| Avg Credibility | 1.44 |
+| Consensus Rate | 22.1% |
+| Avg Winner Score | 33.3 |
+| Avg Loser Score | 7.5 |
+| Score Gap | 25.8 |
+| Score Variance (σ) | 14.2 |
+| Avg Credibility | 6.92 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 3%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
-- Low average credibility - lots of bluffing/minority positions
+- Very low consensus - players clash frequently
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Steady Builder
 
@@ -267,12 +254,12 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 32.0% |
-| Avg Winner Score | 0.8 |
-| Avg Loser Score | 0.1 |
-| Score Gap | 0.7 |
-| Score Variance (σ) | 0.6 |
-| Avg Credibility | 3.90 |
+| Consensus Rate | 33.3% |
+| Avg Winner Score | 14.4 |
+| Avg Loser Score | 0.3 |
+| Score Gap | 14.1 |
+| Score Variance (σ) | 8.8 |
+| Avg Credibility | 6.24 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
@@ -285,7 +272,6 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 - Tight score distribution - extremely balanced outcomes
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Saboteur
 
@@ -293,26 +279,24 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 33.4% |
-| Avg Winner Score | 1.7 |
-| Avg Loser Score | 0.4 |
-| Score Gap | 1.3 |
-| Score Variance (σ) | 0.7 |
-| Avg Credibility | 2.06 |
+| Consensus Rate | 29.4% |
+| Avg Winner Score | 30.0 |
+| Avg Loser Score | 2.7 |
+| Score Gap | 27.4 |
+| Score Variance (σ) | 15.0 |
+| Avg Credibility | 6.53 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 6%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
-- Low average credibility - lots of bluffing/minority positions
+- Very low consensus - players clash frequently
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ### The Meta-Reader
 
@@ -320,25 +304,23 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 38.9% |
-| Avg Winner Score | 1.1 |
-| Avg Loser Score | 0.1 |
-| Score Gap | 0.9 |
-| Score Variance (σ) | 0.6 |
-| Avg Credibility | 3.07 |
+| Consensus Rate | 30.8% |
+| Avg Winner Score | 20.5 |
+| Avg Loser Score | 1.0 |
+| Score Gap | 19.5 |
+| Score Variance (σ) | 12.4 |
+| Avg Credibility | 6.13 |
 | Bluff Rate | 100.0% |
 
 **Win Conditions:**
-- 60 Points: 0%
+- 60 Points: 3%
 - 6 Rounds: 100%
 - 12 Revealed: 0%
 
 **Insights:**
 - Games go to full duration - slow scoring or balanced competition
-- Tight score distribution - extremely balanced outcomes
 - Majority of broadcasts are bluffs - high-risk strategy
 - Usually goes to round 6 - competitive scoring pace
-- Winner/loser gap is tiny - almost random outcomes (skill ceiling?)
 
 ---
 
@@ -347,50 +329,50 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 ### Highest Consensus Rate
 | Rank | Personality | Consensus Rate |
 |------|-------------|----------------|
-| 1 | The Calculated Strategist | 40.9% |
-| 2 | The Professional Analyst | 40.7% |
-| 3 | The Meta-Reader | 38.9% |
-| 4 | The Opportunist | 38.8% |
-| 5 | The Reckless Gambler | 33.5% |
-| 6 | The Saboteur | 33.4% |
-| 7 | The Chaos Agent | 33.1% |
-| 8 | The Conspiracy Theorist | 32.2% |
-| 9 | The Steady Builder | 32.0% |
-| 10 | The Cautious Scholar | 13.9% |
-| 11 | The Paranoid Skeptic | 0.7% |
-| 12 | The Truth Seeker | 0.0% |
+| 1 | The Professional Analyst | 33.6% |
+| 2 | The Steady Builder | 33.3% |
+| 3 | The Calculated Strategist | 32.7% |
+| 4 | The Cautious Scholar | 31.8% |
+| 5 | The Paranoid Skeptic | 31.8% |
+| 6 | The Meta-Reader | 30.8% |
+| 7 | The Saboteur | 29.4% |
+| 8 | The Opportunist | 23.7% |
+| 9 | The Conspiracy Theorist | 23.2% |
+| 10 | The Reckless Gambler | 22.5% |
+| 11 | The Chaos Agent | 22.1% |
+| 12 | The Truth Seeker | 18.6% |
 
 ### Largest Winner/Loser Gaps
 | Rank | Personality | Score Gap |
 |------|-------------|----------|
-| 1 | The Paranoid Skeptic | 2.7 |
-| 2 | The Chaos Agent | 1.6 |
-| 3 | The Conspiracy Theorist | 1.6 |
-| 4 | The Reckless Gambler | 1.5 |
-| 5 | The Saboteur | 1.3 |
-| 6 | The Opportunist | 1.0 |
-| 7 | The Calculated Strategist | 1.0 |
-| 8 | The Meta-Reader | 0.9 |
-| 9 | The Professional Analyst | 0.9 |
-| 10 | The Steady Builder | 0.7 |
-| 11 | The Cautious Scholar | 0.3 |
-| 12 | The Truth Seeker | 0.0 |
+| 1 | The Opportunist | 32.2 |
+| 2 | The Saboteur | 27.4 |
+| 3 | The Reckless Gambler | 26.6 |
+| 4 | The Chaos Agent | 25.8 |
+| 5 | The Conspiracy Theorist | 23.3 |
+| 6 | The Paranoid Skeptic | 23.1 |
+| 7 | The Meta-Reader | 19.5 |
+| 8 | The Calculated Strategist | 15.6 |
+| 9 | The Cautious Scholar | 15.2 |
+| 10 | The Steady Builder | 14.1 |
+| 11 | The Professional Analyst | 12.9 |
+| 12 | The Truth Seeker | 2.8 |
 
 ### Most Consistent Outcomes (Lowest Variance)
 | Rank | Personality | Variance (σ) |
 |------|-------------|-------------|
-| 1 | The Truth Seeker | 0.0 |
-| 2 | The Cautious Scholar | 0.4 |
-| 3 | The Steady Builder | 0.6 |
-| 4 | The Meta-Reader | 0.6 |
-| 5 | The Professional Analyst | 0.6 |
-| 6 | The Calculated Strategist | 0.6 |
-| 7 | The Opportunist | 0.7 |
-| 8 | The Saboteur | 0.7 |
-| 9 | The Reckless Gambler | 0.9 |
-| 10 | The Chaos Agent | 0.9 |
-| 11 | The Conspiracy Theorist | 1.0 |
-| 12 | The Paranoid Skeptic | 18.9 |
+| 1 | The Truth Seeker | 3.9 |
+| 2 | The Professional Analyst | 8.3 |
+| 3 | The Cautious Scholar | 8.8 |
+| 4 | The Steady Builder | 8.8 |
+| 5 | The Calculated Strategist | 9.5 |
+| 6 | The Meta-Reader | 12.4 |
+| 7 | The Paranoid Skeptic | 13.6 |
+| 8 | The Conspiracy Theorist | 13.7 |
+| 9 | The Reckless Gambler | 14.2 |
+| 10 | The Chaos Agent | 14.2 |
+| 11 | The Saboteur | 15.0 |
+| 12 | The Opportunist | 17.1 |
 
 ---
 
@@ -398,20 +380,25 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 
 ### Self-Balancing Strategies
 
-No personalities show strong self-balancing properties.
+These strategies create balanced, competitive games even when all players use them:
+
+- **The Paranoid Skeptic**: Consensus 32%, Gap 23.1
+- **The Calculated Strategist**: Consensus 33%, Gap 15.6
+- **The Professional Analyst**: Consensus 34%, Gap 12.9
+- **The Cautious Scholar**: Consensus 32%, Gap 15.2
+- **The Steady Builder**: Consensus 33%, Gap 14.1
+- **The Meta-Reader**: Consensus 31%, Gap 19.5
 
 ### Potentially Problematic Strategies
 
 These strategies may create problematic gameplay when all players use them:
 
-- **The Paranoid Skeptic**: Very low consensus (<20%). 
 - **The Truth Seeker**: Very low consensus (<20%). 
-- **The Cautious Scholar**: Very low consensus (<20%). 
 
 ---
 
 ## Conclusions
 
 1. **Consensus Formation:** Homogeneous groups struggle with consensus, suggesting strategy diversity improves coordination.
-2. **Outcome Variance:** Small winner/loser gaps suggest luck/position matter more than skill in mirror matches.
-3. **Game Health:** 3 personality types create suboptimal gameplay when homogeneous. Consider balance adjustments.
+2. **Outcome Variance:** Significant winner/loser gaps suggest skill/adaptation matter even with identical strategies.
+3. **Game Health:** 1 personality types create suboptimal gameplay when homogeneous. Consider balance adjustments.

@@ -36,7 +36,8 @@
       "Bash(ls:*)",
       "Bash(taskkill /F /PID 14932)",
       "Bash(taskkill //F //PID 14932)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

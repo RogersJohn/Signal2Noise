@@ -1,30 +1,50 @@
-# Test Results and Balance Reports
+# Test Results and Simulation Reports
 
-This folder contains all AI testing and balance analysis reports for Signal to Noise.
+This directory contains all AI simulation, tournament, and balance analysis reports for Signal to Noise.
 
-## Current Test Reports (Version 2.1.0)
+## 📊 Latest Reports (October 26, 2025)
 
-### Primary Balance Report
-- **ROUND_ROBIN_TOURNAMENT_REPORT.md** - Comprehensive 1000-game tournament with all 12 AI personalities (October 22, 2025)
-  - Definitive balance assessment
-  - Per-personality win rates and statistics
-  - Overall game health metrics
+### Core Balance & Analytics
+- **ANALYTICS_REPORT.md** - Comprehensive analytics across all game formats
+- **MONTE_CARLO_REPORT.md** - 500-game Monte Carlo simulation validating latest rules
+- **ROUND_ROBIN_TOURNAMENT_REPORT.md** - 1000-game round-robin tournament with all 12 AI personalities
 
-### Alternative Format Testing
-- **HOMOGENEOUS_GROUP_REPORT.md** - 1,200 games with identical AI personalities (4v same)
-- **MAJORITY_MINORITY_REPORT.md** - 3,300 games testing 3+1 majority/minority dynamics
-- **TEAM_2V2_REPORT.md** - 1,650 games testing 2v2 team format
-- **COALITION_2_1_1_REPORT.md** - 9,900 games testing 2+1+1 coalition dynamics
+### Tournament Formats
+- **KNOCKOUT_TOURNAMENT_REPORT.md** - Single-elimination tournament analysis
+- **HOMOGENEOUS_GROUP_REPORT.md** - Games with identical AI personalities (4v same)
+- **MAJORITY_MINORITY_REPORT.md** - 3+1 majority/minority dynamics testing
+- **TEAM_2V2_REPORT.md** - 2v2 team format analysis
+- **COALITION_2_1_1_REPORT.md** - 2+1+1 coalition dynamics testing
 
 ### Special Analysis
-- **EVOLUTIONARY_REPORT.md** - 2,500 games using evolutionary algorithm to discover exploits
-- **PHYSICAL_GAME_ASSESSMENT.md** - Readiness assessment for physical playtesting (28,550+ total simulated games)
+- **EVOLUTIONARY_REPORT.md** - Evolutionary algorithm testing to discover exploits
 
-## Total Games Simulated
+## 🎯 Key Findings
 
-**28,550+ games** across all formats
+**Monte Carlo Validation (500 games):**
+- All game mechanics functioning correctly with latest confirmed rules
+- Round 1 double-investigate phase working as intended
+- Escalating bluff penalties (2 → 3 credibility) validated
+- Starting resources: 5 Credibility, 5 Audience confirmed
+- Consensus thresholds validated by player count
 
-## How to Generate Reports
+**Game Balance:**
+- Win condition: 6 rounds or bankruptcy elimination
+- Bluffing system: Escalating penalties prevent abuse
+- Advertising system: -1 Audience penalty for mismatches
+- Late-breaking evidence phase adds strategic depth
+
+## 📈 Total Simulations
+
+**500+ games** in latest Monte Carlo validation (October 26, 2025)
+**28,000+ games** across all historical tournament formats
+
+## 🔧 How to Generate Reports
+
+### Monte Carlo Simulation (500 games)
+```bash
+npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testNamePattern="Monte Carlo"
+```
 
 ### Round Robin Tournament (1000 games)
 ```bash
@@ -36,11 +56,14 @@ npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false --testName
 npm test -- --testPathPattern=gameSimulation.test.ts --watchAll=false
 ```
 
-## Archived Reports
+## 📦 Archived Reports
 
-Outdated pre-balance reports are archived in:
-- `../../archives/2025-10-22-balance-testing/`
+Older test reports (pre-October 26) are archived in:
+- `../docs/archived/`
+
+These contain historical balance data from earlier versions.
 
 ---
 
-**Last Updated:** October 24, 2025
+**Last Updated:** October 26, 2025
+**Current Game Version:** 5.1

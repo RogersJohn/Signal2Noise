@@ -1,6 +1,6 @@
 # Majority-Minority Composition Report
 
-**Generated:** 2025-10-22T11:17:37.037Z
+**Generated:** 2025-10-26T01:01:14.767Z
 **Test Type:** Monte Carlo Simulation (25 games × 132 combinations)
 **Composition:** 3 identical players (majority) + 1 different player (minority)
 **Total Games:** 3300
@@ -13,10 +13,10 @@ This report analyzes what happens when 3 players use the **same strategy** while
 
 ### Key Findings
 
-- **Average Majority Win Rate:** 83.4%
-- **Average Minority Win Rate:** 16.6%
+- **Average Majority Win Rate:** 74.5%
+- **Average Minority Win Rate:** 25.5%
 - **Expected Random Win Rate:** 25.0% (1 in 4 players)
-- **Minority Performance:** UNDERPERFORM
+- **Minority Performance:** OVERPERFORM
 
 ---
 
@@ -26,18 +26,18 @@ How well do 3 identical players coordinate and dominate?
 
 | Rank | Majority Personality | Win Rate | Consensus | Most Vulnerable To | Best Against |
 |------|---------------------|----------|-----------|-------------------|-------------|
-| 1 | The Conspiracy Theorist | 97.8% | 35.2% | The Reckless Gambler | The Paranoid Skeptic |
-| 2 | The Chaos Agent | 97.5% | 35.0% | The Reckless Gambler | The Paranoid Skeptic |
-| 3 | The Reckless Gambler | 96.7% | 35.3% | The Chaos Agent | The Paranoid Skeptic |
-| 4 | The Saboteur | 92.4% | 34.5% | The Chaos Agent | The Paranoid Skeptic |
-| 5 | The Opportunist | 88.4% | 39.6% | The Reckless Gambler | The Paranoid Skeptic |
-| 6 | The Calculated Strategist | 87.3% | 40.8% | The Conspiracy Theorist | The Paranoid Skeptic |
-| 7 | The Professional Analyst | 83.3% | 38.7% | The Conspiracy Theorist | The Paranoid Skeptic |
-| 8 | The Meta-Reader | 82.5% | 37.8% | The Conspiracy Theorist | The Paranoid Skeptic |
-| 9 | The Steady Builder | 80.4% | 36.8% | The Chaos Agent | The Paranoid Skeptic |
-| 10 | The Paranoid Skeptic | 65.8% | 17.1% | The Chaos Agent | The Truth Seeker |
-| 11 | The Truth Seeker | 65.1% | 17.5% | The Conspiracy Theorist | The Paranoid Skeptic |
-| 12 | The Cautious Scholar | 64.0% | 26.1% | The Chaos Agent | The Paranoid Skeptic |
+| 1 | The Reckless Gambler | 91.6% | 24.6% | The Opportunist | The Truth Seeker |
+| 2 | The Conspiracy Theorist | 90.9% | 23.8% | The Chaos Agent | The Paranoid Skeptic |
+| 3 | The Chaos Agent | 87.3% | 24.0% | The Conspiracy Theorist | The Meta-Reader |
+| 4 | The Opportunist | 81.8% | 24.9% | The Reckless Gambler | The Truth Seeker |
+| 5 | The Calculated Strategist | 74.9% | 30.3% | The Conspiracy Theorist | The Truth Seeker |
+| 6 | The Paranoid Skeptic | 73.5% | 30.1% | The Reckless Gambler | The Truth Seeker |
+| 7 | The Saboteur | 73.1% | 29.0% | The Conspiracy Theorist | The Truth Seeker |
+| 8 | The Cautious Scholar | 72.0% | 30.7% | The Conspiracy Theorist | The Truth Seeker |
+| 9 | The Professional Analyst | 65.8% | 31.8% | The Chaos Agent | The Truth Seeker |
+| 10 | The Steady Builder | 65.5% | 33.1% | The Chaos Agent | The Truth Seeker |
+| 11 | The Meta-Reader | 64.7% | 30.7% | The Reckless Gambler | The Truth Seeker |
+| 12 | The Truth Seeker | 52.4% | 31.0% | The Chaos Agent | The Steady Builder |
 
 ---
 
@@ -47,18 +47,18 @@ Best minorities when outnumbered 3-to-1:
 
 | Rank | Minority Personality | Win Rate | Score Advantage | Wins/Total | Best Against |
 |------|---------------------|----------|----------------|------------|-------------|
-| 1 | The Chaos Agent | 42.5% | +0.85 | 117/275 | The Cautious Scholar |
-| 2 | The Reckless Gambler | 40.0% | +1.64 | 110/275 | The Truth Seeker |
-| 3 | The Conspiracy Theorist | 40.0% | +0.78 | 110/275 | The Truth Seeker |
-| 4 | The Opportunist | 21.1% | +0.17 | 58/275 | The Truth Seeker |
-| 5 | The Saboteur | 18.5% | +0.30 | 51/275 | The Cautious Scholar |
-| 6 | The Calculated Strategist | 15.6% | +0.03 | 43/275 | The Truth Seeker |
-| 7 | The Professional Analyst | 9.5% | -0.10 | 26/275 | The Paranoid Skeptic |
-| 8 | The Meta-Reader | 8.0% | -0.15 | 22/275 | The Paranoid Skeptic |
-| 9 | The Steady Builder | 2.2% | -0.29 | 6/275 | The Paranoid Skeptic |
-| 10 | The Cautious Scholar | 1.5% | -0.54 | 4/275 | The Paranoid Skeptic |
-| 11 | The Paranoid Skeptic | 0.0% | -0.68 | 0/275 | The Reckless Gambler |
-| 12 | The Truth Seeker | 0.0% | -0.67 | 0/275 | The Paranoid Skeptic |
+| 1 | The Conspiracy Theorist | 53.1% | +9.49 | 146/275 | The Truth Seeker |
+| 2 | The Chaos Agent | 52.7% | +10.04 | 145/275 | The Truth Seeker |
+| 3 | The Reckless Gambler | 47.3% | +7.84 | 130/275 | The Meta-Reader |
+| 4 | The Opportunist | 37.8% | +5.40 | 104/275 | The Truth Seeker |
+| 5 | The Calculated Strategist | 20.0% | -1.45 | 55/275 | The Truth Seeker |
+| 6 | The Cautious Scholar | 20.0% | -2.09 | 55/275 | The Truth Seeker |
+| 7 | The Saboteur | 19.6% | -1.47 | 54/275 | The Meta-Reader |
+| 8 | The Paranoid Skeptic | 15.6% | -3.98 | 43/275 | The Truth Seeker |
+| 9 | The Steady Builder | 14.2% | -4.02 | 39/275 | The Cautious Scholar |
+| 10 | The Professional Analyst | 13.1% | -3.97 | 36/275 | The Cautious Scholar |
+| 11 | The Meta-Reader | 9.8% | -5.95 | 27/275 | The Truth Seeker |
+| 12 | The Truth Seeker | 3.3% | -10.14 | 9/275 | The Steady Builder |
 
 ---
 
@@ -68,21 +68,21 @@ Specific matchups where minorities beat majorities most often:
 
 | Rank | Matchup | Minority Win % | Score Adv | Consensus % |
 |------|---------|---------------|-----------|-------------|
-| 1 | The Conspiracy Theorist vs 3× The Truth Seeker | 88.0% | +1.76 | 44.0% |
-| 2 | The Chaos Agent vs 3× The Cautious Scholar | 80.0% | +1.72 | 41.9% |
-| 3 | The Reckless Gambler vs 3× The Truth Seeker | 76.0% | +1.52 | 38.0% |
-| 4 | The Reckless Gambler vs 3× The Cautious Scholar | 72.0% | +1.41 | 38.5% |
-| 5 | The Chaos Agent vs 3× The Paranoid Skeptic | 64.0% | +1.28 | 32.0% |
-| 6 | The Opportunist vs 3× The Truth Seeker | 64.0% | +1.28 | 32.0% |
-| 7 | The Conspiracy Theorist vs 3× The Cautious Scholar | 64.0% | +1.37 | 39.3% |
-| 8 | The Conspiracy Theorist vs 3× The Paranoid Skeptic | 60.0% | +1.20 | 30.0% |
-| 9 | The Chaos Agent vs 3× The Truth Seeker | 60.0% | +1.20 | 30.0% |
-| 10 | The Reckless Gambler vs 3× The Paranoid Skeptic | 56.0% | +10.00 | 27.6% |
+| 1 | The Chaos Agent vs 3× The Truth Seeker | 84.0% | +13.72 | 34.1% |
+| 2 | The Conspiracy Theorist vs 3× The Truth Seeker | 76.0% | +10.15 | 38.6% |
+| 3 | The Chaos Agent vs 3× The Professional Analyst | 72.0% | +15.79 | 27.4% |
+| 4 | The Chaos Agent vs 3× The Steady Builder | 72.0% | +16.12 | 30.9% |
+| 5 | The Reckless Gambler vs 3× The Meta-Reader | 72.0% | +16.12 | 28.9% |
+| 6 | The Reckless Gambler vs 3× The Truth Seeker | 68.0% | +11.72 | 32.4% |
+| 7 | The Conspiracy Theorist vs 3× The Meta-Reader | 68.0% | +17.09 | 31.2% |
+| 8 | The Chaos Agent vs 3× The Meta-Reader | 68.0% | +13.44 | 30.6% |
+| 9 | The Opportunist vs 3× The Truth Seeker | 64.0% | +18.87 | 39.5% |
+| 10 | The Conspiracy Theorist vs 3× The Professional Analyst | 64.0% | +11.27 | 30.1% |
 
 ---
 
 ## Conclusions
 
-1. **Majority Advantage:** 3 identical players dominate heavily. Majority coordination is very strong.
-2. **Minority Viability:** Minorities UNDERPERFORM. Conformity is too heavily rewarded.
-3. **Strategic Diversity:** 3 personalities excel as lone wolves, showing counter-strategies exist.
+1. **Majority Advantage:** 3 identical players have significant advantage but minorities can compete.
+2. **Minority Viability:** Minorities OVERPERFORM expected win rate. Being different is advantageous.
+3. **Strategic Diversity:** 4 personalities excel as lone wolves, showing counter-strategies exist.
