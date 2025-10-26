@@ -1,5 +1,5 @@
 import { runSimulations, simulateGame, runMonteCarloSimulation } from './gameSimulation';
-import { AI_PERSONALITIES, getPersonalityByName } from './aiPersonalities';
+import { AI_PERSONALITIES, getPersonalityByName, AIPersonality } from './aiPersonalities';
 import { checkWinCondition } from './gameLogic';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -2682,6 +2682,323 @@ describe('AI Personality-Based Game Simulations', () => {
       expect(tournamentStats.finalWinner).toBeDefined();
       expect(activePlayers.length).toBeGreaterThan(0);
       expect(activePlayers.length).toBeLessThan(600); // Should have eliminated most players
+    }, 600000); // 10 minute timeout
+  });
+
+  describe('Random Personality Monte Carlo (Exploit Detection)', () => {
+    test('Random Monte Carlo: 3, 4, and 5 player games with random personalities', () => {
+      console.log('\n┌─────────────────────────────────────────────────────────┐');
+      console.log('│  RANDOM PERSONALITY MONTE CARLO ANALYSIS                │');
+      console.log('│  Testing exploitable weaknesses in AI personalities     │');
+      console.log('└─────────────────────────────────────────────────────────┘\n');
+
+      const gamesPerPlayerCount = 500;
+      const allPersonalities = Object.values(AI_PERSONALITIES);
+      const results: any[] = [];
+
+      // Run for each player count
+      [3, 4, 5].forEach(playerCount => {
+        console.log(`\n=== Running ${gamesPerPlayerCount} games with ${playerCount} players ===`);
+
+        const stats: any = {
+          playerCount,
+          gamesRun: gamesPerPlayerCount,
+          avgGameLength: 0,
+          personalityStats: {},
+          winRateByPosition: new Array(playerCount).fill(0),
+        };
+
+        // Initialize stats
+        allPersonalities.forEach(p => {
+          stats.personalityStats[p.name] = {
+            name: p.name,
+            gamesPlayed: 0,
+            wins: 0,
+            winRate: 0,
+            avgFinalAudience: 0,
+            avgFinalCredibility: 0,
+            totalBroadcasts: 0,
+            totalBluffs: 0,
+            bluffRate: 0,
+            bankruptcies: 0,
+            bankruptcyRate: 0,
+            avgRank: 0,
+          };
+        });
+
+        let totalGameLength = 0;
+        const positionWins = new Array(playerCount).fill(0);
+        const positionGames = new Array(playerCount).fill(0);
+
+        // Run simulations
+        for (let i = 0; i < gamesPerPlayerCount; i++) {
+          // Randomly select personalities (allow duplicates)
+          const selectedPersonalities: AIPersonality[] = [];
+          for (let j = 0; j < playerCount; j++) {
+            const randomIndex = Math.floor(Math.random() * allPersonalities.length);
+            selectedPersonalities.push(allPersonalities[randomIndex]);
+          }
+
+          const result = simulateGame(selectedPersonalities);
+          totalGameLength += result.finalState.round;
+
+          const winnerIndex = result.finalState.players.findIndex(p => p.id === result.winner);
+          if (winnerIndex >= 0) {
+            positionWins[winnerIndex]++;
+          }
+          positionGames[winnerIndex]++;
+
+          // Sort players by rank
+          const rankedPlayers = [...result.finalState.players]
+            .map((p, idx) => ({ player: p, personality: selectedPersonalities[idx], index: idx }))
+            .sort((a, b) => {
+              if (b.player.audience !== a.player.audience) {
+                return b.player.audience - a.player.audience;
+              }
+              return b.player.credibility - a.player.credibility;
+            });
+
+          // Update stats
+          result.finalState.players.forEach((player, idx) => {
+            const personality = selectedPersonalities[idx];
+            const pStats = stats.personalityStats[personality.name];
+
+            pStats.gamesPlayed++;
+            pStats.avgFinalAudience += player.audience;
+            pStats.avgFinalCredibility += player.credibility;
+
+            const rank = rankedPlayers.findIndex(rp => rp.index === idx) + 1;
+            pStats.avgRank += rank;
+
+            if (player.id === result.winner) {
+              pStats.wins++;
+            }
+
+            if (player.isBankrupt) {
+              pStats.bankruptcies++;
+            }
+
+            player.broadcastHistory.forEach(entry => {
+              pStats.totalBroadcasts++;
+              if (entry.evidenceIds.length === 0) {
+                pStats.totalBluffs++;
+              }
+            });
+          });
+
+          if ((i + 1) % 100 === 0) {
+            console.log(`  Completed ${i + 1}/${gamesPerPlayerCount} games...`);
+          }
+        }
+
+        // Calculate averages
+        stats.avgGameLength = totalGameLength / gamesPerPlayerCount;
+
+        Object.values(stats.personalityStats).forEach((pStats: any) => {
+          if (pStats.gamesPlayed > 0) {
+            pStats.winRate = pStats.wins / pStats.gamesPlayed;
+            pStats.avgFinalAudience /= pStats.gamesPlayed;
+            pStats.avgFinalCredibility /= pStats.gamesPlayed;
+            pStats.avgRank /= pStats.gamesPlayed;
+            pStats.bluffRate = pStats.totalBroadcasts > 0 ?
+              pStats.totalBluffs / pStats.totalBroadcasts : 0;
+            pStats.bankruptcyRate = pStats.bankruptcies / pStats.gamesPlayed;
+          }
+        });
+
+        for (let i = 0; i < playerCount; i++) {
+          stats.winRateByPosition[i] = positionGames[i] > 0 ?
+            positionWins[i] / positionGames[i] : 0;
+        }
+
+        const sortedByWinRate = Object.values(stats.personalityStats)
+          .filter((p: any) => p.gamesPlayed >= 50)
+          .sort((a: any, b: any) => b.winRate - a.winRate);
+
+        stats.dominantPersonalities = sortedByWinRate.slice(0, 3).map((p: any) => p.name);
+        stats.weakestPersonalities = sortedByWinRate.slice(-3).reverse().map((p: any) => p.name);
+
+        results.push(stats);
+      });
+
+      // Generate report
+      let report = '# Random Personality Monte Carlo Analysis\n\n';
+      report += `**Generated:** ${new Date().toLocaleString()}\n`;
+      report += `**Purpose:** Identify exploitable weaknesses in AI personalities\n`;
+      report += `**Method:** Random personality selection with duplicates allowed\n`;
+      report += `**Games per player count:** ${gamesPerPlayerCount}\n`;
+      report += `**Total games:** ${results.reduce((sum: number, r: any) => sum + r.gamesRun, 0)}\n\n`;
+      report += '---\n\n';
+
+      report += '## Executive Summary\n\n';
+
+      results.forEach((stats: any) => {
+        report += `### ${stats.playerCount}-Player Games\n\n`;
+        report += `- **Games Simulated:** ${stats.gamesRun}\n`;
+        report += `- **Average Game Length:** ${stats.avgGameLength.toFixed(2)} rounds\n`;
+        report += `- **Dominant Personalities:** ${stats.dominantPersonalities.join(', ')}\n`;
+        report += `- **Weakest Personalities:** ${stats.weakestPersonalities.join(', ')}\n\n`;
+
+        report += `**Starting Position Win Rates:**\n`;
+        stats.winRateByPosition.forEach((rate: number, idx: number) => {
+          report += `- Position ${idx + 1}: ${(rate * 100).toFixed(2)}%\n`;
+        });
+        report += '\n';
+      });
+
+      report += '---\n\n';
+      report += '## Detailed Personality Performance\n\n';
+
+      // Master rankings
+      const masterRankings: { [name: string]: { totalGames: number; totalWins: number; avgWinRate: number; avgRank: number; } } = {};
+
+      Object.keys(results[0].personalityStats).forEach((name: string) => {
+        let totalGames = 0;
+        let totalWins = 0;
+        let totalRank = 0;
+
+        results.forEach((stats: any) => {
+          const pStats = stats.personalityStats[name];
+          totalGames += pStats.gamesPlayed;
+          totalWins += pStats.wins;
+          totalRank += pStats.avgRank;
+        });
+
+        masterRankings[name] = {
+          totalGames,
+          totalWins,
+          avgWinRate: totalGames > 0 ? totalWins / totalGames : 0,
+          avgRank: totalRank / results.length
+        };
+      });
+
+      const sortedMaster = Object.entries(masterRankings)
+        .sort((a, b) => b[1].avgWinRate - a[1].avgWinRate);
+
+      report += '### Overall Rankings (All Player Counts Combined)\n\n';
+      report += '| Rank | Personality | Total Games | Win Rate | Avg Rank | Total Wins |\n';
+      report += '|------|-------------|-------------|----------|----------|------------|\n';
+
+      sortedMaster.forEach(([name, data], idx) => {
+        report += `| ${idx + 1} | ${name} | ${data.totalGames} | ${(data.avgWinRate * 100).toFixed(2)}% | ${data.avgRank.toFixed(2)} | ${data.totalWins} |\n`;
+      });
+
+      report += '\n';
+
+      // Player count breakdown
+      results.forEach((stats: any) => {
+        report += `### ${stats.playerCount}-Player Game Analysis\n\n`;
+
+        const sorted = Object.values(stats.personalityStats)
+          .sort((a: any, b: any) => b.winRate - a.winRate);
+
+        report += '| Rank | Personality | Games | Win Rate | Avg Audience | Avg Cred | Bluff Rate | Bankruptcy Rate | Avg Rank |\n';
+        report += '|------|-------------|-------|----------|--------------|----------|------------|-----------------|----------|\n';
+
+        sorted.forEach((p: any, idx) => {
+          report += `| ${idx + 1} | ${p.name} | ${p.gamesPlayed} | ${(p.winRate * 100).toFixed(2)}% | ${p.avgFinalAudience.toFixed(1)} | ${p.avgFinalCredibility.toFixed(2)} | ${(p.bluffRate * 100).toFixed(1)}% | ${(p.bankruptcyRate * 100).toFixed(1)}% | ${p.avgRank.toFixed(2)} |\n`;
+        });
+
+        report += '\n';
+      });
+
+      report += '---\n\n## Exploitable Weaknesses Analysis\n\n';
+
+      // High bankruptcy risks
+      report += '### High Bankruptcy Risk Personalities\n\n';
+      const highBankruptcy: any[] = [];
+      results.forEach((stats: any) => {
+        Object.values(stats.personalityStats).forEach((p: any) => {
+          if (p.bankruptcyRate > 0.15 && p.gamesPlayed >= 50) {
+            highBankruptcy.push({
+              name: p.name,
+              rate: p.bankruptcyRate,
+              playerCount: stats.playerCount
+            });
+          }
+        });
+      });
+
+      if (highBankruptcy.length > 0) {
+        highBankruptcy.sort((a, b) => b.rate - a.rate);
+        report += 'Personalities with >15% bankruptcy rate:\n\n';
+        highBankruptcy.forEach((p: any) => {
+          report += `- **${p.name}** (${p.playerCount}p): ${(p.rate * 100).toFixed(1)}% bankruptcy rate\n`;
+        });
+        report += '\n**Exploitation Strategy:** Target these personalities with aggressive bluffing - they will self-destruct.\n\n';
+      } else {
+        report += 'No personalities show concerning bankruptcy rates.\n\n';
+      }
+
+      // Underperformers
+      report += '### Passive/Underperforming Personalities\n\n';
+      const underperformers = sortedMaster.slice(-3);
+      report += 'Bottom 3 performers across all formats:\n\n';
+      underperformers.forEach(([name, data]) => {
+        report += `- **${name}**: ${(data.avgWinRate * 100).toFixed(2)}% win rate (avg rank: ${data.avgRank.toFixed(2)})\n`;
+      });
+      report += '\n**Exploitation Strategy:** These personalities are weak - they won\'t challenge you for consensus.\n\n';
+
+      // Overperformers
+      report += '### Dominant/Overpowered Personalities\n\n';
+      const overperformers = sortedMaster.slice(0, 3);
+      report += 'Top 3 performers across all formats:\n\n';
+      overperformers.forEach(([name, data]) => {
+        report += `- **${name}**: ${(data.avgWinRate * 100).toFixed(2)}% win rate (avg rank: ${data.avgRank.toFixed(2)})\n`;
+      });
+      report += '\n**Counter Strategy:** These personalities will compete aggressively - form coalitions against them.\n\n';
+
+      // Position bias
+      report += '### Position Bias Analysis\n\n';
+      results.forEach((stats: any) => {
+        const maxRate = Math.max(...stats.winRateByPosition);
+        const minRate = Math.min(...stats.winRateByPosition);
+        const spread = maxRate - minRate;
+
+        report += `**${stats.playerCount}-Player Games:**\n`;
+        report += `- Highest win rate: Position ${stats.winRateByPosition.indexOf(maxRate) + 1} (${(maxRate * 100).toFixed(2)}%)\n`;
+        report += `- Lowest win rate: Position ${stats.winRateByPosition.indexOf(minRate) + 1} (${(minRate * 100).toFixed(2)}%)\n`;
+        report += `- Position advantage spread: ${(spread * 100).toFixed(2)}%\n`;
+
+        if (spread > 0.05) {
+          report += `- **⚠️ SIGNIFICANT POSITION BIAS DETECTED**\n`;
+        }
+        report += '\n';
+      });
+
+      report += '---\n\n## Key Insights\n\n';
+
+      const topPerformer = sortedMaster[0];
+      const bottomPerformer = sortedMaster[sortedMaster.length - 1];
+      const winRateGap = topPerformer[1].avgWinRate - bottomPerformer[1].avgWinRate;
+
+      report += `1. **Performance Gap:** The best personality (${topPerformer[0]}) has a ${(winRateGap * 100).toFixed(1)}% higher win rate than the worst (${bottomPerformer[0]}). ${winRateGap > 0.15 ? 'This is a SIGNIFICANT imbalance.' : 'This represents reasonable balance.'}\n\n`;
+
+      report += `2. **Bluffing Strategy:** Analysis of aggressive bluffers vs overall population to determine if bluffing pays off.\n\n`;
+
+      report += `3. **Player Count Effects:** ${results.length} player count configurations tested.\n\n`;
+
+      report += '---\n\n';
+      report += `**Analysis Complete** ✅\n`;
+
+      // Write report
+      const reportPath = path.join(__dirname, '..', 'RANDOM_MONTE_CARLO_ANALYSIS.md');
+      fs.writeFileSync(reportPath, report);
+
+      console.log(`\n✅ Random Monte Carlo report saved: ${reportPath}\n`);
+      console.log('\n' + '='.repeat(60));
+      console.log('KEY FINDINGS:');
+      console.log(`- Top Performer: ${topPerformer[0]} (${(topPerformer[1].avgWinRate * 100).toFixed(1)}% win rate)`);
+      console.log(`- Worst Performer: ${bottomPerformer[0]} (${(bottomPerformer[1].avgWinRate * 100).toFixed(1)}% win rate)`);
+      console.log(`- Performance Gap: ${(winRateGap * 100).toFixed(1)}%`);
+      console.log('='.repeat(60));
+
+      // Assertions
+      expect(results.length).toBe(3);
+      results.forEach((stats: any) => {
+        expect(stats.gamesRun).toBe(gamesPerPlayerCount);
+        expect(stats.avgGameLength).toBeGreaterThan(0);
+      });
     }, 600000); // 10 minute timeout
   });
 });

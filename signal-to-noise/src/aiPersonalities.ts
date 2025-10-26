@@ -214,7 +214,7 @@ export function makeAdvertiseDecision(
     const assignedEvidence = player.assignedEvidence[conspiracy.id] || [];
     const hasEvidence = assignedEvidence.length > 0;
     const evidenceCount = assignedEvidence.length;
-    const realEvidence = assignedEvidence.filter(card => !card.isBluff);
+    const realEvidence = assignedEvidence.filter(card => card.proofValue !== 'BLUFF');
     const hasRealEvidence = realEvidence.length > 0;
 
     let score = 0;
@@ -385,8 +385,8 @@ export function makeAIDecision(
     const evidenceCount = assignedEvidence.length;
 
     // v4.0: Distinguish between real evidence and bluff cards
-    const realEvidence = assignedEvidence.filter(card => !card.isBluff);
-    const bluffCards = assignedEvidence.filter(card => card.isBluff);
+    const realEvidence = assignedEvidence.filter(card => card.proofValue !== 'BLUFF');
+    const bluffCards = assignedEvidence.filter(card => card.proofValue === 'BLUFF');
     const hasRealEvidence = realEvidence.length > 0;
 
     // Calculate base score for this conspiracy

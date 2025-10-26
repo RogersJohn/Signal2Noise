@@ -188,10 +188,7 @@ export function simulateGame(personalities: AIPersonality[]): {
 
         totalBroadcasts++;
       } else {
-        // Pass penalty: lose 2 audience points
-        const passPenalty = 2;
-        player.audience = Math.max(0, player.audience - passPenalty);
-
+        // Player passed (no penalty - COMPREHENSIVE_RULES.md allows strategic passing)
         gameState.broadcastQueue.push({
           id: `pass_${Date.now()}_${playerIndex}`,
           playerId: player.id,
@@ -220,17 +217,70 @@ export function simulateGame(personalities: AIPersonality[]): {
         const broadcasts = activeBroadcasts.filter(b => b.conspiracyId === conspiracyId);
         const majorityPosition = consensusResult.position; // 'REAL' or 'FAKE'
 
-        // STEP 1: Award audience points to ALL broadcasters (regardless of position)
+        // STEP 1: Award audience points based on matching consensus with evidence
         broadcasts.forEach((broadcast) => {
           const player = gameState.players.find(p => p.id === broadcast.playerId);
           if (!player) return;
 
-          // Calculate audience points using new formula
-          const audienceGain = calculateAudiencePoints(broadcast, player, conspiracy);
-          player.audience += audienceGain;
+          const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
+
+          // Determine truth from ALL revealed evidence (COMPREHENSIVE_RULES.md Phase 5 Step 3)
+          const allRevealedEvidence: EvidenceCard[] = [];
+          broadcasts.forEach(b => {
+            const p = gameState.players.find(pl => pl.id === b.playerId);
+            if (p) {
+              const evidence = p.assignedEvidence[conspiracyId] || [];
+              allRevealedEvidence.push(...evidence);
+            }
+          });
+
+          // Count REAL vs FAKE proof values
+          let realCount = 0;
+          let fakeCount = 0;
+          allRevealedEvidence.forEach(card => {
+            if (card.proofValue === 'REAL') realCount++;
+            else if (card.proofValue === 'FAKE') fakeCount++;
+            // BLUFF cards don't count
+          });
+
+          // Determine truth
+          let truth: 'REAL' | 'FAKE' | 'TIE';
+          if (realCount > fakeCount) truth = 'REAL';
+          else if (fakeCount > realCount) truth = 'FAKE';
+          else truth = 'TIE';
+
+          // v6.0: CONSENSUS BONUS SCORING SYSTEM
+          // Option A: Rewards both truth and consensus alignment
+          // - Correct about truth + on consensus side = +4 audience (+3 base + +1 consensus bonus)
+          // - Correct about truth + against consensus = +3 audience
+          // - On consensus but wrong = +1 audience (participation reward)
+          // - Against consensus and wrong = NOTHING
+          const hasValidEvidence = assignedEvidence.some(card =>
+            canSupportConspiracy(card, conspiracyId) && card.proofValue !== 'BLUFF'
+          );
+
+          const onConsensusSide = broadcast.position === majorityPosition;
+          const correctAboutTruth = truth !== 'TIE' && broadcast.position === truth;
+
+          if (correctAboutTruth && hasValidEvidence) {
+            // Correct about truth with evidence: +3 base audience
+            player.audience += 3;
+
+            // Consensus bonus: +1 if also on consensus side
+            if (onConsensusSide) {
+              player.audience += 1;
+              console.log(`  ✅ ${player.name} correct + consensus bonus: +4 audience total`);
+            } else {
+              console.log(`  ✅ ${player.name} correct (against consensus): +3 audience`);
+            }
+          } else if (onConsensusSide && hasValidEvidence) {
+            // On consensus side but wrong about truth: +1 participation reward
+            player.audience += 1;
+            console.log(`  📊 ${player.name} on consensus side (wrong about truth): +1 audience`);
+          }
+          // Otherwise: against consensus and wrong = NOTHING (no reward)
 
           // Track broadcast history
-          const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
           player.broadcastHistory.push({
             round: gameState.round,
             conspiracyId,
@@ -240,7 +290,7 @@ export function simulateGame(personalities: AIPersonality[]): {
           });
         });
 
-        // STEP 2: Adjust credibility based on consensus majority/minority
+        // STEP 2: Apply bluffing penalties (COMPREHENSIVE_RULES.md Phase 5 Step 4)
         broadcasts.forEach((broadcast) => {
           const player = gameState.players.find(p => p.id === broadcast.playerId);
           if (!player) return;
@@ -249,11 +299,38 @@ export function simulateGame(personalities: AIPersonality[]): {
           if (broadcast.position === 'INCONCLUSIVE') return;
 
           const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
-          const hasRealEvidence = assignedEvidence.some(card => canSupportConspiracy(card, conspiracyId));
 
-          // v2.5.0: CAPPED BLUFF PENALTY - Slower escalation for sustainability
-          // 1st bluff: -2, 2nd: -2, 3rd: -3, 4th+: -3 (capped at -3)
-          if (!hasRealEvidence) {
+          // Determine truth (same calculation as Step 1)
+          const allRevealedEvidence: EvidenceCard[] = [];
+          broadcasts.forEach(b => {
+            const p = gameState.players.find(pl => pl.id === b.playerId);
+            if (p) {
+              const evidence = p.assignedEvidence[conspiracyId] || [];
+              allRevealedEvidence.push(...evidence);
+            }
+          });
+
+          let realCount = 0;
+          let fakeCount = 0;
+          allRevealedEvidence.forEach(card => {
+            if (card.proofValue === 'REAL') realCount++;
+            else if (card.proofValue === 'FAKE') fakeCount++;
+          });
+
+          let truth: 'REAL' | 'FAKE' | 'TIE';
+          if (realCount > fakeCount) truth = 'REAL';
+          else if (fakeCount > realCount) truth = 'FAKE';
+          else truth = 'TIE';
+
+          // Check if player bluffed: matched consensus truth but had NO valid evidence
+          // (COMPREHENSIVE_RULES.md: "Players who matched consensus but had NO valid evidence")
+          const hasValidEvidence = assignedEvidence.some(card =>
+            canSupportConspiracy(card, conspiracyId) && card.proofValue !== 'BLUFF'
+          );
+
+          if (truth !== 'TIE' && broadcast.position === truth && !hasValidEvidence) {
+            // Player bluffed successfully (matched truth with no evidence)
+            // Bluffing escalates in penalty: 1st-2nd bluff: -2, 3rd+ bluff: -3
             let bluffPenalty;
             if (player.totalBluffs === 0 || player.totalBluffs === 1) {
               bluffPenalty = 2; // First two bluffs: -2
@@ -265,16 +342,8 @@ export function simulateGame(personalities: AIPersonality[]): {
             console.log(`  ⚠️ ${player.name} bluffed (bluff #${player.totalBluffs}) - ${bluffPenalty} credibility penalty`);
           }
 
-          // v2.5.0: CREDIBILITY RECOVERY - Majority side: +3 credibility (further increased)
-          // Allows players to recover from bluffs by winning consensus
-          if (broadcast.position === majorityPosition) {
-            player.credibility = Math.min(10, player.credibility + 3);
-          } else {
-            // Minority side: -2 credibility (reduced from -3 for sustainability)
-            player.credibility = Math.max(0, player.credibility - 2);
-          }
-
-          // v2.5.0: BANKRUPTCY RULE - Credibility 0 = instant elimination
+          // BANKRUPTCY RULE - Credibility 0 = instant elimination
+          // (COMPREHENSIVE_RULES.md: "If a player's Credibility reaches 0: They are eliminated")
           if (player.credibility <= 0 && !player.isBankrupt) {
             player.isBankrupt = true;
             console.log(`  💀 ${player.name} BANKRUPT (credibility reached 0) - ELIMINATED FROM GAME!`);
@@ -351,83 +420,6 @@ export function simulateGame(personalities: AIPersonality[]): {
       consensusRate: totalBroadcasts > 0 ? consensusCount / totalBroadcasts : 0,
     }
   };
-}
-
-// NEW: Calculate audience points using consensus-based formula
-function calculateAudiencePoints(
-  broadcast: BroadcastObject,
-  player: PlayerState,
-  conspiracy: ConspiracyCard
-): number {
-  const assignedEvidence = player.assignedEvidence[broadcast.conspiracyId] || [];
-
-  // BASE POINTS
-  let basePoints = 0;
-  if (broadcast.position === 'INCONCLUSIVE') {
-    basePoints = 2; // Safe option
-  } else if (assignedEvidence.length > 0) {
-    basePoints = 3; // Broadcasting with evidence
-  } else {
-    basePoints = 1; // Bandwagoning (no evidence)
-  }
-
-  // Q33: TIER BONUS (harder conspiracies with less evidence get bonus points)
-  const tierBonus = conspiracy.tier; // Tier 1: +1, Tier 2: +2, Tier 3: +3
-  basePoints += tierBonus;
-
-  // EVIDENCE BONUS
-  let evidenceBonus = 0;
-
-  assignedEvidence.forEach((card, index) => {
-    // Q27: Diminishing returns - first card full bonus, subsequent cards reduced to +1
-    let specificityBonus;
-    if (index === 0) {
-      // First card: full specificity bonus
-      specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
-    } else {
-      // Subsequent cards: reduced to +1 (diminishing returns)
-      specificityBonus = 1;
-    }
-
-    // Excitement multiplier
-    let excitementMult = 1.0;
-    if (card.excitement === 1) excitementMult = 2.0;  // Exciting (×2.0)
-    if (card.excitement === -1) excitementMult = 0.5; // Boring (×0.5)
-
-    // Apply multiplier with proper rounding
-    let multipliedValue = specificityBonus * excitementMult;
-    let roundedValue;
-    if (card.excitement === -1) {
-      // Boring cards (×0.5): Round UP on odd numbers (e.g., 3×0.5=1.5 → 2, 1×0.5=0.5 → 1)
-      roundedValue = Math.ceil(multipliedValue);
-    } else {
-      // Normal rounding for exciting and neutral cards
-      roundedValue = Math.round(multipliedValue);
-    }
-
-    // Novelty bonus (first use on this specific conspiracy, not global)
-    const isNovel = !player.broadcastHistory.some(h =>
-      h.conspiracyId === broadcast.conspiracyId &&
-      h.evidenceIds.includes(card.id)
-    );
-    const noveltyBonus = isNovel ? 2 : 0;
-
-    evidenceBonus += roundedValue + noveltyBonus;
-  });
-
-  // SUBTOTAL
-  const subtotal = basePoints + evidenceBonus;
-
-  // CREDIBILITY MODIFIER
-  let finalScore = subtotal;
-  if (player.credibility >= 7) {
-    finalScore = Math.round(subtotal * 1.5); // High credibility: +50% bonus
-  } else if (player.credibility <= 3) {
-    finalScore = Math.round(subtotal * 0.75); // Low credibility: -25% penalty
-  }
-  // Medium credibility (4-6): no modifier
-
-  return finalScore;
 }
 
 function assignEvidenceIntelligently(

@@ -249,12 +249,34 @@ Result: Conspiracy is FAKE
 
 #### Step 4: Score Points and Penalties
 
-**A. Players who matched the truth:**
-- **+3 Audience** for each player who:
-  - Broadcast the correct position (matched the truth)
-  - AND had at least 1 valid evidence card
+**A. Consensus Bonus Scoring System:**
 
-**B. Bluffing Penalties (for players who matched consensus but had NO valid evidence):**
+The game rewards BOTH being correct about the truth AND aligning with consensus:
+
+1. **Correct + Consensus Aligned = +4 Audience**
+   - Broadcast matches the actual truth (based on evidence)
+   - On the consensus side (REAL or FAKE)
+   - Has at least 1 valid evidence card
+   - Receives +3 base + +1 consensus bonus
+
+2. **Correct but Against Consensus = +3 Audience**
+   - Broadcast matches the actual truth
+   - Against the consensus majority
+   - Has at least 1 valid evidence card
+   - Receives +3 base (no consensus bonus)
+
+3. **Consensus Aligned but Wrong = +1 Audience**
+   - On the consensus side
+   - But wrong about the actual truth
+   - Has at least 1 valid evidence card
+   - Receives +1 participation reward
+
+4. **Against Consensus and Wrong = NOTHING**
+   - Against the consensus majority
+   - And wrong about the actual truth
+   - No reward
+
+**B. Bluffing Penalties (for players who matched truth but had NO valid evidence):**
 
 Bluffing escalates in penalty:
 - **1st or 2nd bluff:** -2 Credibility
@@ -270,15 +292,29 @@ If a player's Credibility reaches 0:
 
 **Example Scoring:**
 ```
-Alice broadcast FAKE with 2 FAKE evidence cards:
-- Truth was FAKE ✓
-- +3 Audience (now has 8 Audience)
+Scenario: Consensus = FAKE (majority), Truth = FAKE (based on evidence count)
 
-Dave broadcast FAKE with 0 evidence cards (bluff):
-- Truth was FAKE ✓ (matched consensus)
-- But he had no evidence (BLUFF!)
-- This is his 1st bluff
-- -2 Credibility (now has 3 Credibility)
+Alice broadcast FAKE with 2 FAKE evidence cards:
+- Correct about truth ✓
+- On consensus side ✓
+- +4 Audience (+3 base + +1 consensus bonus)
+
+Bob broadcast REAL with 1 REAL evidence card:
+- Wrong about truth ✗
+- Against consensus ✗
+- NOTHING (no reward)
+
+Carol broadcast FAKE with 0 evidence cards (bluff):
+- Correct about truth ✓
+- On consensus side ✓
+- But has no evidence (BLUFF!)
+- This is her 1st bluff
+- -2 Credibility (bluff penalty, no audience gain)
+
+Dave broadcast REAL with 2 REAL evidence cards:
+- Correct about truth ✗ (truth was FAKE)
+- But on consensus side ✗ (consensus was FAKE)
+- NOTHING (against consensus and wrong)
 ```
 
 ---
@@ -394,7 +430,10 @@ If revealed evidence has equal REAL and FAKE proof:
 ### Scoring & Penalties
 | Event | Effect |
 |-------|--------|
-| Correct broadcast with evidence | +3 Audience |
+| Correct + on consensus (with evidence) | +4 Audience (+3 base + +1 bonus) |
+| Correct but against consensus (with evidence) | +3 Audience |
+| On consensus but wrong (with evidence) | +1 Audience |
+| Against consensus and wrong | Nothing |
 | Bluff (1st or 2nd) | -2 Credibility |
 | Bluff (3rd or later) | -3 Credibility |
 | Advertising mismatch | -1 Audience |

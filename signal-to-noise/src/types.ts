@@ -81,7 +81,7 @@ export interface AdvancedRules {
 }
 
 export interface GameState {
-  conspiracies: ConspiracyCard[]; // 6 active
+  conspiracies: ConspiracyCard[]; // 5 active
   conspiracyDeck: ConspiracyCard[];
   evidenceDeck: EvidenceCard[];
   players: PlayerState[];
