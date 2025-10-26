@@ -120,7 +120,7 @@ Each player needs:
      - Player color markers, double sided with R or F to declare Real or Fake
 
 4. **Determine Turn Order**:
-   - Randomly determine first player
+   - Randomly determine first player, they get the first player marker
    - Turn order proceeds clockwise
 
 ---
@@ -230,7 +230,7 @@ All players now place 1 bonus evidence card anywhere face up
 
 ### Phase 3: BROADCAST (Orange)
 
-**Duration**: All players act secretly, then reveal simultaneously
+**Duration**: All players act in turn
 
 **What Happens:**
 
@@ -383,7 +383,7 @@ BASE POINTS:
    - First to 60 audience?
    - 12 conspiracies revealed?
    - 6 rounds completed?
-5. **Advance Round Counter**: Move to next round
+5. **Advance Round Counter**: Move to next round, move first player counter to player with the highest score, if tied move it to the player with the highest score and highest credibility. 
 
 **Win Condition Check:**
 
