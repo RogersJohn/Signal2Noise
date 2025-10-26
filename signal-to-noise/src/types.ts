@@ -2,7 +2,7 @@
 
 export type TruthValue = 'REAL' | 'FAKE';
 export type Tier = 1 | 2 | 3;
-export type Phase = 'INVESTIGATE' | 'ADVERTISE' | 'BROADCAST' | 'RESOLVE' | 'CLEANUP';
+export type Phase = 'INVESTIGATE' | 'ADVERTISE' | 'LATE_EVIDENCE' | 'BROADCAST' | 'RESOLVE' | 'CLEANUP';
 export type Position = 'REAL' | 'FAKE' | 'INCONCLUSIVE';
 
 export interface ConspiracyCard {
@@ -50,12 +50,15 @@ export interface PlayerState {
   color: string;
   broadcastHistory: BroadcastHistoryEntry[];
   totalBluffs: number; // v5.1: Track cumulative bluffs for escalating penalties
+  isBankrupt?: boolean; // v2.5.0: Player eliminated due to 0 credibility (bankruptcy rule)
 }
 
 export interface AdvertiseObject {
   id: string;
   playerId: string;
   conspiracyId: string;
+  position?: Position; // REAL or FAKE - the bet position
+  betAmount?: number; // 1, 2, or 3 audience points to gamble
   timestamp: number;
   isPassed?: boolean; // true if player passed in advertise phase
 }
@@ -92,4 +95,6 @@ export interface GameState {
   advancedRules: AdvancedRules;
   // Track how many conspiracies have been revealed total
   totalRevealed: number;
+  // Track if first investigate phase of round 1 is complete
+  firstInvestigateComplete?: boolean;
 }

@@ -3,9 +3,11 @@ import './GameSetup.css';
 
 interface GameSetupProps {
   onStartGame: (playerCount: number) => void;
+  onStartDemo?: () => void;
+  onStartVsAI?: () => void;
 }
 
-export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
+export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame, onStartDemo, onStartVsAI }) => {
   const [selectedCount, setSelectedCount] = useState<number>(4);
 
   return (
@@ -38,6 +40,9 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
               <strong>INVESTIGATE:</strong> Draw cards and assign evidence to conspiracies
             </li>
             <li>
+              <strong>ADVERTISE:</strong> Signal which conspiracies you're interested in
+            </li>
+            <li>
               <strong>BROADCAST:</strong> Claim a conspiracy is REAL or FAKE (or pass)
             </li>
             <li>
@@ -61,6 +66,18 @@ export const GameSetup: React.FC<GameSetupProps> = ({ onStartGame }) => {
         <button className="start-btn" onClick={() => onStartGame(selectedCount)}>
           Start Game
         </button>
+
+        {onStartVsAI && (
+          <button className="vs-ai-btn" onClick={onStartVsAI}>
+            Play vs AI
+          </button>
+        )}
+
+        {onStartDemo && (
+          <button className="demo-btn" onClick={onStartDemo}>
+            Watch AI Demo
+          </button>
+        )}
       </div>
     </div>
   );

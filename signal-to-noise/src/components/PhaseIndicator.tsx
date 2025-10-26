@@ -17,6 +17,8 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         return '#3b82f6'; // blue
       case 'ADVERTISE':
         return '#a855f7'; // purple
+      case 'LATE_EVIDENCE':
+        return '#ec4899'; // pink
       case 'BROADCAST':
         return '#f59e0b'; // orange
       case 'RESOLVE':
@@ -34,6 +36,8 @@ export const PhaseIndicator: React.FC<PhaseIndicatorProps> = ({
         return 'Assign evidence cards to conspiracies you want to claim';
       case 'ADVERTISE':
         return 'Signal which conspiracy interests you - create opportunities or set traps!';
+      case 'LATE_EVIDENCE':
+        return 'Play ONE card face-up for dramatic effect - or pass to keep your hand hidden!';
       case 'BROADCAST':
         return 'See what others advertised, then make YOUR claim (or pass)';
       case 'RESOLVE':

@@ -24,10 +24,10 @@ export interface AIPersonality {
 export const AI_PERSONALITIES: Record<string, AIPersonality> = {
   PARANOID_SKEPTIC: {
     name: 'The Paranoid Skeptic',
-    description: 'Trusts no one, never bluffs, extremely cautious. Only broadcasts with overwhelming evidence.',
+    description: 'Trusts no one, rarely bluffs, cautious but occasionally takes calculated risks.',
     riskTolerance: 0.1,
-    bluffFrequency: 0.0,
-    evidenceThreshold: 0.45,
+    bluffFrequency: 0.25, // v2.5.0: Further increased - needs more aggression
+    evidenceThreshold: 0.25, // v2.5.0: Further reduced - broadcasts more aggressively
     skepticism: 1.0,
     specialization: 0.3,
     preferHighTier: true,
@@ -65,8 +65,8 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     name: 'The Truth Seeker',
     description: 'Obsessed with accuracy. Only broadcasts with strong evidence, never bluffs, methodical.',
     riskTolerance: 0.2,
-    bluffFrequency: 0.0,
-    evidenceThreshold: 0.40,
+    bluffFrequency: 0.10, // v2.5.0: Increased from 0.0 - occasional bluffs needed to survive
+    evidenceThreshold: 0.30, // v2.5.0: Reduced from 0.40 - broadcasts more frequently
     skepticism: 0.5,
     specialization: 0.2,
     preferHighTier: false,
@@ -92,7 +92,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Data-driven and adaptive. Balances all factors, reads the table, makes optimal plays.',
     riskTolerance: 0.55,
     bluffFrequency: 0.25,
-    evidenceThreshold: 0.6,
+    evidenceThreshold: 0.45, // v2.5.0: Reduced from 0.6 - broadcasts more frequently
     skepticism: 0.7,
     specialization: 0.4,
     preferHighTier: true,
@@ -115,10 +115,10 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
 
   CAUTIOUS_SCHOLAR: {
     name: 'The Cautious Scholar',
-    description: 'Academic approach. Needs extensive evidence, risk-averse, builds reputation slowly.',
+    description: 'Academic approach with occasional bold hypotheses. More willing to take calculated risks.',
     riskTolerance: 0.15,
-    bluffFrequency: 0.05,
-    evidenceThreshold: 0.50,
+    bluffFrequency: 0.30, // v2.5.0: Further increased - more aggressive play
+    evidenceThreshold: 0.30, // v2.5.0: Further reduced - broadcasts more frequently
     skepticism: 0.4,
     specialization: 0.3,
     preferHighTier: false,
@@ -141,10 +141,10 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
 
   STEADY_BUILDER: {
     name: 'The Steady Builder',
-    description: 'Consistent and reliable. Moderate risk, focuses on building audience over time.',
+    description: 'Consistent and reliable with proactive plays. Moderate risk, builds audience aggressively.',
     riskTolerance: 0.4,
-    bluffFrequency: 0.15,
-    evidenceThreshold: 0.50, // Reduced from 0.65 (4 cards → 3 cards) - too high for steady play
+    bluffFrequency: 0.25, // v2.5.0: Increased from 0.15 - more aggressive
+    evidenceThreshold: 0.30, // v2.5.0: Further reduced - broadcasts more frequently
     skepticism: 0.5,
     specialization: 0.5,
     preferHighTier: false,
@@ -170,7 +170,7 @@ export const AI_PERSONALITIES: Record<string, AIPersonality> = {
     description: 'Detects traps and suspicious patterns. Avoids bandwagoning on questionable broadcasts.',
     riskTolerance: 0.5,
     bluffFrequency: 0.2,
-    evidenceThreshold: 0.55, // Reduced from 0.7 (4 cards → 3 cards) - needs to broadcast to use pattern reading
+    evidenceThreshold: 0.45, // v2.5.0: Further reduced - broadcasts more frequently
     skepticism: 0.9,
     specialization: 0.4,
     preferHighTier: true,
@@ -194,6 +194,8 @@ export interface AIAdvertiseDecision {
   conspiracyId?: string;
   confidence: number; // 0-1, how confident the AI is in this decision
   isTrap: boolean; // True if advertising without evidence (psychological warfare)
+  position?: 'REAL' | 'FAKE'; // Bet position
+  betAmount?: number; // 1-3 audience points
 }
 
 // ==================== ADVERTISE PHASE DECISION ====================
@@ -317,11 +319,51 @@ export function makeAdvertiseDecision(
   }
 
   // ADVERTISE on best option
+
+  // Determine bet position based on evidence
+  // If we have real evidence, we can make an informed guess
+  // Otherwise, base it on personality
+  let betPosition: 'REAL' | 'FAKE' = 'REAL';
+  if (bestOption.hasRealEvidence) {
+    // With evidence, we can determine position
+    // For now, assume REAL if we have evidence (simplified)
+    // In full implementation, this would analyze evidence proof values
+    betPosition = Math.random() > 0.5 ? 'REAL' : 'FAKE';
+  } else {
+    // Without evidence, use personality traits
+    // Conspiracy theorist leans REAL, Skeptic leans FAKE
+    if (personality.name === 'The Conspiracy Theorist') {
+      betPosition = 'REAL';
+    } else if (personality.name === 'The Paranoid Skeptic') {
+      betPosition = 'FAKE';
+    } else {
+      betPosition = Math.random() > 0.5 ? 'REAL' : 'FAKE';
+    }
+  }
+
+  // Determine bet amount based on confidence and risk tolerance
+  // Higher confidence + risk tolerance = bigger bet
+  const confidenceScore = bestOption.hasRealEvidence ? 0.8 : 0.4;
+  const riskScore = personality.riskTolerance;
+  const betScore = (confidenceScore + riskScore) / 2;
+  
+  let betAmount: number;
+  if (betScore > 0.7) {
+    betAmount = 3; // High confidence, big bet
+  } else if (betScore > 0.4) {
+    betAmount = 2; // Medium confidence, medium bet
+  } else {
+    betAmount = 1; // Low confidence, small bet
+  }
+
   return {
     action: 'advertise',
     conspiracyId: bestOption.conspiracy.id,
     confidence: bestOption.hasRealEvidence ? 0.8 : 0.4,
     isTrap: bestOption.isTrap
+    ,
+    position: betPosition,
+    betAmount
   };
 }
 

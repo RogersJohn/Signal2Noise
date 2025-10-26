@@ -11,9 +11,12 @@ import { GameSetup } from './components/GameSetup';
 import { HelpPanel } from './components/HelpPanel';
 import { ResolveResults } from './components/ResolveResults';
 import { TutorialMode } from './components/TutorialMode';
+import { DemoMode } from './components/DemoMode';
+import { HumanVsAI } from './components/HumanVsAI';
 import './App.css';
 
 function App() {
+  const [gameMode, setGameMode] = useState<'menu' | 'play' | 'demo' | 'vs-ai'>('menu');
   const [gameStarted, setGameStarted] = useState(false);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
@@ -27,10 +30,24 @@ function App() {
   const handleStartGame = (playerCount: number) => {
     setGameState(initializeGame(playerCount));
     setGameStarted(true);
+    setGameMode('play');
   };
 
+  if (gameMode === 'demo') {
+    return <DemoMode />;
+  }
+
+  if (gameMode === 'vs-ai') {
+    return <HumanVsAI />;
+    return <DemoMode />;
+  }
+
   if (!gameStarted || !gameState) {
-    return <GameSetup onStartGame={handleStartGame} />;
+    return <GameSetup
+      onStartGame={handleStartGame}
+      onStartDemo={() => setGameMode('demo')}
+      onStartVsAI={() => setGameMode('vs-ai')}
+    />;
   }
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
@@ -101,7 +118,19 @@ function App() {
         };
       }
 
-      // All players finished - draw cards for everyone and move to ADVERTISE
+      // All players finished investigating
+      // Check if this is Round 1 and first investigate
+      if (prev.round === 1 && !prev.firstInvestigateComplete) {
+        // Round 1, first investigate done - go to second investigate phase
+        setMessage('Round 1 - First investigation complete. Starting second investigation phase.');
+        return {
+          ...prev,
+          currentPlayerIndex: 0,
+          firstInvestigateComplete: true
+        };
+      }
+
+      // Draw cards for everyone and move to ADVERTISE
       let updatedDeck = [...prev.evidenceDeck];
       const updatedPlayers = prev.players.map(player => {
         const result = drawCards(player, updatedDeck, 3); // v5.0: Increased from 2 to 3 cards
@@ -127,7 +156,7 @@ function App() {
   };
 
   // ADVERTISE PHASE: Signal interest in a conspiracy
-  const handleAdvertise = () => {
+  const handleAdvertise = (position: 'REAL' | 'FAKE', betAmount: number) => {
     if (!selectedConspiracy) {
       setMessage('Select a conspiracy to advertise interest in');
       return;
@@ -137,25 +166,36 @@ function App() {
       id: `advertise_${Date.now()}_${currentPlayer.id}`,
       playerId: currentPlayer.id,
       conspiracyId: selectedConspiracy,
+      position,
+      betAmount,
       timestamp: Date.now()
     };
 
+    let transitioned = false;
     setGameState(prev => {
       if (!prev) return prev;
       const updatedQueue = [...prev.advertiseQueue, advertise];
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const allPlayersWent = nextPlayerIndex === 0;
 
+      if (allPlayersWent) {
+        transitioned = true;
+      }
+
       return {
         ...prev,
         advertiseQueue: updatedQueue,
         currentPlayerIndex: nextPlayerIndex,
-        phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+        phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
       };
     });
 
     setSelectedConspiracy(null);
-    setMessage(`${currentPlayer.name} advertised interest in: ${selectedConspiracy}`);
+    if (transitioned) {
+      setMessage('Advertise phase complete. Late-breaking evidence phase begins - you may play ONE card face-up!');
+    } else {
+      setMessage(`${currentPlayer.name} bet ${betAmount} audience that ${selectedConspiracy} is ${position}`);
+    }
   };
 
   // ADVERTISE PHASE: Pass
@@ -168,21 +208,110 @@ function App() {
       isPassed: true
     };
 
+    let transitioned = false;
     setGameState(prev => {
       if (!prev) return prev;
       const updatedQueue = [...prev.advertiseQueue, passAdvertise];
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const allPlayersWent = nextPlayerIndex === 0;
 
+      if (allPlayersWent) {
+        transitioned = true;
+      }
+
       return {
         ...prev,
         advertiseQueue: updatedQueue,
         currentPlayerIndex: nextPlayerIndex,
-        phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+        phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
       };
     });
 
-    setMessage(`${currentPlayer.name} passed on advertising`);
+    if (transitioned) {
+      setMessage('Advertise phase complete. Late-breaking evidence phase begins - you may play ONE card face-up!');
+    } else {
+      setMessage(`${currentPlayer.name} passed on advertising`);
+    }
+  };
+
+  // LATE_EVIDENCE PHASE: Play one card face-up
+  const handlePlayLateEvidence = () => {
+    if (!selectedCard || !selectedConspiracy) {
+      setMessage('Select one evidence card and a conspiracy to play it face-up');
+      return;
+    }
+
+    const card = currentPlayer.evidenceHand.find(c => c.id === selectedCard);
+    if (!card) {
+      setMessage('Card not found in hand');
+      return;
+    }
+
+    if (!canSupportConspiracy(card, selectedConspiracy)) {
+      setMessage('This evidence does not support the selected conspiracy');
+      return;
+    }
+
+    setGameState(prev => {
+      if (!prev) return prev;
+      const updatedPlayers = [...prev.players];
+      const playerIndex = prev.currentPlayerIndex;
+      const player = { ...updatedPlayers[playerIndex] };
+
+      // Remove card from hand
+      player.evidenceHand = player.evidenceHand.filter(c => c.id !== selectedCard);
+
+      // Add to face-up evidence
+      if (!player.faceUpEvidence) {
+        player.faceUpEvidence = {};
+      }
+      if (!player.faceUpEvidence[selectedConspiracy]) {
+        player.faceUpEvidence[selectedConspiracy] = [];
+      }
+      player.faceUpEvidence[selectedConspiracy] = [
+        ...player.faceUpEvidence[selectedConspiracy],
+        card
+      ];
+
+      updatedPlayers[playerIndex] = player;
+
+      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+      const allPlayersWent = nextPlayerIndex === 0;
+
+      return {
+        ...prev,
+        players: updatedPlayers,
+        currentPlayerIndex: nextPlayerIndex,
+        phase: allPlayersWent ? 'BROADCAST' : 'LATE_EVIDENCE'
+      };
+    });
+
+    setSelectedCard(null);
+    setSelectedConspiracy(null);
+    setLateEvidencePlayed(true);
+    setMessage(`Played ${card.name} face-up on ${selectedConspiracy}`);
+  };
+
+  const handlePassLateEvidence = () => {
+    setGameState(prev => {
+      if (!prev) return prev;
+      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+      const allPlayersWent = nextPlayerIndex === 0;
+
+      if (allPlayersWent) {
+        setMessage('Late-breaking evidence phase complete. Broadcast phase begins!');
+      }
+
+      return {
+        ...prev,
+        currentPlayerIndex: nextPlayerIndex,
+        phase: allPlayersWent ? 'BROADCAST' : 'LATE_EVIDENCE'
+      };
+    });
+
+    if (!gameState || (gameState.currentPlayerIndex + 1) % gameState.players.length !== 0) {
+      setMessage(`${currentPlayer.name} passed on late-breaking evidence`);
+    }
   };
 
   // BROADCAST PHASE: Make a broadcast (bluffing allowed!)
@@ -257,73 +386,6 @@ function App() {
     } else {
       setMessage(`${currentPlayer.name} broadcast ${newBroadcastCount}/2: ${selectedConspiracy} is ${position}`);
     }
-  };
-
-  // BROADCAST PHASE: Play Late-Breaking Evidence (Face-Up)
-  // v5.0: Player can play ONE face-up evidence card on a conspiracy they're broadcasting on
-  const handlePlayLateEvidence = () => {
-    if (!selectedCard) {
-      setMessage('Select an evidence card from your hand');
-      return;
-    }
-
-    if (!selectedConspiracy) {
-      setMessage('Select a conspiracy you are broadcasting on');
-      return;
-    }
-
-    // Check if they've already broadcast on this conspiracy
-    if (!broadcastedConspiracies.includes(selectedConspiracy)) {
-      setMessage('You can only play late-breaking evidence on a conspiracy you are broadcasting on!');
-      return;
-    }
-
-    if (lateEvidencePlayed) {
-      setMessage('You already played your late-breaking evidence this turn!');
-      return;
-    }
-
-    const cardToPlay = currentPlayer.evidenceHand.find(c => c.id === selectedCard);
-    if (!cardToPlay) {
-      setMessage('Card not found in hand');
-      return;
-    }
-
-    // Check if card supports this conspiracy
-    if (!canSupportConspiracy(cardToPlay, selectedConspiracy)) {
-      setMessage('This evidence card does not support the selected conspiracy');
-      return;
-    }
-
-    setGameState(prev => {
-      if (!prev) return prev;
-      const updatedPlayers = [...prev.players];
-      const player = { ...updatedPlayers[prev.currentPlayerIndex] };
-
-      // Remove card from hand
-      player.evidenceHand = player.evidenceHand.filter(c => c.id !== selectedCard);
-
-      // Add to face-up evidence
-      if (!player.faceUpEvidence) {
-        player.faceUpEvidence = {};
-      }
-      if (!player.faceUpEvidence[selectedConspiracy]) {
-        player.faceUpEvidence[selectedConspiracy] = [];
-      }
-      player.faceUpEvidence[selectedConspiracy] = [...player.faceUpEvidence[selectedConspiracy], cardToPlay];
-
-      updatedPlayers[prev.currentPlayerIndex] = player;
-
-      return {
-        ...prev,
-        players: updatedPlayers
-      };
-    });
-
-    setLateEvidencePlayed(true);
-    setSelectedCard(null);
-    setSelectedConspiracy(null);
-    setMessage(`${currentPlayer.name} played LATE-BREAKING EVIDENCE (FACE-UP): ${cardToPlay.name} on ${selectedConspiracy}`);
   };
 
   // BROADCAST PHASE: Done Broadcasting (Pass)
@@ -548,6 +610,30 @@ function App() {
               updatedPlayers[playerIndex] = player;
             }
           });
+
+          // STEP 4: Pay out advertised bets
+          // Check all advertisements on this conspiracy and pay out based on consensus
+          const advertisements = prev.advertiseQueue.filter(
+            a => a.conspiracyId === conspiracy.id && !a.isPassed && a.position && a.betAmount
+          );
+
+          advertisements.forEach(ad => {
+            const playerIndex = updatedPlayers.findIndex(p => p.id === ad.playerId);
+            if (playerIndex >= 0) {
+              const player = { ...updatedPlayers[playerIndex] };
+
+              // Check if advertised position matches consensus
+              if (ad.position === position) {
+                // Won the bet!
+                player.audience += ad.betAmount!;
+              } else {
+                // Lost the bet
+                player.audience = Math.max(0, player.audience - ad.betAmount!);
+              }
+
+              updatedPlayers[playerIndex] = player;
+            }
+          });
         } else {
           // No consensus - still track in history but mark as not scored
           prev.broadcastQueue
@@ -737,7 +823,7 @@ function App() {
             canAssign={!!selectedCard && !!selectedConspiracy}
             canAdvertise={!!selectedConspiracy}
             canBroadcast={!!selectedConspiracy && !broadcastedConspiracies.includes(selectedConspiracy)}
-            canPlayLateEvidence={!!selectedCard && !!selectedConspiracy && broadcastedConspiracies.includes(selectedConspiracy || '') && !lateEvidencePlayed}
+            canPlayLateEvidence={!!selectedCard && !!selectedConspiracy && !lateEvidencePlayed}
             broadcastCount={broadcastsMadeThisTurn}
             lateEvidencePlayed={lateEvidencePlayed}
           />

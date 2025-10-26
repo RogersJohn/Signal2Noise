@@ -2313,4 +2313,375 @@ describe('AI Personality-Based Game Simulations', () => {
       expect(finalGen.bestFitness).toBeGreaterThanOrEqual(initialGen.bestFitness);
     }, 900000); // 15 minute timeout
   });
+
+  describe('Knockout Tournament - 50 of Each Personality', () => {
+    test('Run elimination tournament with duplicates allowed', () => {
+      console.log('\n=== KNOCKOUT TOURNAMENT: 50 of Each Personality ===\n');
+
+      const allPersonalities = Object.values(AI_PERSONALITIES);
+
+      // Create 50 instances of each personality type (600 total players)
+      let players: Array<{ personality: any; id: string; eliminated: boolean }> = [];
+      allPersonalities.forEach(personality => {
+        for (let i = 0; i < 50; i++) {
+          players.push({
+            personality,
+            id: `${personality.name}_${i + 1}`,
+            eliminated: false
+          });
+        }
+      });
+
+      console.log(`Starting with ${players.length} players (50 of each of ${allPersonalities.length} personalities)\n`);
+
+      // Track tournament statistics
+      const tournamentStats = {
+        roundStats: [] as Array<{
+          round: number;
+          playersEntering: number;
+          gamesPlayed: number;
+          playersAdvancing: number;
+          personalityDistribution: { [key: string]: number };
+          avgScores: { [key: string]: number };
+          topScores: Array<{ personality: string; score: number }>;
+        }>,
+        finalWinner: null as any,
+        personalityElimination: {} as { [key: string]: number }, // Which round each personality was eliminated
+        survivalRates: {} as { [key: string]: Array<number> } // How many survived each round
+      };
+
+      // Initialize survival tracking
+      allPersonalities.forEach(p => {
+        tournamentStats.survivalRates[p.name] = [];
+      });
+
+      let roundNumber = 1;
+      let activePlayers = players.filter(p => !p.eliminated);
+
+      while (activePlayers.length > 1) {
+        console.log(`\n--- ROUND ${roundNumber} ---`);
+        console.log(`Active players: ${activePlayers.length}`);
+
+        // Shuffle and create 5-player tables
+        const shuffled = [...activePlayers].sort(() => Math.random() - 0.5);
+        const tables: Array<typeof shuffled> = [];
+
+        for (let i = 0; i < shuffled.length; i += 5) {
+          const table = shuffled.slice(i, i + 5);
+          if (table.length >= 3) { // Need at least 3 players for a game
+            tables.push(table);
+          } else {
+            // Not enough for a table - these players advance automatically
+            console.log(`  ⚡ ${table.length} players auto-advance (not enough for a table)`);
+            table.forEach(p => {
+              // They're already active, just mark them for tracking
+            });
+          }
+        }
+
+        console.log(`Tables: ${tables.length} (${tables.filter(t => t.length === 5).length} full, ${tables.filter(t => t.length < 5).length} partial)`);
+
+        // Track results for this round
+        const roundResults: Array<{ player: any; score: number; table: number }> = [];
+        const personalityCount: { [key: string]: number } = {};
+        const personalityScores: { [key: string]: number[] } = {};
+
+        // Simulate each table
+        tables.forEach((table, tableIndex) => {
+          if (table.length < 3) return; // Skip incomplete tables
+
+          // Run game with these personalities
+          const tablePersonalities = table.map(p => p.personality);
+          const result = simulateGame(tablePersonalities);
+
+          // Record scores for each player at this table
+          result.finalState.players.forEach((player, idx) => {
+            const tournamentPlayer = table[idx];
+            roundResults.push({
+              player: tournamentPlayer,
+              score: player.audience,
+              table: tableIndex
+            });
+
+            // Track stats
+            const pName = tournamentPlayer.personality.name;
+            if (!personalityCount[pName]) personalityCount[pName] = 0;
+            if (!personalityScores[pName]) personalityScores[pName] = [];
+            personalityCount[pName]++;
+            personalityScores[pName].push(player.audience);
+          });
+        });
+
+        // Determine who advances: top 2 from each table
+        const advancingPlayers: typeof activePlayers = [];
+        tables.forEach((table, tableIndex) => {
+          if (table.length < 3) {
+            // Auto-advance
+            advancingPlayers.push(...table);
+            return;
+          }
+
+          const tableResults = roundResults
+            .filter(r => r.table === tableIndex)
+            .sort((a, b) => b.score - a.score); // Sort by score descending
+
+          // Top 2 advance (or all if fewer than 2)
+          const advancing = tableResults.slice(0, 2);
+          advancing.forEach(r => {
+            advancingPlayers.push(r.player);
+          });
+
+          // Eliminate the rest
+          const eliminated = tableResults.slice(2);
+          eliminated.forEach(r => {
+            r.player.eliminated = true;
+          });
+        });
+
+        // Calculate average scores by personality
+        const avgScores: { [key: string]: number } = {};
+        Object.entries(personalityScores).forEach(([name, scores]) => {
+          avgScores[name] = scores.reduce((a, b) => a + b, 0) / scores.length;
+        });
+
+        // Find top scores
+        const topScores = roundResults
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 10)
+          .map(r => ({ personality: r.player.personality.name, score: r.score }));
+
+        // Track survival rates
+        allPersonalities.forEach(p => {
+          const surviving = advancingPlayers.filter(ap => ap.personality.name === p.name).length;
+          tournamentStats.survivalRates[p.name].push(surviving);
+        });
+
+        // Record round stats
+        tournamentStats.roundStats.push({
+          round: roundNumber,
+          playersEntering: activePlayers.length,
+          gamesPlayed: tables.filter(t => t.length >= 3).length,
+          playersAdvancing: advancingPlayers.length,
+          personalityDistribution: personalityCount,
+          avgScores,
+          topScores
+        });
+
+        console.log(`\nAdvancing: ${advancingPlayers.length} players`);
+        console.log(`Distribution:`);
+        const distribution = {} as { [key: string]: number };
+        advancingPlayers.forEach(p => {
+          const name = p.personality.name;
+          distribution[name] = (distribution[name] || 0) + 1;
+        });
+        Object.entries(distribution)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([name, count]) => {
+            console.log(`  ${name}: ${count}`);
+          });
+
+        // Check which personalities were completely eliminated this round
+        allPersonalities.forEach(p => {
+          const remaining = advancingPlayers.filter(ap => ap.personality.name === p.name).length;
+          const wasAlive = activePlayers.filter(ap => ap.personality.name === p.name).length > 0;
+
+          if (wasAlive && remaining === 0 && !tournamentStats.personalityElimination[p.name]) {
+            tournamentStats.personalityElimination[p.name] = roundNumber;
+            console.log(`  💀 ${p.name} ELIMINATED (all instances out)`);
+          }
+        });
+
+        activePlayers = advancingPlayers;
+        roundNumber++;
+
+        if (roundNumber > 20) {
+          console.log('\n⚠️ Tournament exceeded 20 rounds, stopping for safety');
+          break;
+        }
+      }
+
+      // Determine winner
+      if (activePlayers.length === 1) {
+        tournamentStats.finalWinner = activePlayers[0];
+        console.log(`\n\n🏆 TOURNAMENT WINNER: ${tournamentStats.finalWinner.personality.name} (${tournamentStats.finalWinner.id})\n`);
+      } else if (activePlayers.length > 1) {
+        console.log(`\n\n🏆 FINAL ${activePlayers.length} SURVIVORS (tie):`);
+        activePlayers.forEach(p => {
+          console.log(`  - ${p.personality.name} (${p.id})`);
+        });
+        tournamentStats.finalWinner = activePlayers[0]; // Pick first as winner
+      }
+
+      // Generate comprehensive report
+      let report = `# Knockout Tournament Report\n\n`;
+      report += `**Generated:** ${new Date().toISOString()}\n`;
+      report += `**Format:** 50 of each personality type (${allPersonalities.length} types = ${allPersonalities.length * 50} total players)\n`;
+      report += `**Rules:** 5-player games, top 2 advance, duplicates allowed\n\n`;
+      report += `---\n\n`;
+
+      report += `## 🏆 Tournament Winner\n\n`;
+      if (tournamentStats.finalWinner) {
+        report += `**${tournamentStats.finalWinner.personality.name}** (Instance #${tournamentStats.finalWinner.id.split('_')[1]})\n\n`;
+      }
+
+      report += `## 📊 Round-by-Round Breakdown\n\n`;
+      tournamentStats.roundStats.forEach(round => {
+        report += `### Round ${round.round}\n\n`;
+        report += `- **Players Entering:** ${round.playersEntering}\n`;
+        report += `- **Games Played:** ${round.gamesPlayed}\n`;
+        report += `- **Players Advancing:** ${round.playersAdvancing}\n`;
+        report += `- **Elimination Rate:** ${((1 - round.playersAdvancing / round.playersEntering) * 100).toFixed(1)}%\n\n`;
+
+        report += `**Distribution:**\n\n`;
+        const sorted = Object.entries(round.personalityDistribution)
+          .sort((a, b) => b[1] - a[1]);
+        sorted.forEach(([name, count]) => {
+          report += `- ${name}: ${count} players\n`;
+        });
+
+        report += `\n**Average Scores:**\n\n`;
+        const sortedScores = Object.entries(round.avgScores)
+          .sort((a, b) => b[1] - a[1]);
+        sortedScores.forEach(([name, score]) => {
+          report += `- ${name}: ${score.toFixed(1)} pts\n`;
+        });
+
+        report += `\n**Top 10 Scores This Round:**\n\n`;
+        round.topScores.forEach((entry, idx) => {
+          report += `${idx + 1}. ${entry.personality}: ${entry.score} pts\n`;
+        });
+
+        report += `\n`;
+      });
+
+      report += `## 💀 Elimination Order\n\n`;
+      const eliminationOrder = Object.entries(tournamentStats.personalityElimination)
+        .sort((a, b) => a[1] - b[1]);
+
+      if (eliminationOrder.length > 0) {
+        eliminationOrder.forEach(([name, round]) => {
+          report += `- **Round ${round}:** ${name}\n`;
+        });
+      } else {
+        report += `All personalities had survivors until the final rounds.\n`;
+      }
+
+      report += `\n## 📈 Survival Analysis\n\n`;
+      report += `Percentage of each personality remaining after each round:\n\n`;
+
+      // Create survival table
+      report += `| Personality | Start`;
+      tournamentStats.roundStats.forEach(r => {
+        report += ` | R${r.round}`;
+      });
+      report += ` |\n`;
+
+      report += `|------------|------`;
+      tournamentStats.roundStats.forEach(() => {
+        report += `|-----`;
+      });
+      report += `|\n`;
+
+      allPersonalities.forEach(p => {
+        const survival = tournamentStats.survivalRates[p.name];
+        report += `| ${p.name} | 100%`;
+        survival.forEach(count => {
+          const pct = (count / 50 * 100).toFixed(0);
+          report += ` | ${pct}%`;
+        });
+        report += ` |\n`;
+      });
+
+      report += `\n## 🎯 Key Findings\n\n`;
+
+      // Determine most successful personality
+      const finalRound = tournamentStats.roundStats[tournamentStats.roundStats.length - 1];
+      if (finalRound && finalRound.personalityDistribution) {
+        const dominantPersonality = Object.entries(finalRound.personalityDistribution)
+          .sort((a, b) => b[1] - a[1])[0];
+
+        if (dominantPersonality) {
+          report += `### Dominant Strategy: ${dominantPersonality[0]}\n\n`;
+          report += `- Had ${dominantPersonality[1]} survivors in the final rounds\n`;
+          report += `- ${((dominantPersonality[1] / finalRound.playersEntering) * 100).toFixed(1)}% of final field\n\n`;
+        }
+      }
+
+      // Find first eliminated
+      const firstOut = eliminationOrder[0];
+      if (firstOut) {
+        report += `### First Eliminated: ${firstOut[0]}\n\n`;
+        report += `- All instances eliminated by Round ${firstOut[1]}\n`;
+        report += `- Failed to adapt to high-pressure knockout format\n\n`;
+      }
+
+      // Average performance across all rounds
+      report += `### Average Performance Across All Rounds\n\n`;
+      const avgPerformance: { [key: string]: number } = {};
+      allPersonalities.forEach(p => {
+        const scores: number[] = [];
+        tournamentStats.roundStats.forEach(round => {
+          if (round.avgScores[p.name]) {
+            scores.push(round.avgScores[p.name]);
+          }
+        });
+        avgPerformance[p.name] = scores.length > 0
+          ? scores.reduce((a, b) => a + b, 0) / scores.length
+          : 0;
+      });
+
+      const sortedPerf = Object.entries(avgPerformance)
+        .sort((a, b) => b[1] - a[1]);
+
+      sortedPerf.forEach(([name, score]) => {
+        report += `- ${name}: ${score.toFixed(1)} pts/game average\n`;
+      });
+
+      report += `\n## 💡 Insights\n\n`;
+
+      // Aggressive vs Conservative analysis
+      const aggressiveTypes = ['The Reckless Gambler', 'The Chaos Agent', 'The Conspiracy Theorist'];
+      const conservativeTypes = ['The Cautious Scholar', 'The Paranoid Skeptic', 'The Steady Builder'];
+
+      const aggressiveSurvival = aggressiveTypes.map(name => {
+        const final = tournamentStats.survivalRates[name];
+        return final && final.length > 0 ? final[final.length - 1] : 0;
+      }).reduce((a, b) => a + b, 0);
+
+      const conservativeSurvival = conservativeTypes.map(name => {
+        const final = tournamentStats.survivalRates[name];
+        return final && final.length > 0 ? final[final.length - 1] : 0;
+      }).reduce((a, b) => a + b, 0);
+
+      report += `### Aggressive vs Conservative Strategies\n\n`;
+      report += `- **Aggressive survivors:** ${aggressiveSurvival} instances\n`;
+      report += `- **Conservative survivors:** ${conservativeSurvival} instances\n`;
+
+      if (aggressiveSurvival > conservativeSurvival * 1.5) {
+        report += `- **Conclusion:** Knockout format heavily favors aggressive play (+${((aggressiveSurvival / conservativeSurvival - 1) * 100).toFixed(0)}% more survivors)\n`;
+      } else if (conservativeSurvival > aggressiveSurvival * 1.5) {
+        report += `- **Conclusion:** Knockout format rewards conservative strategies (+${((conservativeSurvival / aggressiveSurvival - 1) * 100).toFixed(0)}% more survivors)\n`;
+      } else {
+        report += `- **Conclusion:** Balanced between aggressive and conservative strategies\n`;
+      }
+
+      report += `\n### Multi-Instance Tables\n\n`;
+      report += `Since duplicates are allowed, tables often had multiple instances of the same personality.\n\n`;
+      report += `**Impact:** This tests whether a strategy is truly robust or only works when facing diverse opponents.\n`;
+      report += `- Strategies that thrive in homogeneous groups: Self-sufficient\n`;
+      report += `- Strategies that fail against copies: Rely on exploiting weaknesses\n\n`;
+
+      // Write report
+      const reportPath = path.join(__dirname, '..', 'KNOCKOUT_TOURNAMENT_REPORT.md');
+      fs.writeFileSync(reportPath, report);
+
+      console.log(`\n✅ Knockout tournament report saved: ${reportPath}\n`);
+
+      // Assertions
+      expect(tournamentStats.roundStats.length).toBeGreaterThan(0);
+      expect(tournamentStats.finalWinner).toBeDefined();
+      expect(activePlayers.length).toBeGreaterThan(0);
+      expect(activePlayers.length).toBeLessThan(600); // Should have eliminated most players
+    }, 600000); // 10 minute timeout
+  });
 });

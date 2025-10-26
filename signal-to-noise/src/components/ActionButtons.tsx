@@ -5,20 +5,20 @@ import './ActionButtons.css';
 interface ActionButtonsProps {
   phase: Phase;
   onAssignEvidence?: () => void;
-  onAdvertise?: () => void;
+  onAdvertise?: (position: 'REAL' | 'FAKE', betAmount: number) => void;
   onAdvertisePass?: () => void;
   onBroadcast?: (position: 'REAL' | 'FAKE' | 'INCONCLUSIVE') => void;
-  onPlayLateEvidence?: () => void; // v5.0: Play face-up evidence
+  onPlayLateEvidence?: () => void;
   onPass?: () => void;
   onNextBroadcast?: () => void;
   onContinue?: () => void;
   canAssign?: boolean;
   canAdvertise?: boolean;
   canBroadcast?: boolean;
-  canPlayLateEvidence?: boolean; // v5.0: Can play late evidence
+  canPlayLateEvidence?: boolean;
   canPass?: boolean;
-  broadcastCount?: number; // v5.0: Track broadcasts made (0-2)
-  lateEvidencePlayed?: boolean; // v5.0: Track if late evidence was played
+  broadcastCount?: number;
+  lateEvidencePlayed?: boolean;
 }
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -65,22 +65,96 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         <>
           {!canAdvertise && (
             <div className="button-hint">
-              👆 Select a conspiracy to signal your interest (or pass)
+              👆 Select a conspiracy, then choose your bet position and amount
             </div>
           )}
-          <button
-            className="btn btn-primary"
-            onClick={onAdvertise}
-            disabled={!canAdvertise}
-          >
-            📢 Advertise Interest
-          </button>
+          <div className="advertise-betting">
+            <div className="betting-hint">
+              💰 Bet on whether the conspiracy is REAL or FAKE. Your bet pays out when consensus is reached!
+            </div>
+            <div className="bet-grid">
+              <div className="bet-column">
+                <h4 className="bet-header real-header">Bet REAL ✓</h4>
+                <button
+                  className="btn btn-bet bet-real"
+                  onClick={() => onAdvertise && onAdvertise('REAL', 1)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 1 Audience
+                </button>
+                <button
+                  className="btn btn-bet bet-real"
+                  onClick={() => onAdvertise && onAdvertise('REAL', 2)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 2 Audience
+                </button>
+                <button
+                  className="btn btn-bet bet-real"
+                  onClick={() => onAdvertise && onAdvertise('REAL', 3)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 3 Audience
+                </button>
+              </div>
+              <div className="bet-column">
+                <h4 className="bet-header fake-header">Bet FAKE ✗</h4>
+                <button
+                  className="btn btn-bet bet-fake"
+                  onClick={() => onAdvertise && onAdvertise('FAKE', 1)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 1 Audience
+                </button>
+                <button
+                  className="btn btn-bet bet-fake"
+                  onClick={() => onAdvertise && onAdvertise('FAKE', 2)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 2 Audience
+                </button>
+                <button
+                  className="btn btn-bet bet-fake"
+                  onClick={() => onAdvertise && onAdvertise('FAKE', 3)}
+                  disabled={!canAdvertise}
+                >
+                  Bet 3 Audience
+                </button>
+              </div>
+            </div>
+          </div>
           <button
             className="btn btn-warning"
             onClick={onAdvertisePass}
             disabled={!canPass}
           >
             Pass (No Advertisement)
+          </button>
+        </>
+      )}
+
+      {phase === 'LATE_EVIDENCE' && (
+        <>
+          <div className="button-hint">
+            🎲 Late-Breaking Evidence Phase - Play ONE card face-up or pass
+          </div>
+
+          {!lateEvidencePlayed && canPlayLateEvidence && (
+            <button
+              className="btn btn-primary"
+              onClick={onPlayLateEvidence}
+              disabled={!canPlayLateEvidence}
+            >
+              Play Card Face-Up
+            </button>
+          )}
+
+          <button
+            className="btn btn-warning"
+            onClick={onPass}
+            disabled={lateEvidencePlayed}
+          >
+            {lateEvidencePlayed ? 'Already Played Evidence' : 'Pass (No Late Evidence)'}
           </button>
         </>
       )}
@@ -128,7 +202,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
             Broadcast: INCONCLUSIVE ???
           </button>
 
-          {/* v5.0: Late-Breaking Evidence Button */}
           {broadcastCount > 0 && (
             <>
               <div className="late-evidence-divider">── Late-Breaking Evidence ──</div>

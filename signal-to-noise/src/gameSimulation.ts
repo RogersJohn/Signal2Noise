@@ -51,8 +51,8 @@ export function simulateGame(personalities: AIPersonality[]): {
   finalState: GameState;
   analytics: Partial<GameAnalytics>;
 } {
-  if (personalities.length < 2 || personalities.length > 4) {
-    throw new Error('Game requires 2-4 players');
+  if (personalities.length < 2 || personalities.length > 5) {
+    throw new Error('Game requires 2-5 players');
   }
 
   const gameState = initializeGame(personalities.length);
@@ -71,6 +71,9 @@ export function simulateGame(personalities: AIPersonality[]): {
       // INVESTIGATE PHASE (simplified - AI just keeps existing assignments)
       for (let idx = 0; idx < gameState.players.length; idx++) {
         const player = gameState.players[idx];
+
+        // v2.5.0: Skip bankrupt players
+        if (player.isBankrupt) continue;
 
         // v5.0: Draw 3 cards per investigation phase (max hand: 10)
         // v4.6: Filter to only evidence supporting active conspiracies
@@ -93,6 +96,11 @@ export function simulateGame(personalities: AIPersonality[]): {
     // This creates opportunities for bandwagoning or sets traps
     for (let i = 0; i < gameState.players.length; i++) {
       const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
+      const player = gameState.players[playerIndex];
+
+      // v2.5.0: Skip bankrupt players
+      if (player.isBankrupt) continue;
+
       const personality = personalities[playerIndex];
 
       const advertiseDecision = makeAdvertiseDecision(gameState, playerIndex, personality);
@@ -122,6 +130,10 @@ export function simulateGame(personalities: AIPersonality[]): {
     for (let i = 0; i < gameState.players.length; i++) {
       const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
       const player = gameState.players[playerIndex];
+
+      // v2.5.0: Skip bankrupt players
+      if (player.isBankrupt) continue;
+
       const personality = personalities[playerIndex];
 
       // AI decides where to place bonus evidence card (if any available)
@@ -139,6 +151,10 @@ export function simulateGame(personalities: AIPersonality[]): {
     for (let i = 0; i < gameState.players.length; i++) {
       const playerIndex = (gameState.currentPlayerIndex + i) % gameState.players.length;
       const player = gameState.players[playerIndex];
+
+      // v2.5.0: Skip bankrupt players
+      if (player.isBankrupt) continue;
+
       const personality = personalities[playerIndex];
 
       const decision = makeAIDecision(gameState, playerIndex, personality);
@@ -235,21 +251,33 @@ export function simulateGame(personalities: AIPersonality[]): {
           const assignedEvidence = player.assignedEvidence[conspiracyId] || [];
           const hasRealEvidence = assignedEvidence.some(card => canSupportConspiracy(card, conspiracyId));
 
-          // v5.1: ESCALATING BLUFF PENALTY - Cumulative punishment for repeat offenders
-          // 1st bluff: -2, 2nd: -3, 3rd: -4, 4th+: -5 (capped)
+          // v2.5.0: CAPPED BLUFF PENALTY - Slower escalation for sustainability
+          // 1st bluff: -2, 2nd: -2, 3rd: -3, 4th+: -3 (capped at -3)
           if (!hasRealEvidence) {
-            const bluffPenalty = Math.min(player.totalBluffs + 2, 5);
+            let bluffPenalty;
+            if (player.totalBluffs === 0 || player.totalBluffs === 1) {
+              bluffPenalty = 2; // First two bluffs: -2
+            } else {
+              bluffPenalty = 3; // Subsequent bluffs: -3
+            }
             player.credibility = Math.max(0, player.credibility - bluffPenalty);
             player.totalBluffs++; // Increment bluff counter
             console.log(`  ⚠️ ${player.name} bluffed (bluff #${player.totalBluffs}) - ${bluffPenalty} credibility penalty`);
           }
 
-          // Majority side: +1 credibility
+          // v2.5.0: CREDIBILITY RECOVERY - Majority side: +3 credibility (further increased)
+          // Allows players to recover from bluffs by winning consensus
           if (broadcast.position === majorityPosition) {
-            player.credibility = Math.min(10, player.credibility + 1);
+            player.credibility = Math.min(10, player.credibility + 3);
           } else {
-            // Minority side: -3 credibility (increased from -2)
-            player.credibility = Math.max(0, player.credibility - 3);
+            // Minority side: -2 credibility (reduced from -3 for sustainability)
+            player.credibility = Math.max(0, player.credibility - 2);
+          }
+
+          // v2.5.0: BANKRUPTCY RULE - Credibility 0 = instant elimination
+          if (player.credibility <= 0 && !player.isBankrupt) {
+            player.isBankrupt = true;
+            console.log(`  💀 ${player.name} BANKRUPT (credibility reached 0) - ELIMINATED FROM GAME!`);
           }
         });
 
@@ -301,10 +329,15 @@ export function simulateGame(personalities: AIPersonality[]): {
     gameState.winner = result.winner;
 
     // Update current player (losing player goes first)
-    const losingPlayerIndex = gameState.players.reduce((lowestIdx, player, idx, arr) =>
-      player.audience < arr[lowestIdx].audience ? idx : lowestIdx
-    , 0);
-    gameState.currentPlayerIndex = losingPlayerIndex;
+    // v2.5.0: Only consider active (non-bankrupt) players
+    const activePlayers = gameState.players.filter(p => !p.isBankrupt);
+    if (activePlayers.length > 0) {
+      const losingPlayer = activePlayers.reduce((lowest, player) =>
+        player.audience < lowest.audience ? player : lowest
+      );
+      const losingPlayerIndex = gameState.players.findIndex(p => p.id === losingPlayer.id);
+      gameState.currentPlayerIndex = losingPlayerIndex;
+    }
   }
 
   const winner = gameState.winner || gameState.players.reduce((prev, curr) =>

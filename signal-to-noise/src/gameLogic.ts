@@ -44,13 +44,14 @@ export function initializeGame(playerCount: number): GameState {
       id: `player_${i + 1}`,
       name: playerNames[i],
       credibility: 5,
-      audience: 0,
+      audience: 5,
       evidenceHand,
       assignedEvidence: {},
       faceUpEvidence: {}, // v5.0: Late-breaking evidence
       color: playerColors[i],
       broadcastHistory: [],
-      totalBluffs: 0 // v5.1: Track cumulative bluffs
+      totalBluffs: 0, // v5.1: Track cumulative bluffs
+      isBankrupt: false // v2.5.0: Bankruptcy rule
     });
   }
 
@@ -75,7 +76,8 @@ export function initializeGame(playerCount: number): GameState {
       exposeAction: false,
       specialEvidence: false
     },
-    totalRevealed: 0
+    totalRevealed: 0,
+    firstInvestigateComplete: false
   };
 }
 
@@ -198,10 +200,25 @@ export function checkWinCondition(gameState: GameState): {
   gameOver: boolean;
   winner: string | null;
 } {
+  // v2.5.0: BANKRUPTCY RULE - Check if only 1 active player remains
+  const activePlayers = gameState.players.filter(p => !p.isBankrupt);
+  if (activePlayers.length === 1) {
+    return {
+      gameOver: true,
+      winner: activePlayers[0].id
+    };
+  } else if (activePlayers.length === 0) {
+    // All players bankrupt - shouldn't happen, but handle gracefully
+    return {
+      gameOver: true,
+      winner: null
+    };
+  }
+
   // NEW: ONLY win condition is completing 6 rounds
   // After Round 6, highest audience wins (tiebreak: credibility)
   if (gameState.round > 6) {
-    return determineWinner(gameState.players);
+    return determineWinner(activePlayers); // Only consider active players
   }
 
   return { gameOver: false, winner: null };

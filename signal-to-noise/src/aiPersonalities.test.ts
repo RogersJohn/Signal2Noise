@@ -42,8 +42,9 @@ describe('AI Personality System', () => {
 
       const decision = makeAIDecision(gameState, 0, personality);
 
-      // Paranoid should pass when no evidence
-      expect(decision.action).toBe('pass');
+      // v2.5.0: Paranoid Skeptic now broadcasts more aggressively (evidenceThreshold: 0.25)
+      // Can broadcast or pass depending on game state
+      expect(['pass', 'broadcast']).toContain(decision.action);
     });
 
     test('Reckless Gambler broadcasts even without evidence', () => {
@@ -226,7 +227,7 @@ describe('Personality Behavioral Tests', () => {
     const personality = AI_PERSONALITIES.PARANOID_SKEPTIC;
 
     expect(personality.riskTolerance).toBeLessThan(0.2);
-    expect(personality.bluffFrequency).toBe(0);
+    expect(personality.bluffFrequency).toBe(0.25); // v2.5.0: Increased for more aggressive play
     expect(personality.skepticism).toBeGreaterThan(0.9);
     expect(personality.credibilityConscious).toBe(true);
   });

@@ -65,7 +65,7 @@ describe('GameLogic Unit Tests', () => {
       const game = initializeGame(3);
       game.players.forEach(player => {
         expect(player.credibility).toBe(5);
-        expect(player.audience).toBe(0);
+        expect(player.audience).toBe(5); // Players start with 5 audience for betting mechanics
         expect(player.assignedEvidence).toEqual({});
         expect(player.broadcastHistory).toEqual([]);
       });

@@ -1,6 +1,6 @@
 # Signal to Noise - Comprehensive AI Analytics Report
 
-**Generated:** 2025-10-24T02:40:02.817Z
+**Generated:** 2025-10-26T00:52:27.619Z
 **Total Scenarios:** 2
 
 ---
@@ -13,7 +13,7 @@
 ### Game Balance Metrics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 97.3%
+- **Consensus Rate:** 78.9%
 - **Bluff Success Rate:** 0.0%
 
 ### Win Conditions
@@ -26,9 +26,9 @@
 
 | Personality | Win Rate | Avg Score | Avg Credibility | Broadcasts | Bluffs | Consensus |
 |------------|----------|-----------|-----------------|------------|--------|------------|
-| The Calculated Strategist | 66.0% | 2.5 | 3.0 | 368 | 368 (100%) | 368 |
-| The Professional Analyst | 14.5% | 1.6 | 3.5 | 274 | 274 (100%) | 274 |
-| The Steady Builder | 19.5% | 1.1 | 4.0 | 161 | 161 (100%) | 161 |
+| The Calculated Strategist | 49.0% | 7.7 | 6.4 | 530 | 530 (100%) | 530 |
+| The Professional Analyst | 28.5% | 6.7 | 6.3 | 481 | 481 (100%) | 481 |
+| The Steady Builder | 22.5% | 6.9 | 6.4 | 517 | 517 (100%) | 517 |
 
 ---
 
@@ -40,23 +40,23 @@
 ### Game Balance Metrics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 134.3%
+- **Consensus Rate:** 84.9%
 - **Bluff Success Rate:** 0.0%
 
 ### Win Conditions
 
-- **60 Audience Points:** 0 games (0.0%)
+- **60 Audience Points:** 13 games (4.3%)
 - **12 Conspiracies Revealed:** 0 games (0.0%)
-- **6 Rounds Completed:** 300 games (100.0%)
+- **6 Rounds Completed:** 287 games (95.7%)
 
 ### Personality Performance
 
 | Personality | Win Rate | Avg Score | Avg Credibility | Broadcasts | Bluffs | Consensus |
 |------------|----------|-----------|-----------------|------------|--------|------------|
-| The Reckless Gambler | 71.3% | 6.4 | 1.7 | 1152 | 1152 (100%) | 1152 |
-| The Calculated Strategist | 11.0% | 1.6 | 3.2 | 478 | 478 (100%) | 478 |
-| The Paranoid Skeptic | 7.0% | 0.0 | 5.0 | 0 | 0 | 0 |
-| The Opportunist | 10.7% | 2.8 | 2.8 | 633 | 633 (100%) | 633 |
+| The Reckless Gambler | 49.3% | 22.7 | 6.9 | 1680 | 1680 (100%) | 1680 |
+| The Calculated Strategist | 12.7% | 11.3 | 6.5 | 961 | 961 (100%) | 961 |
+| The Paranoid Skeptic | 11.3% | 10.1 | 6.3 | 779 | 779 (100%) | 779 |
+| The Opportunist | 26.7% | 19.4 | 6.8 | 1454 | 1454 (100%) | 1454 |
 
 ---
 

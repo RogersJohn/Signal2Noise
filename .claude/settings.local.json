@@ -33,7 +33,10 @@
       "Bash(jobs:*)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(taskkill /F /PID 14932)",
+      "Bash(taskkill //F //PID 14932)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
