@@ -46,7 +46,6 @@ Each conspiracy card includes:
 - **Name**: The conspiracy theory title
 - **Description**: Humorous flavor text
 - **Tier**: 1 (6 cards), 2 (4 cards), or 3 (2 cards) - **AFFECTS SCORING!**
-- **Truth Value**: Used only in variant "Truth Matters" mode
 - **Icon**: Visual identifier
 
 **Tier System (v2.3.0):**
@@ -96,9 +95,9 @@ Each evidence card includes:
 
 Each player needs:
 - **Credibility Tracker**: Range 0-10 (starts at 5)
-- **Audience Tracker**: Range 0-60+ (starts at 0)
+- **Audience Tracker**: Range 0-60+ (starts at 5)
 - **Evidence Hand**: Private cards held in hand
-- **Color Marker**: To identify assigned evidence
+- **Color Markers**: To identify assigned evidence
 
 ---
 
@@ -117,8 +116,8 @@ Each player needs:
    - Each player receives:
      - 5 evidence cards (drawn from evidence deck)
      - Credibility tracker set to 5
-     - Audience tracker set to 0
-     - Player color marker
+     - Audience tracker set to 5
+     - Player color markers, double sided with R or F to declare Real or Fake
 
 4. **Determine Turn Order**:
    - Randomly determine first player
@@ -139,7 +138,7 @@ Round → INVESTIGATE → ADVERTISE → BROADCAST → RESOLVE → CLEANUP → Ne
 ### Phase Sequence
 
 1. **INVESTIGATE** (Blue): Secretly assign evidence to conspiracies
-2. **ADVERTISE** (Purple): Publicly signal intentions to other players
+2. **ADVERTISE** (Purple): Publicly signal intentions to other players by betting
 3. **BROADCAST** (Orange): Make public claims about conspiracies
 4. **RESOLVE** (Green): Check consensus and score points
 5. **CLEANUP** (Gray): Replace revealed conspiracies and prepare next round
@@ -150,15 +149,15 @@ Round → INVESTIGATE → ADVERTISE → BROADCAST → RESOLVE → CLEANUP → Ne
 
 ### Phase 1: INVESTIGATE (Blue)
 
-**Duration**: All players act simultaneously
+**Duration**: All players act in turn, one evidence card at a time, if you pass you are out for the remainder of this phase
 
 **What Happens:**
 
 1. Each player examines their evidence hand
-2. Players secretly assign evidence cards face-down to any conspiracy on the board
+2. Players secretly assign evidence cards face-down to any conspiracy on the board one card at a time, one player a time 
 3. Evidence is assigned by placing cards face-down near the conspiracy and marking with player's color token
-4. **IMPORTANT**: Evidence COUNT is visible (e.g., "Alice: 3 cards on Moon Landing"), but CONTENT is hidden
-5. Once all players finish, each player draws 2 new evidence cards from the deck
+4. **IMPORTANT**: Evidence COUNT is visible (e.g., "Alice: 3 cards on Moon Landing"), but CONTENT is hidden. Evidence cards played by a player are marked with their color , this color marker only has the player color
+5. Once all players finish, each player draws 2 new evidence cards from the deck, if this means they have more than 10 cards in hand they must discard down to 10
 
 **Strategic Considerations:**
 
@@ -167,14 +166,13 @@ Round → INVESTIGATE → ADVERTISE → BROADCAST → RESOLVE → CLEANUP → Ne
 - **Signaling**: Stacking many cards signals confidence (or a bluff!)
 - **Spreading**: Distributing evidence hides your true target
 - **Excitement Matters**: EXCITING cards (★★★) double your specificity bonus - prioritize these!
-- **Novelty Bonus**: First-time use of any card on any conspiracy = +2 bonus
 
 **Rules:**
 
 - Players can assign 0 to any number of cards from their hand
 - Evidence persists across rounds until the conspiracy is revealed
 - Other players can see HOW MANY cards you assign but not WHICH cards
-- No verbal communication during this phase
+- Verbal communication is always allowed but is never binding
 
 ---
 
@@ -185,12 +183,12 @@ Round → INVESTIGATE → ADVERTISE → BROADCAST → RESOLVE → CLEANUP → Ne
 **What Happens:**
 
 1. In turn order, each player either:
-   - **Advertises**: Publicly announces ONE conspiracy they're interested in
-   - **Passes**: Declines to advertise (no penalty)
+   - **Advertises**: Publicly announces ONE conspiracy they're interested in and marks it with their color token which is marked B for Broadcast and Gains 1 audience
+   - **Passes**: Declines to advertise and loses 1 audience
 
 2. Advertisements are PUBLIC - all players see them
 
-3. **After all advertisements**, each player assigns ONE additional evidence card to any conspiracy
+3. **After all advertisements**, each player May assign ONE additional evidence card FACE UP to any conspiracy
 
 **Deception Penalty:**
 
@@ -210,7 +208,7 @@ If you advertise conspiracy A but broadcast on conspiracy B during the BROADCAST
 
 - Advertisements are binding for penalty purposes only
 - You can still broadcast on a different conspiracy (with -1 audience penalty)
-- Passing incurs no penalty
+- Passing incurs a penalty of 1 audience
 - The bonus evidence card is assigned AFTER seeing all advertisements
 
 **Example:**
@@ -218,14 +216,14 @@ If you advertise conspiracy A but broadcast on conspiracy B during the BROADCAST
 ```
 Turn Order: Alice → Bob → Carol → Dave
 
-Alice: "I'm interested in Moon Landing"
-Bob: "I'm interested in Moon Landing" (bandwagoning)
-Carol: PASSES
-Dave: "I'm interested in Chemtrails"
+Alice: "I'm interested in Moon Landing" gains +1 audience
+Bob: "I'm interested in Moon Landing" (bandwagoning) gains +1 audience
+Carol: PASSES loses 1 audience
+Dave: "I'm interested in Chemtrails" gains +1 audience
 
 [All advertisements visible]
 
-All players now place 1 bonus evidence card anywhere
+All players now place 1 bonus evidence card anywhere face up
 ```
 
 ---
@@ -240,7 +238,6 @@ All players now place 1 bonus evidence card anywhere
 2. Players secretly choose ONE of the following:
    - **REAL (✓)**: Claim the conspiracy is real
    - **FAKE (✗)**: Claim the conspiracy is fake
-   - **INCONCLUSIVE (???)**: Safe choice, always scores 2 points
    - **PASS**: Don't broadcast this round
 
 3. Players select which conspiracy to broadcast on (if not passing)
@@ -251,21 +248,18 @@ All players now place 1 bonus evidence card anywhere
 
 - **With Evidence**: 3 base points (must have assigned evidence to this conspiracy)
 - **Bandwagoning** (no evidence): 1 base point (attempting to join consensus)
-- **INCONCLUSIVE**: 2 base points (always safe, no bonuses or credibility change)
 - **PASS**: 0 points
 
 **Strategic Considerations:**
 
 - **Follow Advertisements**: Use ads to predict consensus
 - **Bluffing**: Broadcast without evidence for 1 base point if consensus forms
-- **Safety**: INCONCLUSIVE guarantees 2 points with no credibility risk
 - **Advertise Penalty Check**: Broadcasting on a different conspiracy than advertised = -1 audience
 
 **Rules:**
 
 - You can broadcast on any conspiracy, regardless of evidence
 - Broadcasting without evidence = "bandwagoning" (only 1 base point)
-- INCONCLUSIVE always scores 2 points, immune to consensus failures
 - If you pass, you score 0 points but avoid credibility loss
 
 **Example:**
@@ -343,8 +337,7 @@ The complete scoring formula for broadcasts with consensus:
 ```
 BASE POINTS:
   3 = Broadcasting with evidence
-  1 = Bandwagoning (no evidence)
-  2 = INCONCLUSIVE (always scores, immune to consensus)
+  1 = Bandwagoning (no evidence, you did not play any evidence for this specific conspiracy)
 
 + TIER BONUS (difficulty bonus):
   +1 = Tier 1 conspiracies (easy - lots of evidence available)
@@ -354,73 +347,26 @@ BASE POINTS:
 + EVIDENCE BONUSES (per card assigned to this conspiracy):
 
   Specificity Bonus (with diminishing returns):
-    First card:
       +3 = Specific cards (supports 1-5 conspiracies)
-      +1 = ALL cards (supports any conspiracy)
-    Subsequent cards:
-      +1 = All additional cards (diminishing returns)
+      +1 = ALL cards (supports any conspiracy), this includes "Bluff" cards
+      -1 = any card that is specifically not related to this conspiracy
 
   × Excitement Multiplier (applied to specificity bonus):
     ×2.0 = EXCITING (★★★) - Doubles the bonus!
     ×1.0 = NEUTRAL (★☆☆) - No change
     ×0.5 = BORING (☆☆☆) - Half value, rounds UP (3→2, 1→1)
 
-  + Novelty Bonus:
-    +2 = First time this evidence used on THIS CONSPIRACY
-    +0 = Evidence previously used on this conspiracy
 
 × CREDIBILITY MODIFIER (applied to total):
-  ×1.5 = High credibility (7-10)
+  ×2 = High credibility (7-10)
   ×1.0 = Medium credibility (4-6)
-  ×0.75 = Low credibility (0-3)
+  ×0.5 = Low credibility (0-3)
 
 − ADVERTISE DECEPTION PENALTY:
   -1 audience = If you advertised conspiracy A but broadcast on conspiracy B
 
 = TOTAL AUDIENCE POINTS
 ```
-
-#### Scoring Examples
-
-**Example 1: Strong Evidence Play (Tier 1 Conspiracy)**
-
-- Base: 3 (with evidence)
-- Tier Bonus: +1 (Tier 1 conspiracy - Chemtrails)
-- Evidence 1: "Flight Path Analysis" (specific to Chemtrails, EXCITING) - **FIRST CARD**
-  - Specificity: +3 (full bonus for first card)
-  - Excitement: ×2.0 → 3 × 2 = 6
-  - Novelty: +2 (first use on this conspiracy)
-  - Total: 6 + 2 = 8
-- Evidence 2: "Pilot Reports" (specific to Chemtrails, EXCITING) - **SECOND CARD**
-  - Specificity: +1 (diminishing returns!)
-  - Excitement: ×2.0 → 1 × 2 = 2
-  - Novelty: +2 (first use on this conspiracy)
-  - Total: 2 + 2 = 4
-- Subtotal: 4 + 8 + 4 = 16
-- Credibility (8): ×1.5 → 16 × 1.5 = 24 points
-- Advertised correctly: No penalty
-- **FINAL: 24 audience points**
-
-**Example 1b: Same Play on Tier 3 Conspiracy**
-- Same evidence on "Mayor Embezzlement" (Tier 3):
-- Base: 3, Tier Bonus: +3, Evidence: 12
-- Subtotal: 18 × 1.5 = 27 points (vs 24 for Tier 1!)
-- **Higher risk (less evidence available) = higher reward!**
-
-**Example 2: Bandwagon Play**
-
-- Base: 1 (no evidence, bandwagoning)
-- No evidence bonuses
-- Subtotal: 1
-- Credibility (5): ×1.0 → 1 point
-- But bluffing penalty: -2 credibility (first bluff)
-- **FINAL: 1 audience point, -2 credibility**
-
-**Example 3: INCONCLUSIVE Play**
-
-- Base: 2 (INCONCLUSIVE)
-- No other modifiers
-- **FINAL: 2 audience points, 0 credibility change**
 
 ---
 
@@ -430,9 +376,9 @@ BASE POINTS:
 
 **What Happens:**
 
-1. **Replace Revealed Conspiracies**: Any conspiracy that was broadcast on is removed and replaced with a new one from the deck
+1. **Replace Revealed Conspiracies with consensus**: Any conspiracy that was broadcast on and has acieved consensus is removed and replaced with a new one from the deck
 2. **Evidence Persistence**: All evidence assigned to other conspiracies remains in place
-3. **Evidence on Revealed Conspiracies**: Discarded (returns to discard pile)
+3. **Evidence on Revealed and consesnus achieved Conspiracies**: Discarded (returns to discard pile)
 4. **Check Win Conditions**:
    - First to 60 audience?
    - 12 conspiracies revealed?
@@ -459,15 +405,15 @@ Game ends if ANY of the following occur:
 ### Credibility Mechanics
 
 **Range**: 0-10
-**Starting Value**: 5
+**Starting Value**: 4
 
 ### Credibility Effects on Scoring
 
 | Credibility Range | Modifier | Effect |
 |-------------------|----------|--------|
-| 7-10 (High) | ×1.5 | +50% to all audience points |
+| 7-10 (High) | ×2 | +100% to all audience points |
 | 4-6 (Medium) | ×1.0 | No modifier |
-| 0-3 (Low) | ×0.75 | -25% to all audience points |
+| 0-3 (Low) | ×0.5 | -50% to all audience points |
 
 ### Credibility Changes
 
