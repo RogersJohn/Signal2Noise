@@ -1,6 +1,6 @@
 # Comprehensive Round Robin Tournament Report
 
-**Generated:** 2025-10-26T17:42:19.917Z
+**Generated:** 2025-10-26T22:23:09.112Z
 **Total Games:** 1000
 **Personalities:** 12
 **Format:** 4-player random matchups
@@ -10,7 +10,7 @@
 ## Tournament Statistics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 86.89%
+- **Consensus Rate:** 89.51%
 - **Bluff Rate:** 100.00%
 - **Avg Final Credibility:** 5.00
 - **Avg Credibility Loss:** 0.00
@@ -27,335 +27,335 @@
 
 | Rank | Personality | Win Rate | Games | Wins | Avg Audience | Avg Credibility | Bluff Rate | Consensus Rate |
 |------|-------------|----------|-------|------|--------------|-----------------|------------|----------------|
-| 1 | The Paranoid Skeptic | 41.28% | 470 | 194 | 4.7 | 5.00 | 100.0% | 100.0% |
-| 2 | The Cautious Scholar | 40.79% | 331 | 135 | 5.0 | 5.00 | 100.0% | 100.0% |
-| 3 | The Truth Seeker | 39.30% | 402 | 158 | 4.9 | 5.00 | 100.0% | 100.0% |
-| 4 | The Calculated Strategist | 26.09% | 345 | 90 | 4.6 | 5.00 | 100.0% | 100.0% |
-| 5 | The Professional Analyst | 25.40% | 311 | 79 | 4.7 | 5.00 | 100.0% | 100.0% |
-| 6 | The Conspiracy Theorist | 25.10% | 259 | 65 | 4.4 | 5.00 | 100.0% | 100.0% |
-| 7 | The Meta-Reader | 20.89% | 292 | 61 | 4.4 | 5.00 | 100.0% | 100.0% |
-| 8 | The Steady Builder | 18.53% | 313 | 58 | 4.6 | 5.00 | 100.0% | 100.0% |
-| 9 | The Chaos Agent | 15.21% | 263 | 40 | 4.3 | 5.00 | 100.0% | 100.0% |
-| 10 | The Reckless Gambler | 14.39% | 396 | 57 | 4.2 | 5.00 | 100.0% | 100.0% |
-| 11 | The Opportunist | 10.89% | 303 | 33 | 3.7 | 5.00 | 100.0% | 100.0% |
-| 12 | The Saboteur | 9.52% | 315 | 30 | 4.0 | 5.00 | 100.0% | 100.0% |
+| 1 | The Paranoid Skeptic | 41.63% | 466 | 194 | 4.7 | 5.00 | 100.0% | 100.0% |
+| 2 | The Cautious Scholar | 37.17% | 339 | 126 | 5.0 | 5.00 | 100.0% | 100.0% |
+| 3 | The Truth Seeker | 35.28% | 411 | 145 | 4.9 | 5.00 | 100.0% | 100.0% |
+| 4 | The Calculated Strategist | 28.29% | 350 | 99 | 4.6 | 5.00 | 100.0% | 100.0% |
+| 5 | The Conspiracy Theorist | 27.09% | 251 | 68 | 4.6 | 5.00 | 100.0% | 100.0% |
+| 6 | The Professional Analyst | 25.55% | 321 | 82 | 4.7 | 5.00 | 100.0% | 100.0% |
+| 7 | The Steady Builder | 23.36% | 274 | 64 | 4.7 | 5.00 | 100.0% | 100.0% |
+| 8 | The Reckless Gambler | 18.70% | 385 | 72 | 4.3 | 5.00 | 100.0% | 100.0% |
+| 9 | The Chaos Agent | 17.72% | 254 | 45 | 4.4 | 5.00 | 100.0% | 100.0% |
+| 10 | The Meta-Reader | 16.23% | 308 | 50 | 4.5 | 5.00 | 100.0% | 100.0% |
+| 11 | The Saboteur | 9.27% | 302 | 28 | 4.2 | 5.00 | 100.0% | 100.0% |
+| 12 | The Opportunist | 7.96% | 339 | 27 | 3.8 | 5.00 | 100.0% | 100.0% |
 
 ## Detailed Performance Analysis
 
 ### 1. The Paranoid Skeptic
 
 **Overall Performance:**
-- Win Rate: 41.28% (194 wins in 470 games)
+- Win Rate: 41.63% (194 wins in 466 games)
 - Average Final Audience: 4.7
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1569
+- Total Broadcasts: 1333
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=563, FAKE=1006, INCONCLUSIVE=0
+- Position Breakdown: REAL=558, FAKE=775, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Reckless Gambler: 51.5% (119/231)
-- vs The Opportunist: 46.4% (58/125)
-- vs The Calculated Strategist: 44.4% (40/90)
+- vs The Calculated Strategist: 50.5% (51/101)
+- vs The Meta-Reader: 47.0% (54/115)
+- vs The Reckless Gambler: 46.9% (106/226)
 
 **Worst Matchups:**
-- vs The Professional Analyst: 37.6% (41/109)
-- vs The Cautious Scholar: 32.2% (46/143)
-- vs The Truth Seeker: 31.5% (40/127)
+- vs The Cautious Scholar: 37.5% (48/128)
+- vs The Truth Seeker: 34.6% (47/136)
+- vs The Professional Analyst: 33.6% (43/128)
 
 ---
 
 ### 2. The Cautious Scholar
 
 **Overall Performance:**
-- Win Rate: 40.79% (135 wins in 331 games)
+- Win Rate: 37.17% (126 wins in 339 games)
 - Average Final Audience: 5.0
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1113
+- Total Broadcasts: 1067
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=453, FAKE=660, INCONCLUSIVE=0
+- Position Breakdown: REAL=524, FAKE=543, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Meta-Reader: 49.3% (36/73)
-- vs The Opportunist: 48.9% (43/88)
-- vs The Professional Analyst: 48.8% (41/84)
+- vs The Opportunist: 48.5% (47/97)
+- vs The Meta-Reader: 44.8% (43/96)
+- vs The Saboteur: 42.2% (35/83)
 
 **Worst Matchups:**
-- vs The Calculated Strategist: 34.4% (31/90)
-- vs The Truth Seeker: 32.7% (37/113)
-- vs The Steady Builder: 28.6% (24/84)
+- vs The Calculated Strategist: 31.9% (30/94)
+- vs The Steady Builder: 30.7% (23/75)
+- vs The Conspiracy Theorist: 28.2% (20/71)
 
 ---
 
 ### 3. The Truth Seeker
 
 **Overall Performance:**
-- Win Rate: 39.30% (158 wins in 402 games)
+- Win Rate: 35.28% (145 wins in 411 games)
 - Average Final Audience: 4.9
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 441
+- Total Broadcasts: 430
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=204, FAKE=237, INCONCLUSIVE=0
+- Position Breakdown: REAL=220, FAKE=210, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Opportunist: 55.2% (48/87)
-- vs The Saboteur: 45.9% (50/109)
-- vs The Chaos Agent: 44.8% (39/87)
+- vs The Opportunist: 44.4% (52/117)
+- vs The Saboteur: 41.1% (39/95)
+- vs The Chaos Agent: 39.3% (33/84)
 
 **Worst Matchups:**
-- vs The Conspiracy Theorist: 33.0% (32/97)
-- vs The Cautious Scholar: 31.0% (35/113)
-- vs The Paranoid Skeptic: 30.7% (39/127)
+- vs The Meta-Reader: 33.3% (37/111)
+- vs The Conspiracy Theorist: 25.8% (24/93)
+- vs The Cautious Scholar: 22.7% (30/132)
 
 ---
 
 ### 4. The Calculated Strategist
 
 **Overall Performance:**
-- Win Rate: 26.09% (90 wins in 345 games)
+- Win Rate: 28.29% (99 wins in 350 games)
 - Average Final Audience: 4.6
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1137
+- Total Broadcasts: 1103
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=553, FAKE=584, INCONCLUSIVE=0
+- Position Breakdown: REAL=561, FAKE=542, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Conspiracy Theorist: 35.4% (23/65)
-- vs The Professional Analyst: 31.7% (26/82)
-- vs The Meta-Reader: 28.6% (24/84)
+- vs The Reckless Gambler: 33.1% (44/133)
+- vs The Cautious Scholar: 31.9% (30/94)
+- vs The Conspiracy Theorist: 31.7% (20/63)
 
 **Worst Matchups:**
-- vs The Truth Seeker: 23.7% (36/152)
-- vs The Cautious Scholar: 21.1% (19/90)
-- vs The Paranoid Skeptic: 18.9% (17/90)
+- vs The Opportunist: 26.9% (25/93)
+- vs The Truth Seeker: 25.6% (40/156)
+- vs The Paranoid Skeptic: 16.8% (17/101)
 
 ---
 
-### 5. The Professional Analyst
+### 5. The Conspiracy Theorist
 
 **Overall Performance:**
-- Win Rate: 25.40% (79 wins in 311 games)
+- Win Rate: 27.09% (68 wins in 251 games)
+- Average Final Audience: 4.6
+- Average Final Credibility: 5.00
+
+**Playstyle:**
+- Total Broadcasts: 1320
+- Bluff Rate: 100.0%
+- Consensus Participation: 100.0%
+- Position Breakdown: REAL=689, FAKE=631, INCONCLUSIVE=0
+
+**Best Matchups:**
+- vs The Saboteur: 37.9% (22/58)
+- vs The Truth Seeker: 33.3% (31/93)
+- vs The Meta-Reader: 30.0% (21/70)
+
+**Worst Matchups:**
+- vs The Professional Analyst: 22.4% (17/76)
+- vs The Paranoid Skeptic: 20.0% (16/80)
+- vs The Reckless Gambler: 19.4% (12/62)
+
+---
+
+### 6. The Professional Analyst
+
+**Overall Performance:**
+- Win Rate: 25.55% (82 wins in 321 games)
 - Average Final Audience: 4.7
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 846
+- Total Broadcasts: 930
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=384, FAKE=462, INCONCLUSIVE=0
+- Position Breakdown: REAL=486, FAKE=444, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Chaos Agent: 37.5% (24/64)
-- vs The Opportunist: 33.3% (29/87)
-- vs The Steady Builder: 33.3% (25/75)
+- vs The Chaos Agent: 34.3% (23/67)
+- vs The Saboteur: 33.8% (26/77)
+- vs The Steady Builder: 31.9% (23/72)
 
 **Worst Matchups:**
-- vs The Saboteur: 21.0% (17/81)
-- vs The Paranoid Skeptic: 20.2% (22/109)
-- vs The Cautious Scholar: 17.9% (15/84)
+- vs The Truth Seeker: 20.2% (24/119)
+- vs The Cautious Scholar: 19.8% (16/81)
+- vs The Reckless Gambler: 18.9% (17/90)
 
 ---
 
-### 6. The Conspiracy Theorist
+### 7. The Steady Builder
 
 **Overall Performance:**
-- Win Rate: 25.10% (65 wins in 259 games)
-- Average Final Audience: 4.4
+- Win Rate: 23.36% (64 wins in 274 games)
+- Average Final Audience: 4.7
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1431
+- Total Broadcasts: 752
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=754, FAKE=677, INCONCLUSIVE=0
+- Position Breakdown: REAL=382, FAKE=370, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Saboteur: 37.0% (27/73)
-- vs The Chaos Agent: 29.3% (17/58)
-- vs The Steady Builder: 28.1% (18/64)
+- vs The Saboteur: 35.7% (25/70)
+- vs The Opportunist: 28.4% (19/67)
+- vs The Cautious Scholar: 26.7% (20/75)
 
 **Worst Matchups:**
-- vs The Paranoid Skeptic: 22.0% (18/82)
-- vs The Professional Analyst: 21.4% (18/84)
-- vs The Meta-Reader: 17.5% (11/63)
+- vs The Paranoid Skeptic: 19.8% (22/111)
+- vs The Meta-Reader: 19.0% (11/58)
+- vs The Truth Seeker: 14.9% (13/87)
 
 ---
 
-### 7. The Meta-Reader
+### 8. The Reckless Gambler
 
 **Overall Performance:**
-- Win Rate: 20.89% (61 wins in 292 games)
-- Average Final Audience: 4.4
+- Win Rate: 18.70% (72 wins in 385 games)
+- Average Final Audience: 4.3
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 706
+- Total Broadcasts: 2024
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=362, FAKE=344, INCONCLUSIVE=0
+- Position Breakdown: REAL=1094, FAKE=930, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Saboteur: 32.0% (24/75)
-- vs The Opportunist: 27.3% (18/66)
-- vs The Paranoid Skeptic: 22.6% (28/124)
+- vs The Conspiracy Theorist: 27.4% (17/62)
+- vs The Meta-Reader: 25.8% (24/93)
+- vs The Chaos Agent: 23.4% (18/77)
 
 **Worst Matchups:**
-- vs The Chaos Agent: 17.5% (10/57)
-- vs The Truth Seeker: 16.7% (16/96)
-- vs The Steady Builder: 16.4% (10/61)
-
----
-
-### 8. The Steady Builder
-
-**Overall Performance:**
-- Win Rate: 18.53% (58 wins in 313 games)
-- Average Final Audience: 4.6
-- Average Final Credibility: 5.00
-
-**Playstyle:**
-- Total Broadcasts: 822
-- Bluff Rate: 100.0%
-- Consensus Participation: 100.0%
-- Position Breakdown: REAL=446, FAKE=376, INCONCLUSIVE=0
-
-**Best Matchups:**
-- vs The Chaos Agent: 24.2% (16/66)
-- vs The Paranoid Skeptic: 23.8% (34/143)
-- vs The Cautious Scholar: 22.6% (19/84)
-
-**Worst Matchups:**
-- vs The Truth Seeker: 14.7% (16/109)
-- vs The Professional Analyst: 13.3% (10/75)
-- vs The Conspiracy Theorist: 12.5% (8/64)
+- vs The Cautious Scholar: 16.2% (16/99)
+- vs The Paranoid Skeptic: 15.0% (34/226)
+- vs The Calculated Strategist: 12.0% (16/133)
 
 ---
 
 ### 9. The Chaos Agent
 
 **Overall Performance:**
-- Win Rate: 15.21% (40 wins in 263 games)
-- Average Final Audience: 4.3
+- Win Rate: 17.72% (45 wins in 254 games)
+- Average Final Audience: 4.4
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1523
+- Total Broadcasts: 1355
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=753, FAKE=770, INCONCLUSIVE=0
+- Position Breakdown: REAL=738, FAKE=617, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Meta-Reader: 28.1% (16/57)
-- vs The Steady Builder: 22.7% (15/66)
-- vs The Conspiracy Theorist: 19.0% (11/58)
+- vs The Opportunist: 20.0% (17/85)
+- vs The Professional Analyst: 19.4% (13/67)
+- vs The Truth Seeker: 19.0% (16/84)
 
 **Worst Matchups:**
-- vs The Paranoid Skeptic: 11.9% (12/101)
-- vs The Reckless Gambler: 10.1% (8/79)
-- vs The Opportunist: 8.7% (6/69)
+- vs The Cautious Scholar: 14.8% (9/61)
+- vs The Saboteur: 14.5% (8/55)
+- vs The Reckless Gambler: 14.3% (11/77)
 
 ---
 
-### 10. The Reckless Gambler
+### 10. The Meta-Reader
 
 **Overall Performance:**
-- Win Rate: 14.39% (57 wins in 396 games)
+- Win Rate: 16.23% (50 wins in 308 games)
+- Average Final Audience: 4.5
+- Average Final Credibility: 5.00
+
+**Playstyle:**
+- Total Broadcasts: 712
+- Bluff Rate: 100.0%
+- Consensus Participation: 100.0%
+- Position Breakdown: REAL=371, FAKE=341, INCONCLUSIVE=0
+
+**Best Matchups:**
+- vs The Professional Analyst: 21.0% (17/81)
+- vs The Opportunist: 20.7% (17/82)
+- vs The Chaos Agent: 20.4% (11/54)
+
+**Worst Matchups:**
+- vs The Cautious Scholar: 12.5% (12/96)
+- vs The Steady Builder: 12.1% (7/58)
+- vs The Truth Seeker: 11.7% (13/111)
+
+---
+
+### 11. The Saboteur
+
+**Overall Performance:**
+- Win Rate: 9.27% (28 wins in 302 games)
 - Average Final Audience: 4.2
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 2217
+- Total Broadcasts: 1049
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=1110, FAKE=1107, INCONCLUSIVE=0
+- Position Breakdown: REAL=527, FAKE=522, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Professional Analyst: 19.3% (17/88)
-- vs The Chaos Agent: 19.0% (15/79)
-- vs The Truth Seeker: 18.8% (22/117)
+- vs The Opportunist: 16.7% (14/84)
+- vs The Conspiracy Theorist: 13.8% (8/58)
+- vs The Reckless Gambler: 11.0% (10/91)
 
 **Worst Matchups:**
-- vs The Opportunist: 10.5% (9/86)
-- vs The Meta-Reader: 10.0% (11/110)
-- vs The Paranoid Skeptic: 10.0% (23/231)
+- vs The Truth Seeker: 5.3% (5/95)
+- vs The Meta-Reader: 5.1% (4/79)
+- vs The Cautious Scholar: 4.8% (4/83)
 
 ---
 
-### 11. The Opportunist
+### 12. The Opportunist
 
 **Overall Performance:**
-- Win Rate: 10.89% (33 wins in 303 games)
-- Average Final Audience: 3.7
+- Win Rate: 7.96% (27 wins in 339 games)
+- Average Final Audience: 3.8
 - Average Final Credibility: 5.00
 
 **Playstyle:**
-- Total Broadcasts: 1462
+- Total Broadcasts: 1665
 - Bluff Rate: 100.0%
 - Consensus Participation: 100.0%
-- Position Breakdown: REAL=719, FAKE=743, INCONCLUSIVE=0
+- Position Breakdown: REAL=816, FAKE=849, INCONCLUSIVE=0
 
 **Best Matchups:**
-- vs The Steady Builder: 15.5% (13/84)
-- vs The Reckless Gambler: 15.1% (13/86)
-- vs The Saboteur: 15.0% (12/80)
+- vs The Saboteur: 11.9% (10/84)
+- vs The Conspiracy Theorist: 10.1% (7/69)
+- vs The Reckless Gambler: 10.1% (10/99)
 
 **Worst Matchups:**
-- vs The Chaos Agent: 7.2% (5/69)
-- vs The Truth Seeker: 5.7% (5/87)
-- vs The Cautious Scholar: 4.5% (4/88)
-
----
-
-### 12. The Saboteur
-
-**Overall Performance:**
-- Win Rate: 9.52% (30 wins in 315 games)
-- Average Final Audience: 4.0
-- Average Final Credibility: 5.00
-
-**Playstyle:**
-- Total Broadcasts: 1180
-- Bluff Rate: 100.0%
-- Consensus Participation: 100.0%
-- Position Breakdown: REAL=556, FAKE=624, INCONCLUSIVE=0
-
-**Best Matchups:**
-- vs The Meta-Reader: 13.3% (10/75)
-- vs The Calculated Strategist: 11.9% (10/84)
-- vs The Opportunist: 11.3% (9/80)
-
-**Worst Matchups:**
-- vs The Paranoid Skeptic: 8.9% (12/135)
-- vs The Truth Seeker: 6.4% (7/109)
-- vs The Cautious Scholar: 5.7% (5/87)
+- vs The Meta-Reader: 6.1% (5/82)
+- vs The Chaos Agent: 5.9% (5/85)
+- vs The Paranoid Skeptic: 5.6% (8/142)
 
 ---
 
 ## Strategic Recommendations
 
-### Top Tier Personalities (41%+ win rate):
-- **The Paranoid Skeptic**: Strong overall performance with 41.3% win rate
-- **The Cautious Scholar**: Strong overall performance with 40.8% win rate
-- **The Truth Seeker**: Strong overall performance with 39.3% win rate
+### Top Tier Personalities (42%+ win rate):
+- **The Paranoid Skeptic**: Strong overall performance with 41.6% win rate
+- **The Cautious Scholar**: Strong overall performance with 37.2% win rate
+- **The Truth Seeker**: Strong overall performance with 35.3% win rate
 
-### Bottom Tier Personalities (<14% win rate):
-- **The Reckless Gambler**: Underperforming at 14.4% win rate
-- **The Opportunist**: Underperforming at 10.9% win rate
-- **The Saboteur**: Underperforming at 9.5% win rate
+### Bottom Tier Personalities (<16% win rate):
+- **The Meta-Reader**: Underperforming at 16.2% win rate
+- **The Saboteur**: Underperforming at 9.3% win rate
+- **The Opportunist**: Underperforming at 8.0% win rate
 
 ### Balance Assessment
 
-- **Win Rate Spread:** 31.8%
+- **Win Rate Spread:** 33.7%
 - ⚠️ **Balance Issue Detected:** Significant disparity between top and bottom performers
-- **Recommendation:** Consider buffing The Saboteur or nerfing The Paranoid Skeptic
+- **Recommendation:** Consider buffing The Opportunist or nerfing The Paranoid Skeptic

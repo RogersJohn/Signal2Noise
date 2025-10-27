@@ -1,6 +1,6 @@
 # Random Personality Monte Carlo Analysis
 
-**Generated:** 26/10/2025, 18:27:51
+**Generated:** 26/10/2025, 22:25:09
 **Purpose:** Identify exploitable weaknesses in AI personalities
 **Method:** Random personality selection with duplicates allowed
 **Games per player count:** 500
@@ -14,8 +14,8 @@
 
 - **Games Simulated:** 500
 - **Average Game Length:** 7.00 rounds
-- **Dominant Personalities:** The Cautious Scholar, The Calculated Strategist, The Truth Seeker
-- **Weakest Personalities:** The Opportunist, The Saboteur, The Meta-Reader
+- **Dominant Personalities:** The Cautious Scholar, The Steady Builder, The Paranoid Skeptic
+- **Weakest Personalities:** The Opportunist, The Saboteur, The Chaos Agent
 
 **Starting Position Win Rates:**
 - Position 1: 100.00%
@@ -26,8 +26,8 @@
 
 - **Games Simulated:** 500
 - **Average Game Length:** 7.00 rounds
-- **Dominant Personalities:** The Cautious Scholar, The Professional Analyst, The Paranoid Skeptic
-- **Weakest Personalities:** The Opportunist, The Saboteur, The Reckless Gambler
+- **Dominant Personalities:** The Calculated Strategist, The Truth Seeker, The Cautious Scholar
+- **Weakest Personalities:** The Opportunist, The Saboteur, The Conspiracy Theorist
 
 **Starting Position Win Rates:**
 - Position 1: 100.00%
@@ -39,8 +39,8 @@
 
 - **Games Simulated:** 500
 - **Average Game Length:** 7.00 rounds
-- **Dominant Personalities:** The Cautious Scholar, The Paranoid Skeptic, The Steady Builder
-- **Weakest Personalities:** The Opportunist, The Saboteur, The Conspiracy Theorist
+- **Dominant Personalities:** The Cautious Scholar, The Professional Analyst, The Truth Seeker
+- **Weakest Personalities:** The Opportunist, The Saboteur, The Chaos Agent
 
 **Starting Position Win Rates:**
 - Position 1: 100.00%
@@ -57,69 +57,69 @@
 
 | Rank | Personality | Total Games | Win Rate | Avg Rank | Total Wins |
 |------|-------------|-------------|----------|----------|------------|
-| 1 | The Cautious Scholar | 542 | 36.16% | 2.16 | 196 |
-| 2 | The Paranoid Skeptic | 508 | 29.92% | 2.34 | 152 |
-| 3 | The Professional Analyst | 513 | 29.63% | 2.37 | 152 |
-| 4 | The Calculated Strategist | 510 | 29.02% | 2.38 | 148 |
-| 5 | The Truth Seeker | 485 | 27.63% | 2.33 | 134 |
-| 6 | The Steady Builder | 473 | 26.85% | 2.43 | 127 |
-| 7 | The Meta-Reader | 468 | 23.93% | 2.53 | 112 |
-| 8 | The Conspiracy Theorist | 480 | 23.75% | 2.51 | 114 |
-| 9 | The Chaos Agent | 543 | 23.57% | 2.55 | 128 |
-| 10 | The Reckless Gambler | 497 | 23.34% | 2.53 | 116 |
-| 11 | The Saboteur | 476 | 16.39% | 2.84 | 78 |
-| 12 | The Opportunist | 505 | 8.51% | 3.06 | 43 |
+| 1 | The Cautious Scholar | 543 | 34.07% | 2.21 | 185 |
+| 2 | The Paranoid Skeptic | 508 | 31.10% | 2.31 | 158 |
+| 3 | The Truth Seeker | 483 | 30.43% | 2.32 | 147 |
+| 4 | The Professional Analyst | 508 | 28.94% | 2.38 | 147 |
+| 5 | The Calculated Strategist | 495 | 27.88% | 2.35 | 138 |
+| 6 | The Steady Builder | 491 | 27.29% | 2.37 | 134 |
+| 7 | The Reckless Gambler | 514 | 26.26% | 2.52 | 135 |
+| 8 | The Meta-Reader | 480 | 23.75% | 2.52 | 114 |
+| 9 | The Conspiracy Theorist | 460 | 22.39% | 2.61 | 103 |
+| 10 | The Chaos Agent | 499 | 21.84% | 2.61 | 109 |
+| 11 | The Saboteur | 501 | 14.57% | 2.80 | 73 |
+| 12 | The Opportunist | 518 | 11.00% | 3.01 | 57 |
 
 ### 3-Player Game Analysis
 
 | Rank | Personality | Games | Win Rate | Avg Audience | Avg Cred | Bluff Rate | Bankruptcy Rate | Avg Rank |
 |------|-------------|-------|----------|--------------|----------|------------|-----------------|----------|
-| 1 | The Cautious Scholar | 137 | 45.99% | 5.0 | 5.00 | 99.8% | 0.0% | 1.77 |
-| 2 | The Calculated Strategist | 129 | 40.31% | 4.8 | 5.00 | 100.0% | 0.0% | 1.86 |
-| 3 | The Truth Seeker | 111 | 38.74% | 4.9 | 5.00 | 100.0% | 0.0% | 1.86 |
-| 4 | The Chaos Agent | 132 | 37.88% | 5.1 | 5.00 | 97.6% | 0.0% | 1.91 |
-| 5 | The Conspiracy Theorist | 115 | 37.39% | 4.6 | 5.00 | 99.2% | 0.0% | 1.90 |
-| 6 | The Professional Analyst | 140 | 35.71% | 4.8 | 5.00 | 100.0% | 0.0% | 1.96 |
-| 7 | The Paranoid Skeptic | 115 | 35.65% | 4.9 | 5.00 | 96.1% | 0.0% | 1.93 |
-| 8 | The Reckless Gambler | 123 | 33.33% | 4.8 | 5.00 | 99.1% | 0.0% | 1.98 |
-| 9 | The Steady Builder | 133 | 33.08% | 4.7 | 5.00 | 100.0% | 0.0% | 1.98 |
-| 10 | The Meta-Reader | 117 | 29.91% | 4.4 | 5.00 | 100.0% | 0.0% | 2.08 |
-| 11 | The Saboteur | 108 | 17.59% | 4.0 | 5.00 | 100.0% | 0.0% | 2.31 |
-| 12 | The Opportunist | 140 | 13.57% | 3.8 | 5.00 | 99.8% | 0.0% | 2.46 |
+| 1 | The Cautious Scholar | 141 | 43.97% | 5.0 | 5.00 | 100.0% | 0.0% | 1.79 |
+| 2 | The Steady Builder | 106 | 43.40% | 4.7 | 5.00 | 100.0% | 0.0% | 1.80 |
+| 3 | The Paranoid Skeptic | 138 | 41.30% | 4.7 | 5.00 | 100.0% | 0.0% | 1.88 |
+| 4 | The Truth Seeker | 118 | 37.29% | 4.8 | 5.00 | 100.0% | 0.0% | 1.88 |
+| 5 | The Reckless Gambler | 128 | 35.94% | 4.5 | 5.00 | 100.0% | 0.0% | 2.02 |
+| 6 | The Professional Analyst | 125 | 34.40% | 4.8 | 5.00 | 100.0% | 0.0% | 1.98 |
+| 7 | The Conspiracy Theorist | 112 | 33.93% | 4.7 | 5.00 | 100.0% | 0.0% | 2.05 |
+| 8 | The Calculated Strategist | 114 | 32.46% | 4.7 | 5.00 | 100.0% | 0.0% | 2.00 |
+| 9 | The Meta-Reader | 121 | 30.58% | 4.3 | 5.00 | 100.0% | 0.0% | 2.06 |
+| 10 | The Chaos Agent | 145 | 27.59% | 4.4 | 5.00 | 100.0% | 0.0% | 2.09 |
+| 11 | The Saboteur | 114 | 21.93% | 4.0 | 5.00 | 100.0% | 0.0% | 2.19 |
+| 12 | The Opportunist | 138 | 18.12% | 3.7 | 5.00 | 100.0% | 0.0% | 2.24 |
 
 ### 4-Player Game Analysis
 
 | Rank | Personality | Games | Win Rate | Avg Audience | Avg Cred | Bluff Rate | Bankruptcy Rate | Avg Rank |
 |------|-------------|-------|----------|--------------|----------|------------|-----------------|----------|
-| 1 | The Cautious Scholar | 206 | 35.44% | 5.0 | 5.00 | 100.0% | 0.0% | 2.21 |
-| 2 | The Professional Analyst | 169 | 32.54% | 4.7 | 5.00 | 100.0% | 0.0% | 2.32 |
-| 3 | The Paranoid Skeptic | 182 | 30.77% | 4.7 | 5.00 | 100.0% | 0.0% | 2.31 |
-| 4 | The Calculated Strategist | 159 | 28.30% | 4.8 | 5.00 | 100.0% | 0.0% | 2.36 |
-| 5 | The Truth Seeker | 153 | 27.45% | 4.9 | 5.00 | 100.0% | 0.0% | 2.36 |
-| 6 | The Meta-Reader | 158 | 25.32% | 4.5 | 5.00 | 100.0% | 0.0% | 2.48 |
-| 7 | The Steady Builder | 165 | 24.85% | 4.7 | 5.00 | 100.0% | 0.0% | 2.46 |
-| 8 | The Conspiracy Theorist | 171 | 22.81% | 4.6 | 5.00 | 100.0% | 0.0% | 2.53 |
-| 9 | The Chaos Agent | 189 | 21.16% | 4.5 | 5.00 | 100.0% | 0.0% | 2.60 |
-| 10 | The Reckless Gambler | 151 | 20.53% | 4.6 | 5.00 | 100.0% | 0.0% | 2.65 |
-| 11 | The Saboteur | 142 | 16.20% | 4.1 | 5.00 | 100.0% | 0.0% | 2.80 |
-| 12 | The Opportunist | 155 | 9.68% | 3.5 | 5.00 | 100.0% | 0.0% | 3.06 |
+| 1 | The Calculated Strategist | 184 | 32.61% | 4.7 | 5.00 | 100.0% | 0.0% | 2.18 |
+| 2 | The Truth Seeker | 154 | 31.82% | 4.9 | 5.00 | 100.0% | 0.0% | 2.32 |
+| 3 | The Cautious Scholar | 183 | 31.15% | 5.0 | 5.00 | 100.0% | 0.0% | 2.33 |
+| 4 | The Paranoid Skeptic | 164 | 31.10% | 4.6 | 5.00 | 100.0% | 0.0% | 2.38 |
+| 5 | The Professional Analyst | 169 | 28.99% | 4.8 | 5.00 | 100.0% | 0.0% | 2.37 |
+| 6 | The Meta-Reader | 143 | 27.27% | 4.5 | 5.00 | 100.0% | 0.0% | 2.42 |
+| 7 | The Reckless Gambler | 190 | 24.74% | 4.6 | 5.00 | 100.0% | 0.0% | 2.50 |
+| 8 | The Chaos Agent | 153 | 24.18% | 4.5 | 5.00 | 100.0% | 0.0% | 2.51 |
+| 9 | The Steady Builder | 164 | 23.78% | 4.8 | 5.00 | 100.0% | 0.0% | 2.53 |
+| 10 | The Conspiracy Theorist | 163 | 20.86% | 4.4 | 5.00 | 100.0% | 0.0% | 2.63 |
+| 11 | The Saboteur | 179 | 13.41% | 4.2 | 5.00 | 100.0% | 0.0% | 2.76 |
+| 12 | The Opportunist | 154 | 9.09% | 3.9 | 5.00 | 100.0% | 0.0% | 3.12 |
 
 ### 5-Player Game Analysis
 
 | Rank | Personality | Games | Win Rate | Avg Audience | Avg Cred | Bluff Rate | Bankruptcy Rate | Avg Rank |
 |------|-------------|-------|----------|--------------|----------|------------|-----------------|----------|
-| 1 | The Cautious Scholar | 199 | 30.15% | 5.0 | 5.00 | 100.0% | 0.0% | 2.51 |
-| 2 | The Paranoid Skeptic | 211 | 26.07% | 4.7 | 5.00 | 100.0% | 0.0% | 2.76 |
-| 3 | The Steady Builder | 175 | 24.00% | 4.7 | 5.00 | 100.0% | 0.0% | 2.84 |
-| 4 | The Professional Analyst | 204 | 23.04% | 4.8 | 5.00 | 100.0% | 0.0% | 2.82 |
-| 5 | The Calculated Strategist | 222 | 22.97% | 4.6 | 5.00 | 100.0% | 0.0% | 2.91 |
-| 6 | The Truth Seeker | 221 | 22.17% | 4.9 | 5.00 | 100.0% | 0.0% | 2.76 |
-| 7 | The Reckless Gambler | 223 | 19.73% | 4.4 | 5.00 | 100.0% | 0.0% | 2.96 |
-| 8 | The Meta-Reader | 193 | 19.17% | 4.5 | 5.00 | 100.0% | 0.0% | 3.04 |
-| 9 | The Chaos Agent | 222 | 17.12% | 4.4 | 5.00 | 100.0% | 0.0% | 3.14 |
-| 10 | The Conspiracy Theorist | 194 | 16.49% | 4.6 | 5.00 | 100.0% | 0.0% | 3.11 |
-| 11 | The Saboteur | 226 | 15.93% | 4.1 | 5.00 | 100.0% | 0.0% | 3.39 |
-| 12 | The Opportunist | 210 | 4.29% | 4.0 | 5.00 | 100.0% | 0.0% | 3.68 |
+| 1 | The Cautious Scholar | 219 | 30.14% | 5.0 | 5.00 | 100.0% | 0.0% | 2.50 |
+| 2 | The Professional Analyst | 214 | 25.70% | 4.8 | 5.00 | 100.0% | 0.0% | 2.79 |
+| 3 | The Truth Seeker | 211 | 25.59% | 4.9 | 5.00 | 100.0% | 0.0% | 2.75 |
+| 4 | The Paranoid Skeptic | 206 | 24.27% | 4.8 | 5.00 | 100.0% | 0.0% | 2.67 |
+| 5 | The Steady Builder | 221 | 22.17% | 4.7 | 5.00 | 100.0% | 0.0% | 2.79 |
+| 6 | The Reckless Gambler | 196 | 21.43% | 4.6 | 5.00 | 100.0% | 0.0% | 3.04 |
+| 7 | The Calculated Strategist | 197 | 20.81% | 4.7 | 5.00 | 100.0% | 0.0% | 2.88 |
+| 8 | The Meta-Reader | 216 | 17.59% | 4.4 | 5.00 | 100.0% | 0.0% | 3.10 |
+| 9 | The Conspiracy Theorist | 185 | 16.76% | 4.5 | 5.00 | 100.0% | 0.0% | 3.15 |
+| 10 | The Chaos Agent | 201 | 15.92% | 4.5 | 5.00 | 100.0% | 0.0% | 3.22 |
+| 11 | The Saboteur | 208 | 11.54% | 4.2 | 5.00 | 100.0% | 0.0% | 3.45 |
+| 12 | The Opportunist | 226 | 7.96% | 3.9 | 5.00 | 100.0% | 0.0% | 3.66 |
 
 ---
 
@@ -133,9 +133,9 @@ No personalities show concerning bankruptcy rates.
 
 Bottom 3 performers across all formats:
 
-- **The Reckless Gambler**: 23.34% win rate (avg rank: 2.53)
-- **The Saboteur**: 16.39% win rate (avg rank: 2.84)
-- **The Opportunist**: 8.51% win rate (avg rank: 3.06)
+- **The Chaos Agent**: 21.84% win rate (avg rank: 2.61)
+- **The Saboteur**: 14.57% win rate (avg rank: 2.80)
+- **The Opportunist**: 11.00% win rate (avg rank: 3.01)
 
 **Exploitation Strategy:** These personalities are weak - they won't challenge you for consensus.
 
@@ -143,9 +143,9 @@ Bottom 3 performers across all formats:
 
 Top 3 performers across all formats:
 
-- **The Cautious Scholar**: 36.16% win rate (avg rank: 2.16)
-- **The Paranoid Skeptic**: 29.92% win rate (avg rank: 2.34)
-- **The Professional Analyst**: 29.63% win rate (avg rank: 2.37)
+- **The Cautious Scholar**: 34.07% win rate (avg rank: 2.21)
+- **The Paranoid Skeptic**: 31.10% win rate (avg rank: 2.31)
+- **The Truth Seeker**: 30.43% win rate (avg rank: 2.32)
 
 **Counter Strategy:** These personalities will compete aggressively - form coalitions against them.
 
@@ -170,7 +170,7 @@ Top 3 performers across all formats:
 
 ## Key Insights
 
-1. **Performance Gap:** The best personality (The Cautious Scholar) has a 27.6% higher win rate than the worst (The Opportunist). This is a SIGNIFICANT imbalance.
+1. **Performance Gap:** The best personality (The Cautious Scholar) has a 23.1% higher win rate than the worst (The Opportunist). This is a SIGNIFICANT imbalance.
 
 2. **Bluffing Strategy:** Analysis of aggressive bluffers vs overall population to determine if bluffing pays off.
 

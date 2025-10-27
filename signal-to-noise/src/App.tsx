@@ -156,7 +156,7 @@ function App() {
   };
 
   // ADVERTISE PHASE: Signal interest in a conspiracy
-  const handleAdvertise = (position: 'REAL' | 'FAKE', betAmount: number) => {
+  const handleAdvertise = () => {
     if (!selectedConspiracy) {
       setMessage('Select a conspiracy to advertise interest in');
       return;
@@ -166,14 +166,20 @@ function App() {
       id: `advertise_${Date.now()}_${currentPlayer.id}`,
       playerId: currentPlayer.id,
       conspiracyId: selectedConspiracy,
-      position,
-      betAmount,
       timestamp: Date.now()
     };
 
     let transitioned = false;
     setGameState(prev => {
       if (!prev) return prev;
+
+      // Give +1 audience for advertising
+      const updatedPlayers = [...prev.players];
+      updatedPlayers[prev.currentPlayerIndex] = {
+        ...updatedPlayers[prev.currentPlayerIndex],
+        audience: updatedPlayers[prev.currentPlayerIndex].audience + 1
+      };
+
       const updatedQueue = [...prev.advertiseQueue, advertise];
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const allPlayersWent = nextPlayerIndex === 0;
@@ -184,6 +190,7 @@ function App() {
 
       return {
         ...prev,
+        players: updatedPlayers,
         advertiseQueue: updatedQueue,
         currentPlayerIndex: nextPlayerIndex,
         phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
@@ -194,7 +201,7 @@ function App() {
     if (transitioned) {
       setMessage('Advertise phase complete. Late-breaking evidence phase begins - you may play ONE card face-up!');
     } else {
-      setMessage(`${currentPlayer.name} bet ${betAmount} audience that ${selectedConspiracy} is ${position}`);
+      setMessage(`${currentPlayer.name} advertised interest in ${selectedConspiracy} (+1 audience)`);
     }
   };
 
@@ -211,6 +218,14 @@ function App() {
     let transitioned = false;
     setGameState(prev => {
       if (!prev) return prev;
+
+      // Lose -1 audience for passing
+      const updatedPlayers = [...prev.players];
+      updatedPlayers[prev.currentPlayerIndex] = {
+        ...updatedPlayers[prev.currentPlayerIndex],
+        audience: Math.max(0, updatedPlayers[prev.currentPlayerIndex].audience - 1)
+      };
+
       const updatedQueue = [...prev.advertiseQueue, passAdvertise];
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const allPlayersWent = nextPlayerIndex === 0;
@@ -221,6 +236,7 @@ function App() {
 
       return {
         ...prev,
+        players: updatedPlayers,
         advertiseQueue: updatedQueue,
         currentPlayerIndex: nextPlayerIndex,
         phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
@@ -230,7 +246,7 @@ function App() {
     if (transitioned) {
       setMessage('Advertise phase complete. Late-breaking evidence phase begins - you may play ONE card face-up!');
     } else {
-      setMessage(`${currentPlayer.name} passed on advertising`);
+      setMessage(`${currentPlayer.name} passed on advertising (-1 audience)`);
     }
   };
 
@@ -328,7 +344,9 @@ function App() {
     }
 
     const assignedCards = currentPlayer.assignedEvidence[selectedConspiracy] || [];
-    const isBandwagoning = assignedCards.length === 0;
+    const faceUpCards = currentPlayer.faceUpEvidence?.[selectedConspiracy] || [];
+    const totalEvidence = assignedCards.length + faceUpCards.length;
+    const isBandwagoning = totalEvidence === 0;
 
     if (position === 'INCONCLUSIVE') {
       setMessage(`${currentPlayer.name} broadcasts INCONCLUSIVE (???). Safe choice: 2 base points, no credibility risk.`);
@@ -341,7 +359,7 @@ function App() {
       playerId: currentPlayer.id,
       conspiracyId: selectedConspiracy,
       position,
-      evidenceCount: assignedCards.length,
+      evidenceCount: totalEvidence,
       timestamp: Date.now()
     };
 
@@ -473,7 +491,10 @@ function App() {
             const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
             if (playerIndex >= 0) {
               const player = { ...updatedPlayers[playerIndex] };
-              const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+              // Merge face-down evidence (assignedEvidence) with face-up evidence (faceUpEvidence)
+              const assignedCards = player.assignedEvidence[conspiracy.id] || [];
+              const faceUpCards = player.faceUpEvidence?.[conspiracy.id] || [];
+              const evidenceUsed = [...assignedCards, ...faceUpCards];
 
               // Calculate audience points using consensus-based formula
               let audiencePoints = 0;
@@ -570,8 +591,9 @@ function App() {
           // Collect ALL evidence assigned to this conspiracy by ALL players
           const allEvidenceOnConspiracy: any[] = [];
           updatedPlayers.forEach(player => {
-            const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
-            allEvidenceOnConspiracy.push(...evidenceUsed);
+            const assigned = player.assignedEvidence[conspiracy.id] || [];
+            const faceUp = player.faceUpEvidence?.[conspiracy.id] || [];
+            allEvidenceOnConspiracy.push(...assigned, ...faceUp);
           });
 
           // Determine truth based on evidence proof values
@@ -582,7 +604,9 @@ function App() {
             const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
             if (playerIndex >= 0) {
               const player = { ...updatedPlayers[playerIndex] };
-              const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+              const assigned = player.assignedEvidence[conspiracy.id] || [];
+              const faceUp = player.faceUpEvidence?.[conspiracy.id] || [];
+              const evidenceUsed = [...assigned, ...faceUp];
               const hasBluffs = evidenceUsed.some(card => card.proofValue === 'BLUFF');
 
               if (truth === 'TIE') {
@@ -611,29 +635,6 @@ function App() {
             }
           });
 
-          // STEP 4: Pay out advertised bets
-          // Check all advertisements on this conspiracy and pay out based on consensus
-          const advertisements = prev.advertiseQueue.filter(
-            a => a.conspiracyId === conspiracy.id && !a.isPassed && a.position && a.betAmount
-          );
-
-          advertisements.forEach(ad => {
-            const playerIndex = updatedPlayers.findIndex(p => p.id === ad.playerId);
-            if (playerIndex >= 0) {
-              const player = { ...updatedPlayers[playerIndex] };
-
-              // Check if advertised position matches consensus
-              if (ad.position === position) {
-                // Won the bet!
-                player.audience += ad.betAmount!;
-              } else {
-                // Lost the bet
-                player.audience = Math.max(0, player.audience - ad.betAmount!);
-              }
-
-              updatedPlayers[playerIndex] = player;
-            }
-          });
         } else {
           // No consensus - still track in history but mark as not scored
           prev.broadcastQueue
@@ -701,10 +702,14 @@ function App() {
         round: prev.round + 1
       });
 
-      // Determine starting player for next round (losing player goes first - comeback mechanic)
-      const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, player, idx, arr) =>
-        player.audience < arr[lowestIdx].audience ? idx : lowestIdx
-      , 0);
+      // Determine starting player for next round (highest scoring player goes first)
+      // If tied on score, player with highest credibility goes first
+      const startingPlayerIndex = updatedPlayers.reduce((bestIdx, player, idx, arr) => {
+        const bestPlayer = arr[bestIdx];
+        if (player.audience > bestPlayer.audience) return idx;
+        if (player.audience === bestPlayer.audience && player.credibility > bestPlayer.credibility) return idx;
+        return bestIdx;
+      }, 0);
 
       return {
         ...prev,
@@ -764,6 +769,32 @@ function App() {
 
       <PhaseIndicator phase={gameState.phase} round={gameState.round} />
 
+      {/* Score Display */}
+      <div className="scoreboard">
+        <div className="scoreboard-title">Current Scores</div>
+        <div className="scoreboard-players">
+          {gameState.players.map(p => (
+            <div
+              key={p.id}
+              className={`scoreboard-player ${p.id === currentPlayer.id ? 'current-player' : ''}`}
+            >
+              <span className="player-name" style={{ color: p.color }}>
+                {p.name}
+                {p.id === currentPlayer.id && ' ⭐'}
+              </span>
+              <span className="player-stats">
+                <span className="stat-audience" title="Audience">
+                  👥 {p.audience}
+                </span>
+                <span className="stat-credibility" title="Credibility">
+                  ⚖️ {p.credibility}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <HelpPanel phase={gameState.phase} />
 
       {message && <div className="message-banner">{message}</div>}
@@ -777,7 +808,7 @@ function App() {
         allPlayers={gameState.players}
       />
 
-      {(gameState.phase === 'ADVERTISE' || gameState.phase === 'BROADCAST') && (
+      {(gameState.phase === 'ADVERTISE' || gameState.phase === 'LATE_EVIDENCE' || gameState.phase === 'BROADCAST') && (
         <AdvertiseQueue
           queue={gameState.advertiseQueue}
           players={gameState.players}

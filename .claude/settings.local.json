@@ -38,7 +38,12 @@
       "Bash(taskkill //F //PID 14932)",
       "Bash(cat:*)",
       "Bash(tree:*)",
-      "Bash(npx ts-node:*)"
+      "Bash(npx ts-node:*)",
+      "Bash(awk:*)",
+      "Bash(xargs:*)",
+      "Bash(for f in ANALYTICS_REPORT.md COALITION_2_1_1_REPORT.md HOMOGENEOUS_GROUP_REPORT.md KNOCKOUT_TOURNAMENT_REPORT.md MAJORITY_MINORITY_REPORT.md MONTE_CARLO_REPORT.md ROUND_ROBIN_TOURNAMENT_REPORT.md TEAM_2V2_REPORT.md)",
+      "Bash(do mv \"$f\" test-results/)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

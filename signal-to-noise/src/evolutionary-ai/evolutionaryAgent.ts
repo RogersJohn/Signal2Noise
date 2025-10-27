@@ -223,30 +223,18 @@ export class EvolutionaryAgent implements AIPersonality {
     let position: Position;
     let selectedEvidence: EvidenceCard[] = [];
 
-    // Check advertise fakeout strategy
-    const advertised = gameState.advertiseQueue.find(
-      a => a.playerId === playerState.id && a.conspiracyId === conspiracy.id
-    );
+    // Normal position selection based on evidence
+    const realCount = realEvidence.length;
+    const fakeCount = fakeEvidence.length;
+    const adjustedRealCount = realCount + (this.genome.realBias * 2);
+    const adjustedFakeCount = fakeCount - (this.genome.realBias * 2);
 
-    const shouldFakeout = advertised && Math.random() < this.genome.advertiseFakeouts;
-
-    if (shouldFakeout && advertised) {
-      // Broadcast opposite of what we advertised
-      position = advertised.position === 'REAL' ? 'FAKE' : 'REAL';
+    if (adjustedRealCount > adjustedFakeCount) {
+      position = 'REAL';
+    } else if (adjustedFakeCount > adjustedRealCount) {
+      position = 'FAKE';
     } else {
-      // Normal position selection based on evidence
-      const realCount = realEvidence.length;
-      const fakeCount = fakeEvidence.length;
-      const adjustedRealCount = realCount + (this.genome.realBias * 2);
-      const adjustedFakeCount = fakeCount - (this.genome.realBias * 2);
-
-      if (adjustedRealCount > adjustedFakeCount) {
-        position = 'REAL';
-      } else if (adjustedFakeCount > adjustedRealCount) {
-        position = 'FAKE';
-      } else {
-        position = Math.random() < 0.5 ? 'REAL' : 'FAKE';
-      }
+      position = Math.random() < 0.5 ? 'REAL' : 'FAKE';
     }
 
     // Select evidence to play

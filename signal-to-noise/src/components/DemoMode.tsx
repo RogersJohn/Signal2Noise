@@ -166,6 +166,9 @@ export function DemoMode() {
       case 'ADVERTISE':
         handleAdvertisePhase(currentPlayer, personality);
         break;
+      case 'LATE_EVIDENCE':
+        handleLateEvidencePhase(currentPlayer, personality);
+        break;
       case 'BROADCAST':
         handleBroadcastPhase(currentPlayer, personality);
         break;
@@ -244,6 +247,7 @@ export function DemoMode() {
           return result.updatedPlayer;
         });
 
+        // Determine starting player for advertise (losing player gets advantage in advertise phase)
         const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, p, idx, arr) =>
           p.audience < arr[lowestIdx].audience ? idx : lowestIdx
         , 0);
@@ -283,6 +287,14 @@ export function DemoMode() {
 
       setGameState(prev => {
         if (!prev) return prev;
+
+        // Give +1 audience for advertising
+        const updatedPlayers = [...prev.players];
+        updatedPlayers[prev.currentPlayerIndex] = {
+          ...updatedPlayers[prev.currentPlayerIndex],
+          audience: updatedPlayers[prev.currentPlayerIndex].audience + 1
+        };
+
         const advertise = {
           id: `advertise_${Date.now()}_${player.id}`,
           playerId: player.id,
@@ -296,9 +308,10 @@ export function DemoMode() {
 
         return {
           ...prev,
+          players: updatedPlayers,
           advertiseQueue: updatedQueue,
           currentPlayerIndex: nextPlayerIndex,
-          phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+          phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
         };
       });
 
@@ -321,6 +334,14 @@ export function DemoMode() {
       // Pass
       setGameState(prev => {
         if (!prev) return prev;
+
+        // Lose -1 audience for passing
+        const updatedPlayers = [...prev.players];
+        updatedPlayers[prev.currentPlayerIndex] = {
+          ...updatedPlayers[prev.currentPlayerIndex],
+          audience: Math.max(0, updatedPlayers[prev.currentPlayerIndex].audience - 1)
+        };
+
         const passAdvertise = {
           id: `advertise_pass_${Date.now()}_${player.id}`,
           playerId: player.id,
@@ -335,9 +356,10 @@ export function DemoMode() {
 
         return {
           ...prev,
+          players: updatedPlayers,
           advertiseQueue: updatedQueue,
           currentPlayerIndex: nextPlayerIndex,
-          phase: allPlayersWent ? 'BROADCAST' : 'ADVERTISE'
+          phase: allPlayersWent ? 'LATE_EVIDENCE' : 'ADVERTISE'
         };
       });
 
@@ -355,7 +377,142 @@ export function DemoMode() {
         round: currentRound,
         phase: 'ADVERTISE',
         player: 'System',
-        message: 'Advertise phase complete. Broadcast phase begins!',
+        message: 'Advertise phase complete. Late-breaking evidence phase begins!',
+        type: 'phase'
+      });
+    }
+  };
+
+  const handleLateEvidencePhase = (player: PlayerState, personality: AIPersonality) => {
+    if (!gameState) return;
+
+    const currentRound = gameState.round;
+    const playerCount = gameState.players.length;
+    const currentLateEvidenceCount = gameState.players.filter(p => p.faceUpEvidence && Object.keys(p.faceUpEvidence).length > 0).length;
+
+    // AI decides whether to play late evidence (70% chance if they have cards)
+    const shouldPlayCard = player.evidenceHand.length > 0 && Math.random() < 0.7;
+
+    if (shouldPlayCard) {
+      // Find conspiracies the AI has advertised or has evidence for
+      const advertisedConspiracy = gameState.advertiseQueue.find(
+        a => a.playerId === player.id && !a.isPassed
+      )?.conspiracyId;
+
+      const conspiraciesWithEvidence = Object.keys(player.assignedEvidence).filter(
+        cId => player.assignedEvidence[cId].length > 0
+      );
+
+      // Prioritize advertised conspiracy, then any conspiracy with evidence
+      const targetConspiracies = advertisedConspiracy
+        ? [advertisedConspiracy, ...conspiraciesWithEvidence]
+        : conspiraciesWithEvidence;
+
+      if (targetConspiracies.length > 0) {
+        // Try to find a card that supports one of the target conspiracies
+        for (const conspiracyId of targetConspiracies) {
+          const validCards = player.evidenceHand.filter(card =>
+            canSupportConspiracy(card, conspiracyId)
+          );
+
+          if (validCards.length > 0) {
+            // Pick a random valid card
+            const card = validCards[Math.floor(Math.random() * validCards.length)];
+            const conspiracy = gameState.conspiracies.find(c => c.id === conspiracyId);
+
+            // Play the card
+            setGameState(prev => {
+              if (!prev) return prev;
+              const updatedPlayers = [...prev.players];
+              const playerIndex = prev.currentPlayerIndex;
+              const updatedPlayer = { ...updatedPlayers[playerIndex] };
+
+              // Remove card from hand
+              updatedPlayer.evidenceHand = updatedPlayer.evidenceHand.filter(c => c.id !== card.id);
+
+              // Add to face-up evidence
+              if (!updatedPlayer.faceUpEvidence) {
+                updatedPlayer.faceUpEvidence = {};
+              }
+              if (!updatedPlayer.faceUpEvidence[conspiracyId]) {
+                updatedPlayer.faceUpEvidence[conspiracyId] = [];
+              }
+              updatedPlayer.faceUpEvidence[conspiracyId] = [
+                ...updatedPlayer.faceUpEvidence[conspiracyId],
+                card
+              ];
+
+              updatedPlayers[playerIndex] = updatedPlayer;
+
+              const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+              const allPlayersWent = nextPlayerIndex === 0;
+
+              return {
+                ...prev,
+                players: updatedPlayers,
+                currentPlayerIndex: nextPlayerIndex,
+                phase: allPlayersWent ? 'BROADCAST' : 'LATE_EVIDENCE'
+              };
+            });
+
+            addLog({
+              round: currentRound,
+              phase: 'LATE_EVIDENCE',
+              player: player.name,
+              message: `Played "${card.name}" face-up on ${conspiracy?.name}`,
+              type: 'action'
+            });
+
+            addLog({
+              round: currentRound,
+              phase: 'LATE_EVIDENCE',
+              player: player.name,
+              message: getCommentary(personality, 'late_evidence', { card, conspiracy }),
+              type: 'commentary'
+            });
+
+            if (currentLateEvidenceCount === playerCount - 1) {
+              addLog({
+                round: currentRound,
+                phase: 'LATE_EVIDENCE',
+                player: 'System',
+                message: 'Late-breaking evidence phase complete. Broadcast phase begins!',
+                type: 'phase'
+              });
+            }
+            return;
+          }
+        }
+      }
+    }
+
+    // Pass on late evidence
+    setGameState(prev => {
+      if (!prev) return prev;
+      const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+      const allPlayersWent = nextPlayerIndex === 0;
+
+      return {
+        ...prev,
+        currentPlayerIndex: nextPlayerIndex,
+        phase: allPlayersWent ? 'BROADCAST' : 'LATE_EVIDENCE'
+      };
+    });
+
+    addLog({
+      round: currentRound,
+      phase: 'LATE_EVIDENCE',
+      player: player.name,
+      message: 'Passed on late-breaking evidence',
+      type: 'action'
+    });
+
+    if (currentLateEvidenceCount === playerCount - 1) {
+      addLog({
+        round: currentRound,
+        phase: 'LATE_EVIDENCE',
+        player: 'System',
+        message: 'Late-breaking evidence phase complete. Broadcast phase begins!',
         type: 'phase'
       });
     }
@@ -375,6 +532,8 @@ export function DemoMode() {
       if (decision.action === 'broadcast' && decision.conspiracyId && decision.position) {
         const conspiracy = gameState.conspiracies.find(c => c.id === decision.conspiracyId);
         const assignedCards = player.assignedEvidence[decision.conspiracyId] || [];
+        const faceUpCards = player.faceUpEvidence?.[decision.conspiracyId] || [];
+        const totalEvidence = assignedCards.length + faceUpCards.length;
 
         setGameState(prev => {
           if (!prev) return prev;
@@ -383,7 +542,7 @@ export function DemoMode() {
             playerId: player.id,
             conspiracyId: decision.conspiracyId!,
             position: decision.position!,
-            evidenceCount: assignedCards.length,
+            evidenceCount: totalEvidence,
             timestamp: Date.now()
           };
 
@@ -471,7 +630,10 @@ export function DemoMode() {
             const playerIndex = updatedPlayers.findIndex(p => p.id === broadcast.playerId);
             if (playerIndex >= 0) {
               const player = { ...updatedPlayers[playerIndex] };
-              const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+              // Merge face-down evidence (assignedEvidence) with face-up evidence (faceUpEvidence)
+              const assignedCards = player.assignedEvidence[conspiracy.id] || [];
+              const faceUpCards = player.faceUpEvidence?.[conspiracy.id] || [];
+              const evidenceUsed = [...assignedCards, ...faceUpCards];
 
               let audiencePoints = 0;
               if (broadcast.position === 'INCONCLUSIVE') {
@@ -514,8 +676,9 @@ export function DemoMode() {
               // Truth bonus
               const allEvidence: any[] = [];
               prev.players.forEach(p => {
-                const ev = p.assignedEvidence[conspiracy.id] || [];
-                allEvidence.push(...ev);
+                const assigned = p.assignedEvidence[conspiracy.id] || [];
+                const faceUp = p.faceUpEvidence?.[conspiracy.id] || [];
+                allEvidence.push(...assigned, ...faceUp);
               });
 
               const { truth } = determineEvidenceTruth(allEvidence);
@@ -592,9 +755,14 @@ export function DemoMode() {
         round: prev.round + 1
       });
 
-      const startingPlayerIndex = updatedPlayers.reduce((lowestIdx, p, idx, arr) =>
-        p.audience < arr[lowestIdx].audience ? idx : lowestIdx
-      , 0);
+      // Determine starting player for next round (highest scoring player goes first)
+      // If tied on score, player with highest credibility goes first
+      const startingPlayerIndex = updatedPlayers.reduce((bestIdx, p, idx, arr) => {
+        const bestPlayer = arr[bestIdx];
+        if (p.audience > bestPlayer.audience) return idx;
+        if (p.audience === bestPlayer.audience && p.credibility > bestPlayer.credibility) return idx;
+        return bestIdx;
+      }, 0);
 
       if (winCheck.gameOver) {
         const winner = prev.players.find(p => p.id === winCheck.winner);
@@ -714,7 +882,7 @@ export function DemoMode() {
             allPlayers={gameState.players}
           />
 
-          {(gameState.phase === 'ADVERTISE' || gameState.phase === 'BROADCAST') && (
+          {(gameState.phase === 'ADVERTISE' || gameState.phase === 'LATE_EVIDENCE' || gameState.phase === 'BROADCAST') && (
             <AdvertiseQueue
               queue={gameState.advertiseQueue}
               players={gameState.players}

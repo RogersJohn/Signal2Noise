@@ -1,6 +1,6 @@
 # Homogeneous Group Simulation Report
 
-**Generated:** 2025-10-26T17:42:31.007Z
+**Generated:** 2025-10-26T22:23:15.845Z
 **Test Type:** Monte Carlo Simulation (100 games × 12 personality types)
 **Player Count:** 4 players per game (all identical personality)
 
@@ -12,7 +12,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 
 ### Key Findings
 
-- **Average Consensus Rate:** 28.2%
+- **Average Consensus Rate:** 28.4%
 - **Average Winner/Loser Gap:** 0.5 points
 - **Average Score Variance:** 0.3
 - **Degenerate Strategies:** 0/12 personality types
@@ -27,10 +27,10 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 32.1% |
+| Consensus Rate | 30.1% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 4.3 |
-| Score Gap | 0.7 |
+| Score Gap | 0.8 |
 | Score Variance (σ) | 0.5 |
 | Avg Credibility | 5.00 |
 | Bluff Rate | 100.0% |
@@ -80,7 +80,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 32.0% |
+| Consensus Rate | 30.6% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -106,7 +106,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 22.5% |
+| Consensus Rate | 25.1% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -133,7 +133,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 23.4% |
+| Consensus Rate | 21.6% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -160,7 +160,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 33.4% |
+| Consensus Rate | 34.8% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -186,11 +186,11 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 23.4% |
+| Consensus Rate | 24.2% |
 | Avg Winner Score | 4.1 |
-| Avg Loser Score | 2.0 |
-| Score Gap | 2.1 |
-| Score Variance (σ) | 1.2 |
+| Avg Loser Score | 2.3 |
+| Score Gap | 1.9 |
+| Score Variance (σ) | 1.3 |
 | Avg Credibility | 5.00 |
 | Bluff Rate | 100.0% |
 
@@ -239,7 +239,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 22.1% |
+| Consensus Rate | 23.1% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -266,7 +266,7 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 33.0% |
+| Consensus Rate | 34.8% |
 | Avg Winner Score | 5.0 |
 | Avg Loser Score | 5.0 |
 | Score Gap | 0.0 |
@@ -292,10 +292,10 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 29.6% |
-| Avg Winner Score | 4.6 |
-| Avg Loser Score | 2.7 |
-| Score Gap | 1.9 |
+| Consensus Rate | 28.8% |
+| Avg Winner Score | 4.4 |
+| Avg Loser Score | 2.6 |
+| Score Gap | 1.8 |
 | Score Variance (σ) | 1.1 |
 | Avg Credibility | 5.00 |
 | Bluff Rate | 100.0% |
@@ -319,11 +319,11 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 |--------|-------|
 | Games Played | 100 |
 | Avg Game Length | 7.00 rounds |
-| Consensus Rate | 31.9% |
-| Avg Winner Score | 4.8 |
-| Avg Loser Score | 3.2 |
-| Score Gap | 1.5 |
-| Score Variance (σ) | 0.8 |
+| Consensus Rate | 32.4% |
+| Avg Winner Score | 4.9 |
+| Avg Loser Score | 3.3 |
+| Score Gap | 1.6 |
+| Score Variance (σ) | 0.9 |
 | Avg Credibility | 5.00 |
 | Bluff Rate | 100.0% |
 
@@ -346,26 +346,26 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 ### Highest Consensus Rate
 | Rank | Personality | Consensus Rate |
 |------|-------------|----------------|
-| 1 | The Professional Analyst | 33.4% |
-| 2 | The Steady Builder | 33.0% |
-| 3 | The Cautious Scholar | 32.1% |
-| 4 | The Paranoid Skeptic | 32.1% |
-| 5 | The Calculated Strategist | 32.0% |
-| 6 | The Meta-Reader | 31.9% |
-| 7 | The Saboteur | 29.6% |
-| 8 | The Conspiracy Theorist | 23.4% |
-| 9 | The Opportunist | 23.4% |
-| 10 | The Reckless Gambler | 23.0% |
-| 11 | The Truth Seeker | 22.5% |
-| 12 | The Chaos Agent | 22.1% |
+| 1 | The Steady Builder | 34.8% |
+| 2 | The Professional Analyst | 34.8% |
+| 3 | The Meta-Reader | 32.4% |
+| 4 | The Cautious Scholar | 32.1% |
+| 5 | The Calculated Strategist | 30.6% |
+| 6 | The Paranoid Skeptic | 30.1% |
+| 7 | The Saboteur | 28.8% |
+| 8 | The Truth Seeker | 25.1% |
+| 9 | The Opportunist | 24.2% |
+| 10 | The Chaos Agent | 23.1% |
+| 11 | The Reckless Gambler | 23.0% |
+| 12 | The Conspiracy Theorist | 21.6% |
 
 ### Largest Winner/Loser Gaps
 | Rank | Personality | Score Gap |
 |------|-------------|----------|
-| 1 | The Opportunist | 2.1 |
-| 2 | The Saboteur | 1.9 |
-| 3 | The Meta-Reader | 1.5 |
-| 4 | The Paranoid Skeptic | 0.7 |
+| 1 | The Opportunist | 1.9 |
+| 2 | The Saboteur | 1.8 |
+| 3 | The Meta-Reader | 1.6 |
+| 4 | The Paranoid Skeptic | 0.8 |
 | 5 | The Reckless Gambler | 0.0 |
 | 6 | The Calculated Strategist | 0.0 |
 | 7 | The Truth Seeker | 0.0 |
@@ -387,9 +387,9 @@ This report analyzes gameplay dynamics when all players use the **same strategy*
 | 7 | The Chaos Agent | 0.0 |
 | 8 | The Steady Builder | 0.0 |
 | 9 | The Paranoid Skeptic | 0.5 |
-| 10 | The Meta-Reader | 0.8 |
+| 10 | The Meta-Reader | 0.9 |
 | 11 | The Saboteur | 1.1 |
-| 12 | The Opportunist | 1.2 |
+| 12 | The Opportunist | 1.3 |
 
 ---
 

@@ -57,8 +57,6 @@ export interface AdvertiseObject {
   id: string;
   playerId: string;
   conspiracyId: string;
-  position?: Position; // REAL or FAKE - the bet position
-  betAmount?: number; // 1, 2, or 3 audience points to gamble
   timestamp: number;
   isPassed?: boolean; // true if player passed in advertise phase
 }

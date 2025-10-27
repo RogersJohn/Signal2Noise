@@ -221,7 +221,10 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                           const player = players.find(p => p.id === broadcast.playerId);
                           if (!player) return null;
 
-                          const evidenceUsed = player.assignedEvidence[conspiracy.id] || [];
+                          // Merge face-down evidence (assignedEvidence) with face-up evidence (faceUpEvidence)
+                          const assignedCards = player.assignedEvidence[conspiracy.id] || [];
+                          const faceUpCards = player.faceUpEvidence?.[conspiracy.id] || [];
+                          const evidenceUsed = [...assignedCards, ...faceUpCards];
 
                         // CONSENSUS-BASED SCORING CALCULATION (matches App.tsx)
                         // BASE POINTS
@@ -237,6 +240,7 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                         // EVIDENCE BONUS
                         let evidenceBonus = 0;
                         const evidenceDetails: string[] = [];
+
                         evidenceUsed.forEach(card => {
                           // Specificity bonus
                           const specificityBonus = card.supportedConspiracies.includes('ALL') ? 1 : 3;
@@ -256,9 +260,18 @@ export const ResolveResults: React.FC<ResolveResultsProps> = ({
                           const cardBonus = Math.round(specificityBonus * excitementMult) + noveltyBonus;
                           evidenceBonus += cardBonus;
 
-                          evidenceDetails.push(
-                            `${card.name}: +${cardBonus} (specificity: ${specificityBonus}, excitement: ×${excitementMult}, novelty: +${noveltyBonus})`
-                          );
+                          // Only show card details if it was played face-up (late-breaking evidence)
+                          const isFaceUp = faceUpCards.some(fc => fc.id === card.id);
+                          if (isFaceUp) {
+                            evidenceDetails.push(
+                              `🎬 ${card.name}: +${cardBonus} (specificity: ${specificityBonus}, excitement: ×${excitementMult}, novelty: +${noveltyBonus})`
+                            );
+                          } else {
+                            // Face-down evidence - keep it secret
+                            evidenceDetails.push(
+                              `🔒 Secret Evidence: +${cardBonus} points`
+                            );
+                          }
                         });
 
                         // SUBTOTAL

@@ -1,29 +1,29 @@
 # 2+1+1 Coalition Dynamics Report
 
-**Generated:** 2025-10-26T01:08:26.811Z
+**Generated:** 2025-10-26T17:44:37.185Z
 **Total Games:** 9900
 
 ---
 
 ## Key Findings
 
-- **Avg Pair Win Rate:** 51.9%
-- **Avg Lone Wolf Win Rate:** 24.1%
+- **Avg Pair Win Rate:** 88.6%
+- **Avg Lone Wolf Win Rate:** 5.7%
 - **Expected (balanced):** Pair 50%, Each Wolf 25%
 
 ## Best Pairs
 
 | Rank | Pair | Win Rate |
 |------|------|----------|
-| 1 | The Chaos Agent | 77.8% |
-| 2 | The Conspiracy Theorist | 76.8% |
-| 3 | The Reckless Gambler | 74.5% |
-| 4 | The Opportunist | 65.0% |
-| 5 | The Saboteur | 50.1% |
-| 6 | The Cautious Scholar | 47.2% |
-| 7 | The Calculated Strategist | 44.7% |
-| 8 | The Paranoid Skeptic | 43.0% |
-| 9 | The Professional Analyst | 41.8% |
-| 10 | The Steady Builder | 40.8% |
-| 11 | The Meta-Reader | 36.1% |
-| 12 | The Truth Seeker | 24.5% |
+| 1 | The Cautious Scholar | 100.0% |
+| 2 | The Truth Seeker | 98.9% |
+| 3 | The Professional Analyst | 96.6% |
+| 4 | The Calculated Strategist | 96.4% |
+| 5 | The Paranoid Skeptic | 96.0% |
+| 6 | The Steady Builder | 95.2% |
+| 7 | The Reckless Gambler | 94.9% |
+| 8 | The Conspiracy Theorist | 94.8% |
+| 9 | The Chaos Agent | 94.4% |
+| 10 | The Meta-Reader | 82.2% |
+| 11 | The Saboteur | 62.8% |
+| 12 | The Opportunist | 51.0% |

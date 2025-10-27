@@ -106,6 +106,9 @@ export function simulateGame(personalities: AIPersonality[]): {
       const advertiseDecision = makeAdvertiseDecision(gameState, playerIndex, personality);
 
       if (advertiseDecision.action === 'advertise' && advertiseDecision.conspiracyId) {
+        // Give +1 audience for advertising
+        player.audience += 1;
+
         gameState.advertiseQueue.push({
           id: `advertise_${Date.now()}_${playerIndex}`,
           playerId: gameState.players[playerIndex].id,
@@ -115,6 +118,9 @@ export function simulateGame(personalities: AIPersonality[]): {
         });
       } else {
         // Player passes on advertising (keeps plans secret)
+        // Lose -1 audience for passing
+        player.audience = Math.max(0, player.audience - 1);
+
         gameState.advertiseQueue.push({
           id: `advertise_pass_${Date.now()}_${playerIndex}`,
           playerId: gameState.players[playerIndex].id,
@@ -397,15 +403,18 @@ export function simulateGame(personalities: AIPersonality[]): {
     gameState.gameOver = result.gameOver;
     gameState.winner = result.winner;
 
-    // Update current player (losing player goes first)
+    // Update current player (highest scoring player goes first)
+    // If tied on score, player with highest credibility goes first
     // v2.5.0: Only consider active (non-bankrupt) players
     const activePlayers = gameState.players.filter(p => !p.isBankrupt);
     if (activePlayers.length > 0) {
-      const losingPlayer = activePlayers.reduce((lowest, player) =>
-        player.audience < lowest.audience ? player : lowest
-      );
-      const losingPlayerIndex = gameState.players.findIndex(p => p.id === losingPlayer.id);
-      gameState.currentPlayerIndex = losingPlayerIndex;
+      const winningPlayer = activePlayers.reduce((best, player) => {
+        if (player.audience > best.audience) return player;
+        if (player.audience === best.audience && player.credibility > best.credibility) return player;
+        return best;
+      });
+      const winningPlayerIndex = gameState.players.findIndex(p => p.id === winningPlayer.id);
+      gameState.currentPlayerIndex = winningPlayerIndex;
     }
   }
 

@@ -5,7 +5,7 @@ import './ActionButtons.css';
 interface ActionButtonsProps {
   phase: Phase;
   onAssignEvidence?: () => void;
-  onAdvertise?: (position: 'REAL' | 'FAKE', betAmount: number) => void;
+  onAdvertise?: () => void;
   onAdvertisePass?: () => void;
   onBroadcast?: (position: 'REAL' | 'FAKE' | 'INCONCLUSIVE') => void;
   onPlayLateEvidence?: () => void;
@@ -65,71 +65,27 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         <>
           {!canAdvertise && (
             <div className="button-hint">
-              👆 Select a conspiracy, then choose your bet position and amount
+              👆 Select a conspiracy to advertise your interest
             </div>
           )}
-          <div className="advertise-betting">
-            <div className="betting-hint">
-              💰 Bet on whether the conspiracy is REAL or FAKE. Your bet pays out when consensus is reached!
+          <div className="advertise-buttons">
+            <div className="advertise-hint">
+              📢 Advertise a conspiracy to signal your interest (+1 audience) or pass (-1 audience)
             </div>
-            <div className="bet-grid">
-              <div className="bet-column">
-                <h4 className="bet-header real-header">Bet REAL ✓</h4>
-                <button
-                  className="btn btn-bet bet-real"
-                  onClick={() => onAdvertise && onAdvertise('REAL', 1)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 1 Audience
-                </button>
-                <button
-                  className="btn btn-bet bet-real"
-                  onClick={() => onAdvertise && onAdvertise('REAL', 2)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 2 Audience
-                </button>
-                <button
-                  className="btn btn-bet bet-real"
-                  onClick={() => onAdvertise && onAdvertise('REAL', 3)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 3 Audience
-                </button>
-              </div>
-              <div className="bet-column">
-                <h4 className="bet-header fake-header">Bet FAKE ✗</h4>
-                <button
-                  className="btn btn-bet bet-fake"
-                  onClick={() => onAdvertise && onAdvertise('FAKE', 1)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 1 Audience
-                </button>
-                <button
-                  className="btn btn-bet bet-fake"
-                  onClick={() => onAdvertise && onAdvertise('FAKE', 2)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 2 Audience
-                </button>
-                <button
-                  className="btn btn-bet bet-fake"
-                  onClick={() => onAdvertise && onAdvertise('FAKE', 3)}
-                  disabled={!canAdvertise}
-                >
-                  Bet 3 Audience
-                </button>
-              </div>
-            </div>
+            <button
+              className="btn btn-primary"
+              onClick={onAdvertise}
+              disabled={!canAdvertise}
+            >
+              📢 Advertise (+1 Audience)
+            </button>
+            <button
+              className="btn btn-warning"
+              onClick={onAdvertisePass}
+            >
+              Pass (-1 Audience)
+            </button>
           </div>
-          <button
-            className="btn btn-warning"
-            onClick={onAdvertisePass}
-            disabled={!canPass}
-          >
-            Pass (No Advertisement)
-          </button>
         </>
       )}
 

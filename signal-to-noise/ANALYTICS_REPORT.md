@@ -1,6 +1,6 @@
 # Signal to Noise - Comprehensive AI Analytics Report
 
-**Generated:** 2025-10-26T17:41:57.256Z
+**Generated:** 2025-10-26T22:22:52.466Z
 **Total Scenarios:** 2
 
 ---
@@ -13,7 +13,7 @@
 ### Game Balance Metrics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 78.5%
+- **Consensus Rate:** 68.0%
 - **Bluff Success Rate:** 0.0%
 
 ### Win Conditions
@@ -26,9 +26,9 @@
 
 | Personality | Win Rate | Avg Score | Avg Credibility | Broadcasts | Bluffs | Consensus |
 |------------|----------|-----------|-----------------|------------|--------|------------|
-| The Calculated Strategist | 100.0% | 5.0 | 5.0 | 583 | 583 (100%) | 583 |
-| The Professional Analyst | 0.0% | 5.0 | 5.0 | 506 | 506 (100%) | 506 |
-| The Steady Builder | 0.0% | 5.0 | 5.0 | 445 | 445 (100%) | 445 |
+| The Calculated Strategist | 100.0% | 5.0 | 5.0 | 529 | 529 (100%) | 529 |
+| The Professional Analyst | 0.0% | 5.0 | 5.0 | 401 | 401 (100%) | 401 |
+| The Steady Builder | 0.0% | 5.0 | 5.0 | 429 | 429 (100%) | 429 |
 
 ---
 
@@ -40,7 +40,7 @@
 ### Game Balance Metrics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 83.5%
+- **Consensus Rate:** 89.2%
 - **Bluff Success Rate:** 0.0%
 
 ### Win Conditions
@@ -53,10 +53,10 @@
 
 | Personality | Win Rate | Avg Score | Avg Credibility | Broadcasts | Bluffs | Consensus |
 |------------|----------|-----------|-----------------|------------|--------|------------|
-| The Reckless Gambler | 62.7% | 4.3 | 5.0 | 1571 | 1571 (100%) | 1571 |
-| The Calculated Strategist | 14.0% | 4.5 | 5.0 | 1007 | 1007 (100%) | 1007 |
-| The Paranoid Skeptic | 22.7% | 4.7 | 5.0 | 886 | 886 (100%) | 886 |
-| The Opportunist | 0.7% | 3.8 | 5.0 | 1525 | 1525 (100%) | 1525 |
+| The Reckless Gambler | 72.3% | 4.4 | 5.0 | 1514 | 1514 (100%) | 1514 |
+| The Calculated Strategist | 10.3% | 4.6 | 5.0 | 1007 | 1007 (100%) | 1007 |
+| The Paranoid Skeptic | 17.3% | 4.7 | 5.0 | 825 | 825 (100%) | 825 |
+| The Opportunist | 0.0% | 4.0 | 5.0 | 1471 | 1471 (100%) | 1471 |
 
 ---
 

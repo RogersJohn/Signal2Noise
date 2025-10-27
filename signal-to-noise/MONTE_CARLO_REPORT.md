@@ -1,6 +1,6 @@
 # Monte Carlo Simulation Report
 
-**Generated:** 2025-10-26T17:42:03.962Z
+**Generated:** 2025-10-26T22:22:57.913Z
 **Total Games:** 500
 
 ---
@@ -8,7 +8,7 @@
 ## Summary Statistics
 
 - **Average Game Length:** 7.00 rounds
-- **Consensus Rate:** 90.14%
+- **Consensus Rate:** 87.79%
 - **Bluff Rate:** 100.00%
 - **Avg Final Credibility:** 5.00
 - **Avg Credibility Loss:** 0.00
@@ -25,18 +25,18 @@
 
 | Rank | Personality | Games | Wins | Win Rate |
 |------|------------|-------|------|----------|
-| 1 | The Cautious Scholar | 170 | 77 | 45.29% |
-| 2 | The Paranoid Skeptic | 221 | 95 | 42.99% |
-| 3 | The Truth Seeker | 185 | 70 | 37.84% |
-| 4 | The Calculated Strategist | 169 | 53 | 31.36% |
-| 5 | The Professional Analyst | 153 | 43 | 28.10% |
-| 6 | The Conspiracy Theorist | 124 | 28 | 22.58% |
-| 7 | The Chaos Agent | 140 | 25 | 17.86% |
-| 8 | The Meta-Reader | 149 | 24 | 16.11% |
-| 9 | The Opportunist | 154 | 22 | 14.29% |
-| 10 | The Steady Builder | 169 | 24 | 14.20% |
-| 11 | The Reckless Gambler | 202 | 23 | 11.39% |
-| 12 | The Saboteur | 164 | 16 | 9.76% |
+| 1 | The Cautious Scholar | 163 | 76 | 46.63% |
+| 2 | The Paranoid Skeptic | 233 | 99 | 42.49% |
+| 3 | The Truth Seeker | 194 | 64 | 32.99% |
+| 4 | The Calculated Strategist | 172 | 49 | 28.49% |
+| 5 | The Conspiracy Theorist | 149 | 42 | 28.19% |
+| 6 | The Professional Analyst | 180 | 43 | 23.89% |
+| 7 | The Meta-Reader | 154 | 29 | 18.83% |
+| 8 | The Steady Builder | 129 | 23 | 17.83% |
+| 9 | The Chaos Agent | 126 | 19 | 15.08% |
+| 10 | The Reckless Gambler | 206 | 28 | 13.59% |
+| 11 | The Opportunist | 145 | 18 | 12.41% |
+| 12 | The Saboteur | 149 | 10 | 6.71% |
 
 ---
 
@@ -49,7 +49,7 @@
 
 ✅ **Healthy Bluffing:** 100.0% bluff rate indicates strategic depth.
 
-⚠️ **Balance Issue:** 36% win rate difference between best and worst personalities.
+⚠️ **Balance Issue:** 40% win rate difference between best and worst personalities.
 - The Cautious Scholar may be overpowered
 - The Saboteur may need buffs
 

@@ -86,3 +86,86 @@
   text-align: right;
   color: #9ca3af;
 }
+
+/* Scoreboard */
+.scoreboard {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 2px solid #374151;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.scoreboard-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #3b82f6;
+  margin-bottom: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scoreboard-players {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scoreboard-player {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f172a;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
+}
+
+.scoreboard-player:hover {
+  background: #1e293b;
+  border-color: #4b5563;
+  transform: translateX(2px);
+}
+
+.scoreboard-player.current-player {
+  border: 2px solid #3b82f6;
+  background: linear-gradient(90deg, #1e3a8a 0%, #0f172a 50%);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+.player-name {
+  font-weight: bold;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.player-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.stat-audience,
+.stat-credibility {
+  font-size: 0.95rem;
+  padding: 4px 10px;
+  background: #1f2937;
+  border-radius: 6px;
+  border: 1px solid #374151;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-audience {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.stat-credibility {
+  color: #10b981;
+  font-weight: bold;
+}
