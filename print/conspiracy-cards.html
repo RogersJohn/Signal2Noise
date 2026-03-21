@@ -1,100 +1,303 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Conspiracy Cards</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signal to Noise - Conspiracy Cards</title>
 <style>
-  .page { page-break-after: always; width: 210mm; margin: 0 auto; padding: 10mm; box-sizing: border-box; }
-  .card-grid { display: grid; gap: 2mm; }
-  .card { border: 1px solid #333; border-radius: 3mm; padding: 3mm; box-sizing: border-box; font-family: 'Courier New', monospace; overflow: hidden; }
-  .conspiracy-grid { grid-template-columns: repeat(2, 63mm); grid-template-rows: repeat(3, 88mm); }
-  .evidence-grid { grid-template-columns: repeat(3, 63mm); grid-template-rows: repeat(3, 88mm); }
-  .card-icon { font-size: 24px; text-align: center; margin: 2mm 0; }
-  .card-name { font-weight: bold; font-size: 9pt; text-align: center; margin: 1mm 0; }
-  .card-desc { font-size: 7pt; color: #444; line-height: 1.3; margin: 2mm 0; }
-  .card-type { font-size: 7pt; text-align: center; border: 1px solid #888; display: inline-block; padding: 1mm 2mm; border-radius: 2mm; }
-  .card-targets { font-size: 6pt; color: #666; text-align: center; margin-top: 1mm; }
-  .evidence-zone { border: 1px dashed #aaa; margin-top: auto; padding: 2mm; font-size: 6pt; color: #999; text-align: center; min-height: 15mm; }
-  @media print { body { margin: 0; } .page { page-break-after: always; } }
-  body { background: white; color: black; }
-</style></head><body><div class="page"><div class="card-grid conspiracy-grid">
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">✈️☁️</div>
-        <div class="card-name">Chemtrails Control Weather</div>
-        <div class="card-desc">Wake up sheeple! Those aren't contrails - they're CHEMICAL COCKTAILS being sprayed to control weather AND minds!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-page {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 10mm;
+    background: #1a1a2e;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .print-page:last-child { page-break-after: auto; }
+
+  /* Cut line markers at corners of each card */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 63mm);
+    grid-template-rows: repeat(2, 88mm);
+    gap: 3mm;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+  }
+
+  .card {
+    width: 63mm;
+    height: 88mm;
+    border: 0.4mm solid #555;
+    border-radius: 3mm;
+    background: linear-gradient(180deg, #16213e 0%, #0f3460 40%, #16213e 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5mm 3mm;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Cut-line corners */
+  .card::before, .card::after {
+    content: '';
+    position: absolute;
+    width: 3mm; height: 3mm;
+    border-color: #888;
+    border-style: solid;
+  }
+  .card::before {
+    top: -1.5mm; left: -1.5mm;
+    border-width: 0.3mm 0 0 0.3mm;
+  }
+  .card::after {
+    top: -1.5mm; right: -1.5mm;
+    border-width: 0.3mm 0.3mm 0 0;
+  }
+
+  .card-header {
+    font-size: 6pt;
+    font-weight: 700;
+    letter-spacing: 2pt;
+    color: #e94560;
+    text-transform: uppercase;
+    margin-bottom: 1mm;
+    border-bottom: 0.3mm solid #e94560;
+    padding-bottom: 1mm;
+    width: 100%;
+    text-align: center;
+  }
+  .card-icon {
+    font-size: 22pt;
+    margin: 2mm 0;
+    line-height: 1.2;
+  }
+  .card-name {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 1.5mm;
+    line-height: 1.2;
+  }
+  .card-desc {
+    font-size: 5.5pt;
+    text-align: center;
+    color: #ccc;
+    line-height: 1.35;
+    flex: 1;
+    overflow: hidden;
+    padding: 0 1mm;
+  }
+  .evidence-slots {
+    margin-top: auto;
+    width: 100%;
+    padding-top: 1.5mm;
+    border-top: 0.3mm solid #333;
+  }
+  .slot-label {
+    font-size: 5pt;
+    letter-spacing: 1.5pt;
+    color: #888;
+    text-align: center;
+    margin-bottom: 1mm;
+  }
+  .slots {
+    display: flex;
+    justify-content: center;
+    gap: 2mm;
+  }
+  .slot {
+    width: 8mm;
+    height: 8mm;
+    border: 0.3mm dashed #666;
+    border-radius: 1mm;
+    background: rgba(255,255,255,0.04);
+  }
+  .card-footer {
+    font-size: 4pt;
+    letter-spacing: 1.5pt;
+    color: #444;
+    margin-top: 1.5mm;
+    text-align: center;
+  }
+
+  @media print {
+    body { background: #1a1a2e; }
+    .print-page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Page 1: Cards 1-6 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x2708;&#xFE0F;&#x2601;&#xFE0F;</div>
+      <div class="card-name">Chemtrails Control Weather</div>
+      <div class="card-desc">Wake up sheeple! Those aren't contrails - they're CHEMICAL COCKTAILS being sprayed to control weather AND minds!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">👑⛽</div>
-        <div class="card-name">Celebrity Death Hoax: Elvis Lives</div>
-        <div class="card-desc">The King never left the building - he's been spotted working at a gas station in Kalamazoo!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F451;&#x26FD;</div>
+      <div class="card-name">Celebrity Death Hoax: Elvis Lives</div>
+      <div class="card-desc">The King never left the building - he's been spotted working at a gas station in Kalamazoo!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">👽🌾</div>
-        <div class="card-name">Crop Circles Are Alien Messages</div>
-        <div class="card-desc">These perfect geometric patterns appeared OVERNIGHT in wheat fields! Two drunk farmers with planks? IMPOSSIBLE.</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F47D;&#x1F33E;</div>
+      <div class="card-name">Crop Circles Are Alien Messages</div>
+      <div class="card-desc">These perfect geometric patterns appeared OVERNIGHT in wheat fields! Two drunk farmers with planks? IMPOSSIBLE.</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🦶🌲</div>
-        <div class="card-name">Bigfoot Sighting Cover-Up</div>
-        <div class="card-desc">The Forest Service keeps finding 18-inch footprints and DESTROYING THE EVIDENCE!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F9B6;&#x1F332;</div>
+      <div class="card-name">Bigfoot Sighting Cover-Up</div>
+      <div class="card-desc">The Forest Service keeps finding 18-inch footprints and DESTROYING THE EVIDENCE!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🎵🍔</div>
-        <div class="card-name">Subliminal Advertising in Music</div>
-        <div class="card-desc">Record labels embed SUBCONSCIOUS TRIGGERS in the mix! Play it backwards at 0.7x speed!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F3B5;&#x1F354;</div>
+      <div class="card-name">Subliminal Advertising in Music</div>
+      <div class="card-desc">Ever wonder why you suddenly NEED that burger after hearing that song? Record labels embed SUBCONSCIOUS TRIGGERS!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🚰🧠</div>
-        <div class="card-name">Fluoride Mind Control</div>
-        <div class="card-desc">They say it's for your teeth, but have you noticed everyone's getting more complacent?</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F6B0;&#x1F9E0;</div>
+      <div class="card-name">Fluoride Mind Control</div>
+      <div class="card-desc">They say it's for your teeth, but have you noticed everyone's getting more complacent?</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    </div></div><div class="page"><div class="card-grid conspiracy-grid">
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🌙🎬</div>
-        <div class="card-name">Moon Landing Was Faked</div>
-        <div class="card-desc">Look at the shadows! Look at the flag waving! Stanley Kubrick filmed it in Area 51.</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Page 2: Cards 7-12 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F319;&#x1F3AC;</div>
+      <div class="card-name">Moon Landing Was Faked</div>
+      <div class="card-desc">Look at the shadows! Look at the flag waving! We couldn't even make a phone call in 1969 but we went to the MOON?!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">💊🤫</div>
-        <div class="card-name">Pharmaceutical Company Hides Cure</div>
-        <div class="card-desc">A cure exists. A CURE! But Big Pharma makes billions on treatment, not cures!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F48A;&#x1F92B;</div>
+      <div class="card-name">Pharmaceutical Company Hides Cure</div>
+      <div class="card-desc">A cure exists. A CURE! But Big Pharma makes billions on treatment, not cures!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🗳️💻</div>
-        <div class="card-name">Election Rigging Software</div>
-        <div class="card-desc">These voting machines run Windows XP and connect to the internet. THE INTERNET!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F5F3;&#xFE0F;&#x1F4BB;</div>
+      <div class="card-name">Election Rigging Software</div>
+      <div class="card-desc">These voting machines run Windows XP and connect to the internet. THE INTERNET!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">🌪️⚡</div>
-        <div class="card-name">Government Weather Machine</div>
-        <div class="card-desc">HAARP isn't a research facility - it's a WEATHER WEAPON!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F32A;&#xFE0F;&#x26A1;</div>
+      <div class="card-name">Government Weather Machine</div>
+      <div class="card-desc">HAARP isn't a research facility - it's a WEATHER WEAPON!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">💰⛵</div>
-        <div class="card-name">Mayor Embezzling City Funds</div>
-        <div class="card-desc">That new pothole repair fund? OFFSHORE ACCOUNTS IN THE CAYMANS!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F4B0;&#x26F5;</div>
+      <div class="card-name">Mayor Embezzling City Funds</div>
+      <div class="card-desc">That new "pothole repair fund"? OFFSHORE ACCOUNTS IN THE CAYMANS!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;">
-        <div class="card-icon">📱💸</div>
-        <div class="card-name">Tech Company Selling User Data</div>
-        <div class="card-desc">Your private messages, your photos, your LOCATION DATA - all being sold to the highest bidder!</div>
-        <div class="evidence-zone">EVIDENCE ZONE<br>Place evidence tokens here</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">CONSPIRACY</div>
+      <div class="card-icon">&#x1F4F1;&#x1F4B8;</div>
+      <div class="card-name">Tech Company Selling User Data</div>
+      <div class="card-desc">Your private messages, your photos, your LOCATION DATA - all being sold to the highest bidder!</div>
+      <div class="evidence-slots">
+        <div class="slot-label">EVIDENCE</div>
+        <div class="slots"><div class="slot"></div><div class="slot"></div><div class="slot"></div></div>
       </div>
-    </div></div></body></html>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
