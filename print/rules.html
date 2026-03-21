@@ -1,95 +1,464 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Rulebook</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signal to Noise - Rulebook</title>
 <style>
-  body { font-family: 'Courier New', monospace; max-width: 210mm; margin: 0 auto; padding: 10mm; font-size: 10pt; line-height: 1.5; }
-  .page { page-break-after: always; min-height: 277mm; }
-  h1 { font-size: 18pt; text-align: center; }
-  h2 { font-size: 13pt; border-bottom: 1px solid #333; }
-  h3 { font-size: 11pt; }
-  table { border-collapse: collapse; width: 100%; }
-  td, th { border: 1px solid #333; padding: 2mm 3mm; }
-  th { background: #eee; }
-  @media print { .page { page-break-after: always; } }
-</style></head><body>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-page {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 12mm 14mm;
+    background: #1a1a2e;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .print-page:last-child { page-break-after: auto; }
 
-<div class="page">
-<h1>📡 SIGNAL TO NOISE</h1>
-<p style="text-align:center;font-size:12pt;">A Social Deduction Card Game for 3-5 Players</p>
-<h2>What Is This Game?</h2>
-<p>You are conspiracy investigators competing to build consensus. The truth doesn't matter — only what the group agrees on. Commit secret evidence, broadcast your position, and score points when the majority sides with you.</p>
-<h2>Components</h2>
-<ul>
-<li>12 Conspiracy cards (5 active at a time)</li>
-<li>48 Evidence cards (12 generic + 36 specific)</li>
-<li>Pen and paper for tracking scores and credibility</li>
-</ul>
-<h2>Setup</h2>
-<ol>
-<li>Shuffle conspiracies. Place 5 face-up in the center. Stack the rest as a draw pile.</li>
-<li>Shuffle evidence cards. Deal 5 to each player.</li>
-<li>Each player starts at 0 points, 5 credibility.</li>
-<li>Determine first player randomly. After round 1, lowest score goes first.</li>
-</ol>
+  .rules-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h2 {
+    font-size: 11pt;
+    color: #e94560;
+    letter-spacing: 2pt;
+    border-bottom: 0.4mm solid #e94560;
+    padding-bottom: 1.5mm;
+    margin-bottom: 3mm;
+    margin-top: 5mm;
+  }
+  h2:first-child { margin-top: 0; }
+
+  h3 {
+    font-size: 9pt;
+    color: #c77dff;
+    letter-spacing: 1pt;
+    margin-bottom: 2mm;
+    margin-top: 3mm;
+  }
+
+  p {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    margin-bottom: 2mm;
+    color: #ddd;
+  }
+  ul, ol {
+    font-size: 7.5pt;
+    line-height: 1.5;
+    padding-left: 5mm;
+    margin-bottom: 2.5mm;
+    color: #ddd;
+  }
+  li { margin-bottom: 1mm; }
+
+  code {
+    background: #2a2a4a;
+    padding: 0.5mm 1.5mm;
+    border-radius: 1mm;
+    font-size: 7pt;
+    color: #4ecca3;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+  em { color: #c77dff; }
+  strong { color: #fff; }
+
+  /* Cover */
+  .cover-section {
+    text-align: center;
+    padding: 18mm 0 12mm;
+  }
+  .cover-icon { font-size: 36pt; margin-bottom: 5mm; }
+  .cover-title {
+    font-size: 28pt;
+    color: #e94560;
+    letter-spacing: 5pt;
+    margin-bottom: 2mm;
+    font-weight: 700;
+  }
+  .cover-edition {
+    font-size: 10pt;
+    color: #888;
+    letter-spacing: 3pt;
+    margin-bottom: 4mm;
+  }
+  .cover-tagline {
+    font-size: 9pt;
+    color: #ccc;
+    font-style: italic;
+    margin-bottom: 6mm;
+  }
+  .cover-line {
+    width: 40mm;
+    height: 0.4mm;
+    background: #e94560;
+    margin: 0 auto 6mm;
+  }
+  .cover-players {
+    font-size: 8pt;
+    color: #aaa;
+    letter-spacing: 1pt;
+  }
+
+  /* Components */
+  .component-list { margin-bottom: 3mm; }
+  .component {
+    font-size: 7.5pt;
+    padding: 1.2mm 0;
+    color: #ddd;
+    border-bottom: 0.2mm solid #2a2a4a;
+    display: flex;
+    align-items: baseline;
+  }
+  .comp-count {
+    display: inline-block;
+    width: 8mm;
+    text-align: right;
+    margin-right: 3mm;
+    font-weight: 700;
+    color: #4ecca3;
+  }
+
+  /* Phase boxes */
+  .phase-box {
+    background: rgba(255,255,255,0.03);
+    border-left: 0.5mm solid #e94560;
+    padding: 2.5mm 3.5mm;
+    margin-bottom: 3mm;
+  }
+
+  /* Scoring table */
+  .rules-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 7pt;
+    margin-bottom: 3mm;
+  }
+  .rules-table th {
+    background: #2a2a4a;
+    color: #e94560;
+    padding: 2mm 3mm;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 0.3mm solid #444;
+  }
+  .rules-table td {
+    padding: 1.5mm 3mm;
+    border-bottom: 0.2mm solid #333;
+    color: #ddd;
+  }
+  .rules-table td:last-child {
+    text-align: center;
+    font-weight: 700;
+    color: #4ecca3;
+    white-space: nowrap;
+  }
+  .rules-table .zero td:last-child { color: #888; }
+  .rules-table .zero td { color: #999; }
+
+  /* Strategy */
+  .strategy-box {
+    background: rgba(255,255,255,0.03);
+    border: 0.3mm solid #333;
+    border-radius: 2mm;
+    padding: 3mm;
+    margin-bottom: 3mm;
+  }
+  .strategy-box p {
+    font-size: 7pt;
+    margin-bottom: 1.5mm;
+  }
+  .strategy-box p:last-child { margin-bottom: 0; }
+
+  /* Conspiracy list */
+  .conspiracy-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1mm 4mm;
+    margin-bottom: 3mm;
+  }
+  .conspiracy-entry {
+    font-size: 6.5pt;
+    padding: 1mm 0;
+    color: #ddd;
+  }
+
+  .evidence-summary { margin-bottom: 3mm; }
+  .ev-type {
+    font-size: 7pt;
+    padding: 1.5mm 0;
+    color: #ddd;
+    line-height: 1.4;
+    border-bottom: 0.2mm solid #2a2a4a;
+  }
+
+  .rules-footer {
+    margin-top: auto;
+    text-align: center;
+    font-size: 6pt;
+    color: #555;
+    letter-spacing: 1pt;
+    border-top: 0.3mm solid #333;
+    padding-top: 2mm;
+  }
+
+  .page-num {
+    position: absolute;
+    bottom: 8mm;
+    right: 14mm;
+    font-size: 6pt;
+    color: #555;
+  }
+
+  @media print {
+    body { background: #1a1a2e; }
+    .print-page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: Cover & Overview -->
+<div class="print-page">
+  <div class="rules-content">
+    <div class="cover-section">
+      <div class="cover-icon">&#x1F4E1;</div>
+      <div class="cover-title">SIGNAL TO NOISE</div>
+      <p class="cover-edition">VERSION 2</p>
+      <p class="cover-tagline">A game of conspiracy, bluffing, and manufactured consensus</p>
+      <div class="cover-line"></div>
+      <p class="cover-players">3-6 Players &#x2022; 30-45 Minutes &#x2022; Ages 14+</p>
+    </div>
+
+    <h2>OVERVIEW</h2>
+    <p>You are a broadcaster in the post-truth media landscape. Conspiracies are everywhere &mdash; some might even be real. Your job isn't to find the truth. It's to be on the <em>winning side</em>.</p>
+    <p>Each round, conspiracies hit the airwaves. You'll secretly commit evidence, then publicly declare each conspiracy REAL or FAKE. Land on the majority side to score points. Back your position with evidence to score even more. Read the room, bluff strategically, and manufacture consensus.</p>
+    <p><strong>The player with the most points after 6 rounds wins.</strong></p>
+
+    <h2>COMPONENTS</h2>
+    <div class="component-list">
+      <div class="component"><span class="comp-count">12</span> Conspiracy Cards</div>
+      <div class="component"><span class="comp-count">12</span> Generic Evidence Cards (support all conspiracies)</div>
+      <div class="component"><span class="comp-count">36</span> Specific Evidence Cards (3 per conspiracy)</div>
+      <div class="component"><span class="comp-count">1</span> Quick Reference Card</div>
+      <div class="component"><span class="comp-count">&mdash;</span> Score tracking (pen &amp; paper or app)</div>
+    </div>
+
+    <h2>KEY CONCEPTS</h2>
+    <p><strong>Consensus</strong> &mdash; When enough broadcasters agree (REAL or FAKE), a conspiracy reaches consensus. The threshold is <code>ceil(playerCount / 2)</code>.</p>
+    <p><strong>Evidence</strong> &mdash; Cards you secretly commit to conspiracies during the Commit phase. Evidence on the majority side earns bonus points. <em>Specific</em> evidence (marked &#x25C6;) earns an extra bonus.</p>
+    <p><strong>Credibility</strong> &mdash; Starts at 5 (range 0&ndash;10). Goes up when you're on the majority, down when you're in the minority. Used only as a tiebreaker.</p>
+  </div>
+  <div class="page-num">1</div>
 </div>
 
-<div class="page">
-<h2>How to Play — 6 Rounds</h2>
-<h3>Phase 1: COMMIT</h3>
-<p>In turn order, each player assigns evidence cards from their hand to active conspiracies. Cards are placed face-down next to the conspiracy. Other players see <em>how many</em> cards you assigned, but not <em>which</em> cards.</p>
-<ul>
-<li><b>Generic cards</b> (📋) support any conspiracy.</li>
-<li><b>Specific cards</b> (🎯) only support the conspiracy they name.</li>
-<li>You may assign 0 or more cards. Say "done" when finished.</li>
-</ul>
-<h3>Phase 2: BROADCAST</h3>
-<p>Players act <b>one at a time in turn order</b>. Each broadcast is immediately visible to everyone. This is the core of the game — later players have more information.</p>
-<p>On your turn, either:</p>
-<ul>
-<li><b>Broadcast</b>: Pick one active conspiracy and declare it <b>REAL</b> or <b>FAKE</b>.</li>
-<li><b>Pass</b>: Do nothing this round.</li>
-</ul>
-<p>You may only act once per round. No changing your mind.</p>
-<h3>Phase 3: RESOLVE</h3>
-<p>For each conspiracy that received broadcasts:</p>
-<ol>
-<li>Count REAL vs FAKE broadcasts.</li>
-<li>Check if either side meets the consensus threshold (see below).</li>
-<li>If consensus: score points, adjust credibility, remove and replace the conspiracy.</li>
-<li>If no consensus: nobody scores. The conspiracy stays.</li>
-</ol>
-<p>After resolving, each player draws 2 cards (max hand size: 7).</p>
+<!-- PAGE 2: Setup & Phases -->
+<div class="print-page">
+  <div class="rules-content">
+    <h2>SETUP</h2>
+    <ol>
+      <li>Shuffle all 12 Conspiracy Cards. Deal 5 face-up to form the <strong>active conspiracies</strong>. Set the rest aside as a conspiracy draw pile.</li>
+      <li>Shuffle all 48 Evidence Cards together (generic + specific). Deal 5 to each player as their starting hand. Place the rest face-down as the evidence draw pile.</li>
+      <li>Each player starts with <strong>0 points</strong> and <strong>5 credibility</strong>.</li>
+      <li>Determine first-round turn order randomly.</li>
+    </ol>
+
+    <h2>ROUND STRUCTURE</h2>
+    <p>The game lasts <strong>6 rounds</strong>. Each round has three phases:</p>
+
+    <h3>PHASE 1: COMMIT</h3>
+    <div class="phase-box">
+      <p>All players act simultaneously. Look at your hand of evidence cards and the 5 active conspiracies. Secretly assign any number of evidence cards from your hand face-down to conspiracies.</p>
+      <ul>
+        <li>Each evidence card goes to exactly one conspiracy</li>
+        <li><strong>Generic evidence (&#x25CB;)</strong> can go on ANY conspiracy</li>
+        <li><strong>Specific evidence (&#x25C6;)</strong> can ONLY go on its named conspiracy</li>
+        <li>You may assign zero cards (keep your hand for future rounds)</li>
+        <li>Committed cards are placed face-down &mdash; other players don't see them yet</li>
+      </ul>
+      <p>Once all players are done committing, move to the Broadcast phase.</p>
+    </div>
+
+    <h3>PHASE 2: BROADCAST</h3>
+    <div class="phase-box">
+      <p>Players take turns <strong>in order</strong> (lowest score first; ties broken by lowest credibility). On your turn, you must either:</p>
+      <ul>
+        <li><strong>Declare REAL or FAKE</strong> on one active conspiracy, OR</li>
+        <li><strong>PASS</strong> &mdash; skip broadcasting entirely this round (score 0 for everything)</li>
+      </ul>
+      <p>Declarations are public. You can see what previous players declared before making your choice. This is where the bluffing and reading happens.</p>
+      <p><em>You broadcast on exactly one conspiracy per round (or pass).</em></p>
+    </div>
+
+    <h3>PHASE 3: RESOLVE</h3>
+    <div class="phase-box">
+      <p>After all players have broadcast (or passed), resolve each conspiracy that received at least one broadcast:</p>
+      <ol>
+        <li><strong>Count votes:</strong> Tally REAL vs FAKE declarations</li>
+        <li><strong>Check consensus:</strong> Does the majority reach the threshold (<code>ceil(playerCount / 2)</code>)?</li>
+        <li><strong>Reveal evidence:</strong> Flip all committed evidence cards face-up</li>
+        <li><strong>Score points:</strong> Award points per the scoring table (see page 3)</li>
+        <li><strong>Adjust credibility:</strong> +1 for majority side, -1 for minority side</li>
+      </ol>
+    </div>
+  </div>
+  <div class="page-num">2</div>
 </div>
 
-<div class="page">
-<h2>Scoring</h2>
-<table>
-<tr><th>Situation</th><th>Points</th></tr>
-<tr><td>Majority side with evidence committed</td><td><b>3</b></td></tr>
-<tr><td>...and evidence is specific to this conspiracy</td><td><b>+1</b> (4 total)</td></tr>
-<tr><td>Majority side without evidence (bandwagon)</td><td><b>2</b></td></tr>
-<tr><td>First to broadcast on conspiracy that reaches consensus</td><td><b>+1</b></td></tr>
-<tr><td>Each player on majority beyond threshold</td><td><b>+1</b> each</td></tr>
-<tr><td>Minority side</td><td>0</td></tr>
-<tr><td>No consensus</td><td>0</td></tr>
-<tr><td>Pass</td><td>0</td></tr>
-</table>
-<h2>Consensus Threshold</h2>
-<table>
-<tr><th>Players</th><th>Threshold</th></tr>
-<tr><td>3–4</td><td>2 must agree</td></tr>
-<tr><td>5</td><td>3 must agree</td></tr>
-</table>
-<h2>Credibility</h2>
-<p>Majority: +1 | Minority: -1 | Range: 0–10 | Starts at 5</p>
-<p><b>Credibility is ONLY a tiebreaker.</b> It does not affect scoring.</p>
-<h2>Winning</h2>
-<p>After 6 rounds, highest score wins. Ties broken by credibility.</p>
-<h2>Strategy Tips</h2>
-<ul>
-<li>The first mover bonus rewards bold broadcasts, but you act with less information.</li>
-<li>Watch how many cards opponents commit — it reveals their plans.</li>
-<li>Bandwagoning (2 pts, no evidence needed) is efficient but limited.</li>
-<li>Specific evidence gives a bonus — focus your cards on one conspiracy.</li>
-<li>Building large consensus benefits everyone on the majority side.</li>
-</ul>
+<!-- PAGE 3: Scoring & Credibility -->
+<div class="print-page">
+  <div class="rules-content">
+    <h2>SCORING</h2>
+    <table class="rules-table">
+      <thead>
+        <tr><th>Condition</th><th>Points</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>On majority side, committed evidence to this conspiracy</td>
+          <td><strong>3</strong></td>
+        </tr>
+        <tr>
+          <td>&nbsp;&nbsp;&nbsp;With specific (&#x25C6;) evidence</td>
+          <td><strong>+1</strong> (4 total)</td>
+        </tr>
+        <tr>
+          <td>On majority side, NO evidence committed (bandwagon)</td>
+          <td><strong>2</strong></td>
+        </tr>
+        <tr>
+          <td>First mover bonus &mdash; first player to broadcast on a conspiracy that reaches consensus</td>
+          <td><strong>+1</strong></td>
+        </tr>
+        <tr>
+          <td>Consensus size bonus &mdash; for each player on the majority beyond the threshold</td>
+          <td><strong>+1</strong> per extra</td>
+        </tr>
+        <tr class="zero">
+          <td>On minority side</td>
+          <td>0</td>
+        </tr>
+        <tr class="zero">
+          <td>No consensus reached</td>
+          <td>0 (for all)</td>
+        </tr>
+        <tr class="zero">
+          <td>Passed this round</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Scoring Example</h3>
+    <div class="phase-box">
+      <p>4 players. Consensus threshold = <code>ceil(4/2) = 2</code>. Three players broadcast on "Chemtrails": Alice says REAL with specific evidence, Bob says REAL with generic evidence, Carol says FAKE with no evidence. Dave passed.</p>
+      <p><strong>REAL wins</strong> (2 vs 1, meets threshold of 2).</p>
+      <ul>
+        <li><strong>Alice:</strong> 3 (evidence) + 1 (specific) + 1 (first mover) + 0 (no extra beyond threshold) = <strong>5 pts</strong></li>
+        <li><strong>Bob:</strong> 3 (evidence) + 0 (generic) + 0 (not first) + 0 = <strong>3 pts</strong></li>
+        <li><strong>Carol:</strong> minority side = <strong>0 pts</strong>, credibility -1</li>
+        <li><strong>Dave:</strong> passed = <strong>0 pts</strong></li>
+      </ul>
+      <p>Alice and Bob each get +1 credibility.</p>
+    </div>
+
+    <h2>CREDIBILITY</h2>
+    <ul>
+      <li><strong>+1</strong> when you're on the majority side of a consensus</li>
+      <li><strong>-1</strong> when you're on the minority side</li>
+      <li>Clamped to range <strong>0&ndash;10</strong></li>
+      <li>Credibility is used <strong>only</strong> as a tiebreaker for score ties and turn order</li>
+    </ul>
+
+    <h2>BETWEEN ROUNDS</h2>
+    <ol>
+      <li>Discard all evidence from resolved conspiracies to the discard pile</li>
+      <li>Remove resolved conspiracies; deal new ones from the conspiracy deck to refill to 5 active</li>
+      <li>Each player draws 2 evidence cards (max hand size: 7; discard excess to your choice)</li>
+      <li>Recalculate turn order: lowest score first, ties broken by lowest credibility</li>
+    </ol>
+
+    <h2>CONSENSUS THRESHOLD TABLE</h2>
+    <table class="rules-table">
+      <thead><tr><th>Player Count</th><th>Threshold</th></tr></thead>
+      <tbody>
+        <tr><td>3 players</td><td>2 must agree</td></tr>
+        <tr><td>4 players</td><td>2 must agree</td></tr>
+        <tr><td>5 players</td><td>3 must agree</td></tr>
+        <tr><td>6 players</td><td>3 must agree</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-num">3</div>
 </div>
-</body></html>
+
+<!-- PAGE 4: Strategy, Card Lists, Game End -->
+<div class="print-page">
+  <div class="rules-content">
+    <h2>GAME END</h2>
+    <p>The game ends after <strong>6 rounds</strong>. The player with the <strong>highest total score wins</strong>. In case of a tie, the player with the highest credibility wins. If still tied, players share the victory.</p>
+
+    <h2>STRATEGY TIPS</h2>
+    <div class="strategy-box">
+      <p><strong>Read the room.</strong> Broadcasting is sequential &mdash; watch what others declare before committing to a position. Going first is risky but earns the first mover bonus.</p>
+      <p><strong>Evidence is leverage.</strong> Committing evidence shows you have skin in the game. But you're also giving up cards from your hand for future rounds.</p>
+      <p><strong>The bandwagon is real.</strong> You score 2 points just for being on the winning side, even without evidence. Sometimes going with the crowd is the smart play.</p>
+      <p><strong>Specific evidence is gold.</strong> The +1 bonus for specific evidence adds up fast. Save specific cards for when you can guarantee the majority.</p>
+      <p><strong>Passing is valid.</strong> If the round looks unfavorable, passing preserves your hand and avoids credibility loss. Zero points beats a credibility hit.</p>
+      <p><strong>Credibility matters late.</strong> In tight games, credibility is the tiebreaker. Don't tank it early by taking losing positions.</p>
+    </div>
+
+    <h2>THE 12 CONSPIRACIES</h2>
+    <div class="conspiracy-list">
+      <div class="conspiracy-entry">&#x2708;&#xFE0F;&#x2601;&#xFE0F; <strong>Chemtrails Control Weather</strong></div>
+      <div class="conspiracy-entry">&#x1F451;&#x26FD; <strong>Celebrity Death Hoax: Elvis Lives</strong></div>
+      <div class="conspiracy-entry">&#x1F47D;&#x1F33E; <strong>Crop Circles Are Alien Messages</strong></div>
+      <div class="conspiracy-entry">&#x1F9B6;&#x1F332; <strong>Bigfoot Sighting Cover-Up</strong></div>
+      <div class="conspiracy-entry">&#x1F3B5;&#x1F354; <strong>Subliminal Advertising in Music</strong></div>
+      <div class="conspiracy-entry">&#x1F6B0;&#x1F9E0; <strong>Fluoride Mind Control</strong></div>
+      <div class="conspiracy-entry">&#x1F319;&#x1F3AC; <strong>Moon Landing Was Faked</strong></div>
+      <div class="conspiracy-entry">&#x1F48A;&#x1F92B; <strong>Pharma Company Hides Cure</strong></div>
+      <div class="conspiracy-entry">&#x1F5F3;&#xFE0F;&#x1F4BB; <strong>Election Rigging Software</strong></div>
+      <div class="conspiracy-entry">&#x1F32A;&#xFE0F;&#x26A1; <strong>Government Weather Machine</strong></div>
+      <div class="conspiracy-entry">&#x1F4B0;&#x26F5; <strong>Mayor Embezzling City Funds</strong></div>
+      <div class="conspiracy-entry">&#x1F4F1;&#x1F4B8; <strong>Tech Company Selling User Data</strong></div>
+    </div>
+
+    <h2>EVIDENCE CARD TYPES</h2>
+    <div class="evidence-summary">
+      <div class="ev-type">
+        <strong>Generic Evidence (&#x25CB;)</strong> &mdash; 12 cards<br>
+        Can be committed to any conspiracy. Awards 3 points on majority side.
+      </div>
+      <div class="ev-type">
+        <strong>Specific Evidence (&#x25C6;)</strong> &mdash; 36 cards (3 per conspiracy)<br>
+        Can only be committed to its named conspiracy. Awards 3 + 1 bonus = 4 points on majority side.
+      </div>
+    </div>
+
+    <h2>CARD SYMBOLS</h2>
+    <p>&#x25CB; = Generic evidence (works on any conspiracy)<br>
+       &#x25C6; = Specific evidence (only works on named conspiracy)</p>
+
+    <div class="rules-footer">
+      SIGNAL TO NOISE v2 &mdash; Designed for deception. Trust no one.
+    </div>
+  </div>
+  <div class="page-num">4</div>
+</div>
+
+</body>
+</html>

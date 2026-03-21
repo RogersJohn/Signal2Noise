@@ -1,400 +1,624 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Evidence Cards</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signal to Noise - Evidence Cards</title>
 <style>
-  .page { page-break-after: always; width: 210mm; margin: 0 auto; padding: 10mm; box-sizing: border-box; }
-  .card-grid { display: grid; gap: 2mm; }
-  .card { border: 1px solid #333; border-radius: 3mm; padding: 3mm; box-sizing: border-box; font-family: 'Courier New', monospace; overflow: hidden; }
-  .conspiracy-grid { grid-template-columns: repeat(2, 63mm); grid-template-rows: repeat(3, 88mm); }
-  .evidence-grid { grid-template-columns: repeat(3, 63mm); grid-template-rows: repeat(3, 88mm); }
-  .card-icon { font-size: 24px; text-align: center; margin: 2mm 0; }
-  .card-name { font-weight: bold; font-size: 9pt; text-align: center; margin: 1mm 0; }
-  .card-desc { font-size: 7pt; color: #444; line-height: 1.3; margin: 2mm 0; }
-  .card-type { font-size: 7pt; text-align: center; border: 1px solid #888; display: inline-block; padding: 1mm 2mm; border-radius: 2mm; }
-  .card-targets { font-size: 6pt; color: #666; text-align: center; margin-top: 1mm; }
-  .evidence-zone { border: 1px dashed #aaa; margin-top: auto; padding: 2mm; font-size: 6pt; color: #999; text-align: center; min-height: 15mm; }
-  @media print { body { margin: 0; } .page { page-break-after: always; } }
-  body { background: white; color: black; }
-</style></head><body><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Anonymous Whistleblower</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Leaked Documents</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Viral Social Media Post</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Expert Testimony</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Pattern Recognition</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Follow the Money</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Declassified CIA Documents</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Deathbed Confession</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Mainstream Media Silence</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    </div></div><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Your Gut Feeling</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Suspicious Timing</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Whistleblower Testimony</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">📋 GENERIC</span>
-        </div>
-        <div class="card-targets">Supports: ALL</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Flight Path Analysis</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Chemtrails Control Weather</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Pilot Reports</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Chemtrails Control Weather</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Foreign Government Contracts</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Chemtrails Control Weather</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Paparazzi Photos</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Celebrity Death Hoax: Elvis Lives</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Death Certificate Irregularities</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Celebrity Death Hoax: Elvis Lives</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Luxury Purchases</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Celebrity Death Hoax: Elvis Lives</div>
-      </div>
-    </div></div><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Geometric Precision</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Crop Circles Are Alien Messages</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Radiation Readings</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Crop Circles Are Alien Messages</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Bent Plant Stems</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Crop Circles Are Alien Messages</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Footprint Casts</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Bigfoot Sighting Cover-Up</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Thermal Imaging Footage</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Bigfoot Sighting Cover-Up</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Photo Inconsistencies</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Bigfoot Sighting Cover-Up</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Backmasking Audio</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Subliminal Advertising in Music</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Industry Insider</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Subliminal Advertising in Music</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Consumer Behavior Studies</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Subliminal Advertising in Music</div>
-      </div>
-    </div></div><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Fluoride Health Data</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Fluoride Mind Control</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Nazi Research Papers</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Fluoride Mind Control</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Dental Industry Lobbying</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Fluoride Mind Control</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Flag Movement Analysis</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Moon Landing Was Faked</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Van Allen Radiation Belt</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Moon Landing Was Faked</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Stanley Kubrick Connection</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Moon Landing Was Faked</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Suppressed Clinical Trials</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Pharmaceutical Company Hides Cure</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Researcher Death</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Pharmaceutical Company Hides Cure</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Revenue Projections</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Pharmaceutical Company Hides Cure</div>
-      </div>
-    </div></div><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Source Code Analysis</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Election Rigging Software</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Machine Calibration Issues</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Election Rigging Software</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Exit Poll Discrepancies</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Election Rigging Software</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Military Patents</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Government Weather Machine</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">HAARP Facility Activity</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Government Weather Machine</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Meteorological Anomalies</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Government Weather Machine</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Construction Contracts</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Mayor Embezzling City Funds</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Offshore Bank Records</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Mayor Embezzling City Funds</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Accounting Audit</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Mayor Embezzling City Funds</div>
-      </div>
-    </div></div><div class="page"><div class="card-grid evidence-grid">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Server Logs</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Tech Company Selling User Data</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Terms of Service Changes</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Tech Company Selling User Data</div>
-      </div>
-    
-      <div class="card" style="display:flex;flex-direction:column;justify-content:center;">
-        <div class="card-name">Employee NDA Violations</div>
-        <div style="text-align:center;margin:2mm 0;">
-          <span class="card-type">🎯 SPECIFIC</span>
-        </div>
-        <div class="card-targets">Supports: Tech Company Selling User Data</div>
-      </div>
-    </div></div></body></html>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-page {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 8mm;
+    background: #1a1a2e;
+    position: relative;
+    page-break-after: always;
+    overflow: hidden;
+  }
+  .print-page:last-child { page-break-after: auto; }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 63mm);
+    grid-template-rows: repeat(3, 88mm);
+    gap: 2mm;
+    justify-content: center;
+    align-content: center;
+    height: 100%;
+  }
+
+  .card {
+    width: 63mm;
+    height: 88mm;
+    border: 0.4mm solid #555;
+    border-radius: 3mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2.5mm 3mm;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Cut-line corners */
+  .card::before, .card::after {
+    content: '';
+    position: absolute;
+    width: 3mm; height: 3mm;
+    border-color: #888;
+    border-style: solid;
+  }
+  .card::before { top: -1.5mm; left: -1.5mm; border-width: 0.3mm 0 0 0.3mm; }
+  .card::after { top: -1.5mm; right: -1.5mm; border-width: 0.3mm 0.3mm 0 0; }
+
+  .generic {
+    background: linear-gradient(180deg, #1a1a2e 0%, #1a2a3e 50%, #1a1a2e 100%);
+  }
+  .specific {
+    background: linear-gradient(180deg, #1a1a2e 0%, #2a1a3e 50%, #1a1a2e 100%);
+  }
+
+  .card-header {
+    font-size: 5.5pt;
+    font-weight: 700;
+    letter-spacing: 1.5pt;
+    text-transform: uppercase;
+    margin-bottom: 2mm;
+    padding-bottom: 1mm;
+    width: 100%;
+    text-align: center;
+  }
+  .generic .card-header {
+    color: #4ecca3;
+    border-bottom: 0.3mm solid #4ecca3;
+  }
+  .specific .card-header {
+    color: #c77dff;
+    border-bottom: 0.3mm solid #c77dff;
+  }
+
+  .card-indicator {
+    font-size: 18pt;
+    margin: 2mm 0;
+    line-height: 1;
+  }
+  .generic .card-indicator { color: #4ecca3; }
+  .specific .card-indicator { color: #c77dff; }
+
+  .card-name {
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 2mm;
+    line-height: 1.2;
+  }
+
+  .card-target {
+    font-size: 6pt;
+    font-weight: 600;
+    text-align: center;
+    padding: 1mm 3mm;
+    border-radius: 2mm;
+    margin-bottom: 3mm;
+    letter-spacing: 0.5pt;
+  }
+  .generic .card-target {
+    color: #4ecca3;
+    border: 0.3mm solid #4ecca3;
+  }
+  .specific .card-target {
+    color: #c77dff;
+    border: 0.3mm solid #c77dff;
+  }
+
+  .card-flavor {
+    font-size: 5.5pt;
+    text-align: center;
+    color: #bbb;
+    font-style: italic;
+    line-height: 1.35;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 2mm;
+  }
+
+  .card-footer {
+    font-size: 4pt;
+    letter-spacing: 1.5pt;
+    color: #444;
+    margin-top: 2mm;
+  }
+
+  @media print {
+    body { background: #1a1a2e; }
+    .print-page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: Generic evidence 1-9 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Anonymous Whistleblower</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">"I'll lose my job if they find out it's me, but the truth needs to be told..."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Leaked Documents</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">Posted to Pastebin at 4:17am, deleted by 4:23am. I downloaded them.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Viral Social Media Post</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">87K shares in 6 hours, then POOF - memory-holed.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Expert Testimony</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">"In my 30 years studying this..." - PhD from a university you've definitely heard of</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Pattern Recognition</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">I made a spreadsheet. The correlation is 94.7%. You can't argue with MATH.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Follow the Money</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">$2.3 million deposited the day before the incident.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Declassified CIA Documents</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">Operation [REDACTED]. Page 47, paragraph 3.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Deathbed Confession</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">"I have nothing left to lose. I'll tell you everything..."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Mainstream Media Silence</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">CNN: nothing. Fox: nothing. MSNBC: nothing. Controlled media!</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 2: Generic 10-12 + Specific Chemtrails 1-3 + Celebrity Death 1-3 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Your Gut Feeling</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">Deep down, you know something's wrong. Trust your instincts.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Suspicious Timing</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">This happened EXACTLY 3 days after the hearing. EXACTLY.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card generic">
+      <div class="card-header">GENERIC EVIDENCE</div>
+      <div class="card-indicator">&#x25CB;</div>
+      <div class="card-name">Whistleblower Testimony</div>
+      <div class="card-target">ALL CONSPIRACIES</div>
+      <div class="card-flavor">"I can't reveal my identity for safety reasons, but I was THERE."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Flight Path Analysis</div>
+      <div class="card-target">CHEMTRAILS</div>
+      <div class="card-flavor">Normal planes don't fly in perfect grids for 6 hours.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Pilot Reports</div>
+      <div class="card-target">CHEMTRAILS</div>
+      <div class="card-flavor">"They made us install tanks we weren't allowed to ask about"</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Foreign Gov't Contracts</div>
+      <div class="card-target">CHEMTRAILS</div>
+      <div class="card-flavor">$280M contract. Aerial dispersion systems. WEATHER CONTROL.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Paparazzi Photos</div>
+      <div class="card-target">ELVIS LIVES</div>
+      <div class="card-flavor">Same mole on the left cheek! Cashier in Buenos Aires, 2019.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Death Cert. Irregularities</div>
+      <div class="card-target">ELVIS LIVES</div>
+      <div class="card-flavor">The coroner's signature doesn't match ANY other document.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Luxury Purchases</div>
+      <div class="card-target">ELVIS LIVES</div>
+      <div class="card-flavor">$2.1M yacht spotted with "deceased" celebrity.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 3: Crop Circles 1-3, Bigfoot 1-3, Subliminal Ads 1-3 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Geometric Precision</div>
+      <div class="card-target">CROP CIRCLES</div>
+      <div class="card-flavor">409 circles, perfect fractals, appeared in 4 hours.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Radiation Readings</div>
+      <div class="card-target">CROP CIRCLES</div>
+      <div class="card-flavor">Geiger counter went CRAZY inside the circle.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Bent Plant Stems</div>
+      <div class="card-target">CROP CIRCLES</div>
+      <div class="card-flavor">Bent at the nodes, not broken. Microwave radiation signature.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Footprint Casts</div>
+      <div class="card-target">BIGFOOT</div>
+      <div class="card-flavor">18 inches long, dermal ridges visible. Fake that in 1967.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Thermal Imaging Footage</div>
+      <div class="card-target">BIGFOOT</div>
+      <div class="card-flavor">8-foot heat signature, bipedal gait, 30mph uphill. Not a bear.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Photo Inconsistencies</div>
+      <div class="card-target">BIGFOOT</div>
+      <div class="card-flavor">Shadows going in THREE directions. BASIC PHOTOGRAPHY.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Backmasking Audio</div>
+      <div class="card-target">SUBLIMINAL ADS</div>
+      <div class="card-flavor">0.68x speed backwards: "Buy... consume... obey..."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Industry Insider</div>
+      <div class="card-target">SUBLIMINAL ADS</div>
+      <div class="card-flavor">"We call it the frequency layer. The execs know."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Consumer Behavior Studies</div>
+      <div class="card-target">SUBLIMINAL ADS</div>
+      <div class="card-flavor">Fast food sales spike 340% where the song plays.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 4: Fluoride 1-3, Moon Landing 1-3, Pharma 1-3 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Fluoride Health Data</div>
+      <div class="card-target">FLUORIDE</div>
+      <div class="card-flavor">IQ scores drop 7 points in fluoridated areas. Harvard study.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Nazi Research Papers</div>
+      <div class="card-target">FLUORIDE</div>
+      <div class="card-flavor">I.G. Farben documents, 1939-1944. Now it's in YOUR water.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Dental Industry Lobbying</div>
+      <div class="card-target">FLUORIDE</div>
+      <div class="card-flavor">$14M in campaign donations from Colgate alone.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Flag Movement Analysis</div>
+      <div class="card-target">MOON LANDING</div>
+      <div class="card-flavor">The flag WAVES. No air on the moon. FRAME 27:43.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Van Allen Radiation Belt</div>
+      <div class="card-target">MOON LANDING</div>
+      <div class="card-flavor">25,000 rads. Lead suits or not, they'd be DEAD.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Stanley Kubrick Connection</div>
+      <div class="card-target">MOON LANDING</div>
+      <div class="card-flavor">2001 came out in '68. Moon landing '69. DO THE MATH.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Suppressed Clinical Trials</div>
+      <div class="card-target">PHARMA COVER-UP</div>
+      <div class="card-flavor">94% success rate. Paper "lost". All 7 copies.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Researcher Death</div>
+      <div class="card-target">PHARMA COVER-UP</div>
+      <div class="card-flavor">"Accidental" death #12 this year. All same cure.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Revenue Projections</div>
+      <div class="card-target">PHARMA COVER-UP</div>
+      <div class="card-flavor">Internal memo: boost sales $40B annually.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 5: Election Rigging 1-3, Weather Machine 1-3, Mayor 1-3 -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Source Code Analysis</div>
+      <div class="card-target">ELECTION RIGGING</div>
+      <div class="card-flavor">Line 1,547: if(candidate=="X") votes--;</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Machine Calibration Issues</div>
+      <div class="card-target">ELECTION RIGGING</div>
+      <div class="card-flavor">Touch A, machine votes B. 47 counties, same day.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Exit Poll Discrepancies</div>
+      <div class="card-target">ELECTION RIGGING</div>
+      <div class="card-flavor">Exit polls off by 11%. Margin of error: 3%.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Military Patents</div>
+      <div class="card-target">WEATHER MACHINE</div>
+      <div class="card-flavor">Patent US5003186 - Stratospheric Welsbach seeding.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">HAARP Facility Activity</div>
+      <div class="card-target">WEATHER MACHINE</div>
+      <div class="card-flavor">Power surge 48 hours before the earthquake.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Meteorological Anomalies</div>
+      <div class="card-target">WEATHER MACHINE</div>
+      <div class="card-flavor">Square clouds. SQUARE. Clouds aren't square in nature.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Construction Contracts</div>
+      <div class="card-target">MAYOR EMBEZZLEMENT</div>
+      <div class="card-flavor">$8M bridge. Actual cost: $900K. The rest: shell corp.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Offshore Bank Records</div>
+      <div class="card-target">MAYOR EMBEZZLEMENT</div>
+      <div class="card-flavor">Panama Papers, page 1,847. Account #472819.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Accounting Audit</div>
+      <div class="card-target">MAYOR EMBEZZLEMENT</div>
+      <div class="card-flavor">CPA found "irregularities" in 73% of city expenses.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAGE 6: Tech Data Sale 1-3 (+ 6 empty slots) -->
+<div class="print-page">
+  <div class="card-grid">
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Server Logs</div>
+      <div class="card-target">TECH DATA SALE</div>
+      <div class="card-flavor">2.4TB uploaded to Beijing servers. Daily.</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Terms of Service Changes</div>
+      <div class="card-target">TECH DATA SALE</div>
+      <div class="card-flavor">Clause 7.4.2: "may share with partners and affiliates."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+    <div class="card specific">
+      <div class="card-header">SPECIFIC EVIDENCE</div>
+      <div class="card-indicator">&#x25C6;</div>
+      <div class="card-name">Employee NDA Violations</div>
+      <div class="card-target">TECH DATA SALE</div>
+      <div class="card-flavor">"I had to sign an NDA about the data pipeline."</div>
+      <div class="card-footer">SIGNAL TO NOISE</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

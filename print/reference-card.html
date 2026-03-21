@@ -1,49 +1,245 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Reference Card</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Signal to Noise - Quick Reference</title>
 <style>
-  body { font-family: 'Courier New', monospace; max-width: 210mm; margin: 0 auto; padding: 10mm; font-size: 9pt; }
-  h1 { font-size: 14pt; text-align: center; border-bottom: 2px solid black; padding-bottom: 2mm; }
-  h2 { font-size: 11pt; margin-top: 4mm; margin-bottom: 1mm; }
-  table { border-collapse: collapse; width: 100%; margin: 2mm 0; }
-  td, th { border: 1px solid #333; padding: 1mm 2mm; text-align: left; font-size: 8pt; }
-  th { background: #eee; }
-  .section { margin-bottom: 3mm; }
-  ul { margin: 1mm 0; padding-left: 5mm; }
-  li { margin-bottom: 1mm; }
-</style></head><body>
-<h1>📡 SIGNAL TO NOISE — Quick Reference</h1>
-<div class="section">
-  <h2>Game Flow (6 rounds)</h2>
-  <p><b>1. COMMIT</b> — Secretly assign evidence to conspiracies (others see count, not cards)<br>
-  <b>2. BROADCAST</b> — In turn order, declare REAL/FAKE on one conspiracy, or PASS<br>
-  <b>3. RESOLVE</b> — Check consensus, score, replace resolved conspiracies, draw 2 cards</p>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-page {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 10mm;
+    background: #1a1a2e;
+    position: relative;
+    page-break-after: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+  }
+  .ref-content {
+    width: 100%;
+    padding: 2mm;
+  }
+
+  h1 {
+    font-size: 18pt;
+    color: #e94560;
+    text-align: center;
+    margin-bottom: 1mm;
+    letter-spacing: 3pt;
+    border-bottom: 0.5mm solid #e94560;
+    padding-bottom: 2mm;
+  }
+  h1 .subtitle {
+    font-size: 10pt;
+    color: #aaa;
+    letter-spacing: 1pt;
+    display: block;
+    margin-top: 1mm;
+    font-weight: 400;
+  }
+
+  .ref-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+    margin-top: 3mm;
+  }
+  .ref-col h2 {
+    font-size: 9pt;
+    color: #e94560;
+    letter-spacing: 1.5pt;
+    border-bottom: 0.3mm solid #444;
+    padding-bottom: 1mm;
+    margin-bottom: 2mm;
+    margin-top: 3mm;
+  }
+  .ref-col h2:first-child { margin-top: 0; }
+  .ref-col p {
+    font-size: 6.5pt;
+    line-height: 1.4;
+    margin-bottom: 1.5mm;
+    color: #ddd;
+  }
+  .ref-col ul, .ref-col ol {
+    font-size: 6.5pt;
+    line-height: 1.4;
+    padding-left: 4mm;
+    margin-bottom: 2mm;
+    color: #ddd;
+  }
+  .ref-col li { margin-bottom: 0.5mm; }
+  .ref-col strong { color: #fff; }
+  .ref-col em { color: #c77dff; font-style: normal; }
+
+  .scoring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 6pt;
+    margin-bottom: 2mm;
+  }
+  .scoring-table th {
+    background: #2a2a4a;
+    color: #e94560;
+    padding: 1.5mm 2mm;
+    text-align: left;
+    font-size: 6pt;
+    letter-spacing: 0.5pt;
+    border-bottom: 0.3mm solid #444;
+  }
+  .scoring-table td {
+    padding: 1mm 2mm;
+    border-bottom: 0.2mm solid #333;
+    color: #ddd;
+  }
+  .scoring-table .pts {
+    text-align: center;
+    font-weight: 700;
+    color: #4ecca3;
+    white-space: nowrap;
+  }
+  .scoring-table .zero .pts {
+    color: #888;
+  }
+  .scoring-table .zero td {
+    color: #888;
+  }
+
+  .ref-footer {
+    position: absolute;
+    bottom: 10mm;
+    left: 10mm;
+    right: 10mm;
+    text-align: center;
+    font-size: 5pt;
+    color: #555;
+    letter-spacing: 1pt;
+    border-top: 0.3mm solid #333;
+    padding-top: 2mm;
+  }
+
+  @media print {
+    body { background: #1a1a2e; }
+    .print-page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="print-page">
+  <div class="ref-content">
+    <h1>SIGNAL TO NOISE <span class="subtitle">Quick Reference Card</span></h1>
+
+    <div class="ref-columns">
+      <div class="ref-col">
+        <h2>GAME SETUP</h2>
+        <ul>
+          <li>3-6 players</li>
+          <li>6 rounds, 5 active conspiracies per round</li>
+          <li>Starting hand: 5 evidence cards</li>
+          <li>Draw 2 per round (max hand: 7)</li>
+          <li>Consensus threshold: <em>ceil(playerCount / 2)</em></li>
+          <li>Starting credibility: 5 (range 0-10)</li>
+        </ul>
+
+        <h2>TURN ORDER</h2>
+        <p>Each round: lowest score goes first.<br>Ties broken by lowest credibility.</p>
+
+        <h2>PHASE 1: COMMIT</h2>
+        <p>Secretly assign evidence cards from your hand to active conspiracies. Each card placed face-down on one conspiracy. You may assign multiple cards or none.</p>
+        <ul>
+          <li><strong>Generic</strong> (&#x25CB;) cards go on ANY conspiracy</li>
+          <li><strong>Specific</strong> (&#x25C6;) cards ONLY on their named conspiracy</li>
+        </ul>
+
+        <h2>PHASE 2: BROADCAST</h2>
+        <p>In turn order, each player either:</p>
+        <ul>
+          <li><strong>Declares REAL or FAKE</strong> on one active conspiracy</li>
+          <li><strong>PASS</strong> &mdash; skip, score 0 for all conspiracies</li>
+        </ul>
+        <p>Sequential: you see previous players' declarations before choosing.</p>
+
+        <h2>PHASE 3: RESOLVE</h2>
+        <p>For each conspiracy with broadcasts:</p>
+        <ol>
+          <li>Count REAL vs FAKE declarations</li>
+          <li>If majority &ge; threshold &rarr; consensus reached</li>
+          <li>Reveal committed evidence</li>
+          <li>Score points (see Scoring)</li>
+          <li>Adjust credibility</li>
+        </ol>
+      </div>
+
+      <div class="ref-col">
+        <h2>SCORING</h2>
+        <table class="scoring-table">
+          <thead>
+            <tr><th>Condition</th><th>Pts</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Majority side WITH evidence</td><td class="pts">3</td></tr>
+            <tr><td>&nbsp;&nbsp;+ specific evidence bonus</td><td class="pts">+1</td></tr>
+            <tr><td>Majority WITHOUT evidence (bandwagon)</td><td class="pts">2</td></tr>
+            <tr><td>First mover bonus (first broadcaster on conspiracy reaching consensus)</td><td class="pts">+1</td></tr>
+            <tr><td>Consensus size bonus (per player on majority beyond threshold)</td><td class="pts">+1 ea</td></tr>
+            <tr class="zero"><td>Minority side</td><td class="pts">0</td></tr>
+            <tr class="zero"><td>No consensus reached</td><td class="pts">0</td></tr>
+            <tr class="zero"><td>Pass</td><td class="pts">0</td></tr>
+          </tbody>
+        </table>
+
+        <h2>CREDIBILITY</h2>
+        <ul>
+          <li>On majority side: <strong>+1</strong> credibility</li>
+          <li>On minority side: <strong>-1</strong> credibility</li>
+          <li>Range: 0 to 10 (clamped)</li>
+          <li>Used as tiebreaker only</li>
+        </ul>
+
+        <h2>EVIDENCE CARDS</h2>
+        <ul>
+          <li><strong>Generic (&#x25CB;)</strong> &mdash; 12 cards, support ALL conspiracies</li>
+          <li><strong>Specific (&#x25C6;)</strong> &mdash; 36 cards (3 per conspiracy), +1 bonus point</li>
+        </ul>
+
+        <h2>CONSENSUS THRESHOLD</h2>
+        <table class="scoring-table">
+          <thead><tr><th>Players</th><th>Threshold</th></tr></thead>
+          <tbody>
+            <tr><td>3 players</td><td class="pts">2</td></tr>
+            <tr><td>4 players</td><td class="pts">2</td></tr>
+            <tr><td>5 players</td><td class="pts">3</td></tr>
+            <tr><td>6 players</td><td class="pts">3</td></tr>
+          </tbody>
+        </table>
+
+        <h2>WINNING</h2>
+        <p>After 6 rounds, highest total score wins.<br>
+        Tiebreaker: highest credibility.</p>
+
+        <h2>BETWEEN ROUNDS</h2>
+        <ul>
+          <li>Discard evidence from resolved conspiracies</li>
+          <li>Replace resolved conspiracies to refill to 5</li>
+          <li>Draw 2 evidence cards (max hand: 7)</li>
+          <li>Recalculate turn order (lowest score first)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ref-footer">
+      SIGNAL TO NOISE v2 &mdash; A game of conspiracy, bluffing, and manufactured consensus
+    </div>
+  </div>
 </div>
-<div class="section">
-  <h2>Scoring</h2>
-  <table>
-    <tr><th>Situation</th><th>Points</th></tr>
-    <tr><td>Majority + evidence</td><td>3</td></tr>
-    <tr><td>...specific evidence bonus</td><td>+1</td></tr>
-    <tr><td>Majority, no evidence (bandwagon)</td><td>2</td></tr>
-    <tr><td>First broadcaster bonus</td><td>+1</td></tr>
-    <tr><td>Per extra player on majority beyond threshold</td><td>+1 each</td></tr>
-    <tr><td>Minority / No consensus / Pass</td><td>0</td></tr>
-  </table>
-</div>
-<div class="section">
-  <h2>Consensus Threshold</h2>
-  <p>3-4 players: <b>2 needed</b> | 5 players: <b>3 needed</b></p>
-</div>
-<div class="section">
-  <h2>Credibility</h2>
-  <p>+1 majority, -1 minority. Range 0-10. Start at 5. <b>Tiebreaker only.</b></p>
-</div>
-<div class="section">
-  <h2>Key Numbers</h2>
-  <ul>
-    <li>5 active conspiracies on the board</li>
-    <li>Starting hand: 5 cards | Draw: 2/round | Max hand: 7</li>
-    <li>Cards: 12 generic (any conspiracy) + 36 specific (named conspiracy)</li>
-    <li>Lowest score goes first each round</li>
-  </ul>
-</div>
-</body></html>
+</body>
+</html>
