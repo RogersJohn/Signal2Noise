@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Reference Card</title>
+<style>
+  body { font-family: 'Courier New', monospace; max-width: 210mm; margin: 0 auto; padding: 10mm; font-size: 9pt; }
+  h1 { font-size: 14pt; text-align: center; border-bottom: 2px solid black; padding-bottom: 2mm; }
+  h2 { font-size: 11pt; margin-top: 4mm; margin-bottom: 1mm; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0; }
+  td, th { border: 1px solid #333; padding: 1mm 2mm; text-align: left; font-size: 8pt; }
+  th { background: #eee; }
+  .section { margin-bottom: 3mm; }
+  ul { margin: 1mm 0; padding-left: 5mm; }
+  li { margin-bottom: 1mm; }
+</style></head><body>
+<h1>📡 SIGNAL TO NOISE — Quick Reference</h1>
+<div class="section">
+  <h2>Game Flow (6 rounds)</h2>
+  <p><b>1. COMMIT</b> — Secretly assign evidence to conspiracies (others see count, not cards)<br>
+  <b>2. BROADCAST</b> — In turn order, declare REAL/FAKE on one conspiracy, or PASS<br>
+  <b>3. RESOLVE</b> — Check consensus, score, replace resolved conspiracies, draw 2 cards</p>
+</div>
+<div class="section">
+  <h2>Scoring</h2>
+  <table>
+    <tr><th>Situation</th><th>Points</th></tr>
+    <tr><td>Majority + evidence</td><td>3</td></tr>
+    <tr><td>...specific evidence bonus</td><td>+1</td></tr>
+    <tr><td>Majority, no evidence (bandwagon)</td><td>2</td></tr>
+    <tr><td>First broadcaster bonus</td><td>+1</td></tr>
+    <tr><td>Per extra player on majority beyond threshold</td><td>+1 each</td></tr>
+    <tr><td>Minority / No consensus / Pass</td><td>0</td></tr>
+  </table>
+</div>
+<div class="section">
+  <h2>Consensus Threshold</h2>
+  <p>3-4 players: <b>2 needed</b> | 5 players: <b>3 needed</b></p>
+</div>
+<div class="section">
+  <h2>Credibility</h2>
+  <p>+1 majority, -1 minority. Range 0-10. Start at 5. <b>Tiebreaker only.</b></p>
+</div>
+<div class="section">
+  <h2>Key Numbers</h2>
+  <ul>
+    <li>5 active conspiracies on the board</li>
+    <li>Starting hand: 5 cards | Draw: 2/round | Max hand: 7</li>
+    <li>Cards: 12 generic (any conspiracy) + 36 specific (named conspiracy)</li>
+    <li>Lowest score goes first each round</li>
+  </ul>
+</div>
+</body></html>

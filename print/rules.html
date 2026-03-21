@@ -1,0 +1,95 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Signal to Noise — Rulebook</title>
+<style>
+  body { font-family: 'Courier New', monospace; max-width: 210mm; margin: 0 auto; padding: 10mm; font-size: 10pt; line-height: 1.5; }
+  .page { page-break-after: always; min-height: 277mm; }
+  h1 { font-size: 18pt; text-align: center; }
+  h2 { font-size: 13pt; border-bottom: 1px solid #333; }
+  h3 { font-size: 11pt; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #333; padding: 2mm 3mm; }
+  th { background: #eee; }
+  @media print { .page { page-break-after: always; } }
+</style></head><body>
+
+<div class="page">
+<h1>📡 SIGNAL TO NOISE</h1>
+<p style="text-align:center;font-size:12pt;">A Social Deduction Card Game for 3-5 Players</p>
+<h2>What Is This Game?</h2>
+<p>You are conspiracy investigators competing to build consensus. The truth doesn't matter — only what the group agrees on. Commit secret evidence, broadcast your position, and score points when the majority sides with you.</p>
+<h2>Components</h2>
+<ul>
+<li>12 Conspiracy cards (5 active at a time)</li>
+<li>48 Evidence cards (12 generic + 36 specific)</li>
+<li>Pen and paper for tracking scores and credibility</li>
+</ul>
+<h2>Setup</h2>
+<ol>
+<li>Shuffle conspiracies. Place 5 face-up in the center. Stack the rest as a draw pile.</li>
+<li>Shuffle evidence cards. Deal 5 to each player.</li>
+<li>Each player starts at 0 points, 5 credibility.</li>
+<li>Determine first player randomly. After round 1, lowest score goes first.</li>
+</ol>
+</div>
+
+<div class="page">
+<h2>How to Play — 6 Rounds</h2>
+<h3>Phase 1: COMMIT</h3>
+<p>In turn order, each player assigns evidence cards from their hand to active conspiracies. Cards are placed face-down next to the conspiracy. Other players see <em>how many</em> cards you assigned, but not <em>which</em> cards.</p>
+<ul>
+<li><b>Generic cards</b> (📋) support any conspiracy.</li>
+<li><b>Specific cards</b> (🎯) only support the conspiracy they name.</li>
+<li>You may assign 0 or more cards. Say "done" when finished.</li>
+</ul>
+<h3>Phase 2: BROADCAST</h3>
+<p>Players act <b>one at a time in turn order</b>. Each broadcast is immediately visible to everyone. This is the core of the game — later players have more information.</p>
+<p>On your turn, either:</p>
+<ul>
+<li><b>Broadcast</b>: Pick one active conspiracy and declare it <b>REAL</b> or <b>FAKE</b>.</li>
+<li><b>Pass</b>: Do nothing this round.</li>
+</ul>
+<p>You may only act once per round. No changing your mind.</p>
+<h3>Phase 3: RESOLVE</h3>
+<p>For each conspiracy that received broadcasts:</p>
+<ol>
+<li>Count REAL vs FAKE broadcasts.</li>
+<li>Check if either side meets the consensus threshold (see below).</li>
+<li>If consensus: score points, adjust credibility, remove and replace the conspiracy.</li>
+<li>If no consensus: nobody scores. The conspiracy stays.</li>
+</ol>
+<p>After resolving, each player draws 2 cards (max hand size: 7).</p>
+</div>
+
+<div class="page">
+<h2>Scoring</h2>
+<table>
+<tr><th>Situation</th><th>Points</th></tr>
+<tr><td>Majority side with evidence committed</td><td><b>3</b></td></tr>
+<tr><td>...and evidence is specific to this conspiracy</td><td><b>+1</b> (4 total)</td></tr>
+<tr><td>Majority side without evidence (bandwagon)</td><td><b>2</b></td></tr>
+<tr><td>First to broadcast on conspiracy that reaches consensus</td><td><b>+1</b></td></tr>
+<tr><td>Each player on majority beyond threshold</td><td><b>+1</b> each</td></tr>
+<tr><td>Minority side</td><td>0</td></tr>
+<tr><td>No consensus</td><td>0</td></tr>
+<tr><td>Pass</td><td>0</td></tr>
+</table>
+<h2>Consensus Threshold</h2>
+<table>
+<tr><th>Players</th><th>Threshold</th></tr>
+<tr><td>3–4</td><td>2 must agree</td></tr>
+<tr><td>5</td><td>3 must agree</td></tr>
+</table>
+<h2>Credibility</h2>
+<p>Majority: +1 | Minority: -1 | Range: 0–10 | Starts at 5</p>
+<p><b>Credibility is ONLY a tiebreaker.</b> It does not affect scoring.</p>
+<h2>Winning</h2>
+<p>After 6 rounds, highest score wins. Ties broken by credibility.</p>
+<h2>Strategy Tips</h2>
+<ul>
+<li>The first mover bonus rewards bold broadcasts, but you act with less information.</li>
+<li>Watch how many cards opponents commit — it reveals their plans.</li>
+<li>Bandwagoning (2 pts, no evidence needed) is efficient but limited.</li>
+<li>Specific evidence gives a bonus — focus your cards on one conspiracy.</li>
+<li>Building large consensus benefits everyone on the majority side.</li>
+</ul>
+</div>
+</body></html>

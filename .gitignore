@@ -1,1 +1,13 @@
+node_modules/
+build/
+coverage/
+.env
+.env.local
+*.log
+data/simulation-results/*.json
+data/transcripts/*.json
+!data/simulation-results/.gitkeep
+!data/transcripts/.gitkeep
+e2e/screenshots/
+.idea/
 nul
