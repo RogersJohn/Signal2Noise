@@ -5,6 +5,20 @@ interface GameLogProps {
   entries: LogEntry[];
 }
 
+function formatEntry(entry: LogEntry): string {
+  const { action, details } = entry;
+  switch (action) {
+    case 'ASSIGN_EVIDENCE': return details;
+    case 'DONE_COMMITTING': return details;
+    case 'BROADCAST': return details;
+    case 'PASS': return details;
+    case 'RESOLVE': return details;
+    case 'NEXT_ROUND': return details;
+    case 'GAME_OVER': return '🏆 Game complete!';
+    default: return details;
+  }
+}
+
 export default function GameLog({ entries }: GameLogProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -12,19 +26,31 @@ export default function GameLog({ entries }: GameLogProps) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [entries.length]);
 
-  const recent = entries.slice(-50);
+  // Group by round
+  const recent = entries.slice(-60);
+  let lastRound = -1;
 
   return (
     <div style={styles.container}>
       <h3 style={styles.title}>EVENT LOG</h3>
       <div style={styles.logArea}>
-        {recent.map((entry, i) => (
-          <div key={i} style={styles.entry}>
-            <span style={styles.round}>R{entry.round}</span>
-            <span style={styles.phase}>[{entry.phase}]</span>
-            <span style={styles.details}>{entry.details}</span>
-          </div>
-        ))}
+        {recent.map((entry, i) => {
+          const showRoundHeader = entry.round !== lastRound;
+          lastRound = entry.round;
+          return (
+            <React.Fragment key={i}>
+              {showRoundHeader && (
+                <div style={styles.roundHeader}>
+                  ── Round {entry.round} ──
+                </div>
+              )}
+              <div style={styles.entry}>
+                <span style={styles.phase}>[{entry.phase}]</span>
+                <span style={styles.text}>{formatEntry(entry)}</span>
+              </div>
+            </React.Fragment>
+          );
+        })}
         <div ref={bottomRef} />
       </div>
     </div>
@@ -35,16 +61,11 @@ const styles: Record<string, React.CSSProperties> = {
   container: { padding: '8px', fontFamily: 'monospace' },
   title: { color: '#0f0', fontSize: '14px', margin: '0 0 8px' },
   logArea: {
-    maxHeight: '200px',
-    overflowY: 'auto',
-    background: '#0a0a0a',
-    border: '1px solid #222',
-    borderRadius: '4px',
-    padding: '6px',
-    fontSize: '10px',
+    maxHeight: '250px', overflowY: 'auto', background: '#0a0a0a',
+    border: '1px solid #222', borderRadius: '4px', padding: '6px', fontSize: '10px',
   },
+  roundHeader: { color: '#fa0', margin: '6px 0 2px', fontWeight: 'bold', fontSize: '10px' },
   entry: { marginBottom: '2px', lineHeight: '1.4' },
-  round: { color: '#fa0', marginRight: '4px' },
-  phase: { color: '#0af', marginRight: '4px' },
-  details: { color: '#888' },
+  phase: { color: '#0af', marginRight: '4px', fontSize: '9px' },
+  text: { color: '#888' },
 };

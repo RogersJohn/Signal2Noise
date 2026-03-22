@@ -1,12 +1,31 @@
-import { useReducer, useCallback, useEffect, useRef } from 'react';
+import { useReducer, useState, useCallback, useRef } from 'react';
 import { GameState, GameAction, GameConfig } from '../../engine/types';
 import { createGame, applyAction, getWinner } from '../../engine/engine';
-import { getStrategy } from '../../ai/strategies';
 import { CONSPIRACIES } from '../../data/conspiracies';
 import { EVIDENCE_CARDS } from '../../data/evidence';
-import { GameRecorder } from '../../logging/gameRecorder';
+import { Signal } from '../../ai/social/types';
+import { AdvancedAI } from '../../ai/social/advancedAgent';
 
-function gameReducer(state: GameState, action: GameAction): GameState {
+export type UIPhase =
+  | 'COMMIT_PLAYER'
+  | 'COMMIT_AI'
+  | 'SIGNALS'
+  | 'BROADCAST_WAITING'
+  | 'BROADCAST_PLAYER'
+  | 'BROADCAST_AI'
+  | 'RESOLVE_DISPLAY'
+  | 'GAME_OVER';
+
+export interface GameUIState {
+  engineState: GameState;
+  uiPhase: UIPhase;
+  signals: Signal[];
+  signalDisplays: string[];
+  aiNarration: string | null;
+  selectedCardId: string | null;
+}
+
+function engineReducer(state: GameState, action: GameAction): GameState {
   try {
     return applyAction(state, action);
   } catch (e) {
@@ -15,101 +34,117 @@ function gameReducer(state: GameState, action: GameAction): GameState {
   }
 }
 
-export interface UseGameReturn {
-  state: GameState;
-  dispatch: (action: GameAction) => void;
-  startGame: (config: GameConfig) => void;
-  isAITurn: boolean;
-  winner: ReturnType<typeof getWinner>;
-}
-
-export function useGame(): UseGameReturn {
-  const defaultConfig: GameConfig = {
-    playerNames: ['You'],
-    humanPlayerIds: ['player_0'],
-  };
-
-  const [state, dispatch] = useReducer(
-    gameReducer,
-    defaultConfig,
-    (config) => createGame(config, CONSPIRACIES, EVIDENCE_CARDS)
+export function useGame(config: GameConfig) {
+  const [engineState, dispatchEngine] = useReducer(
+    engineReducer,
+    config,
+    (cfg) => createGame(cfg, CONSPIRACIES, EVIDENCE_CARDS)
   );
 
-  const recorderRef = useRef<GameRecorder>(new GameRecorder(state));
-  const aiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [uiPhase, setUIPhase] = useState<UIPhase>(() => {
+    // Determine initial UI phase based on whether human goes first
+    const state = createGame(config, CONSPIRACIES, EVIDENCE_CARDS);
+    const firstPlayer = state.turnOrder[0];
+    return config.humanPlayerIds.includes(firstPlayer) ? 'COMMIT_PLAYER' : 'COMMIT_AI';
+  });
 
-  const wrappedDispatch = useCallback((action: GameAction) => {
-    dispatch(action);
+  const [signals, setSignals] = useState<Signal[]>([]);
+  const [signalDisplays, setSignalDisplays] = useState<string[]>([]);
+  const [aiNarration, setAINarration] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+  const [aiSpeed, setAISpeed] = useState<'normal' | 'fast'>('normal');
+
+  const dispatch = useCallback((action: GameAction) => {
+    dispatchEngine(action);
   }, []);
 
-  const startGame = useCallback((config: GameConfig) => {
-    const newState = createGame(config, CONSPIRACIES, EVIDENCE_CARDS);
-    // Reset via a series of actions isn't clean with useReducer,
-    // so we use a trick: dispatch a special init
-    // Actually, we need to re-create the reducer. Let's use a workaround.
-    dispatch({ type: 'NEXT_ROUND' } as GameAction); // placeholder
-    // For a real reset, the component should unmount/remount
-    recorderRef.current = new GameRecorder(newState);
+  const isHumanTurn = useCallback((state: GameState): boolean => {
+    if (state.phase === 'GAME_OVER' || state.phase === 'RESOLVE') return false;
+    const currentId = state.turnOrder[state.currentPlayerIndex];
+    const player = state.players.find(p => p.id === currentId);
+    return player?.isHuman ?? false;
   }, []);
 
-  // Determine if it's an AI turn
-  const currentPlayerId = state.phase === 'COMMIT' || state.phase === 'BROADCAST'
-    ? state.turnOrder[state.currentPlayerIndex]
-    : undefined;
+  const getCurrentPlayerId = useCallback((state: GameState): string => {
+    return state.turnOrder[state.currentPlayerIndex];
+  }, []);
 
-  const currentPlayer = currentPlayerId
-    ? state.players.find(p => p.id === currentPlayerId)
-    : undefined;
+  const getPlayerName = useCallback((state: GameState, playerId: string): string => {
+    return state.players.find(p => p.id === playerId)?.name ?? playerId;
+  }, []);
 
-  const isAITurn = currentPlayer ? !currentPlayer.isHuman : false;
+  // Advance one AI action, return narration text
+  const advanceOneAICommit = useCallback((
+    state: GameState,
+    agents: AdvancedAI[]
+  ): { narration: string; newPhase: UIPhase } | null => {
+    const currentId = getCurrentPlayerId(state);
+    const player = state.players.find(p => p.id === currentId);
+    if (!player || player.isHuman) return null;
 
-  // Handle AI turns
-  useEffect(() => {
-    if (state.phase === 'GAME_OVER' || state.phase === 'RESOLVE') return;
+    const agent = agents.find(a => a.playerId === currentId);
+    if (!agent) return null;
 
-    if (!isAITurn || !currentPlayer || !currentPlayer.strategyName) return;
-
-    aiTimeoutRef.current = setTimeout(() => {
-      const strategy = getStrategy(currentPlayer.strategyName!);
-
-      if (state.phase === 'COMMIT') {
-        const commitActions = strategy.decideCommit(state, currentPlayer.id);
-        for (const action of commitActions) {
-          try {
-            dispatch(action);
-          } catch {
-            // Skip invalid
-          }
-        }
-        dispatch({ type: 'DONE_COMMITTING', playerId: currentPlayer.id });
-      } else if (state.phase === 'BROADCAST') {
-        const action = strategy.decideBroadcast(state, currentPlayer.id);
-        dispatch(action);
-      }
-    }, 500); // Small delay for UX
-
-    return () => {
-      if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current);
-    };
-  }, [state, isAITurn, currentPlayer]);
-
-  // Auto-resolve and auto-next-round
-  useEffect(() => {
-    if (state.phase === 'RESOLVE') {
-      aiTimeoutRef.current = setTimeout(() => {
-        dispatch({ type: 'RESOLVE' });
-        setTimeout(() => {
-          dispatch({ type: 'NEXT_ROUND' });
-        }, 1500);
-      }, 1000);
-
-      return () => {
-        if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current);
-      };
+    const actions = agent.decideCommit(state);
+    const assignedCount = actions.length;
+    for (const a of actions) {
+      try { dispatch(a); } catch { /* skip */ }
     }
-  }, [state.phase]);
+    dispatch({ type: 'DONE_COMMITTING', playerId: currentId });
 
-  const winner = getWinner(state);
+    const name = player.name;
+    const narration = assignedCount > 0
+      ? `${name} assigned ${assignedCount} card${assignedCount > 1 ? 's' : ''}`
+      : `${name} committed nothing`;
 
-  return { state, dispatch: wrappedDispatch, startGame, isAITurn, winner };
+    return { narration, newPhase: 'COMMIT_AI' };
+  }, [dispatch, getCurrentPlayerId]);
+
+  const advanceOneAIBroadcast = useCallback((
+    state: GameState,
+    agents: AdvancedAI[],
+    currentSignals: Signal[]
+  ): { narration: string } | null => {
+    const currentId = getCurrentPlayerId(state);
+    const player = state.players.find(p => p.id === currentId);
+    if (!player || player.isHuman) return null;
+
+    const agent = agents.find(a => a.playerId === currentId);
+    if (!agent) return null;
+
+    const action = agent.decideBroadcast(state, currentSignals);
+    dispatch(action);
+
+    if (action.type === 'BROADCAST') {
+      const cid = (action as { conspiracyId: string }).conspiracyId;
+      const pos = (action as { position: string }).position;
+      const conspiracy = state.activeConspiracies.find(c => c.card.id === cid);
+      const cname = conspiracy?.card.name ?? cid;
+      return { narration: `${player.name} broadcasts ${pos} on ${cname}` };
+    }
+    return { narration: `${player.name} passes (drew 1 card)` };
+  }, [dispatch, getCurrentPlayerId]);
+
+  return {
+    engineState,
+    uiPhase,
+    setUIPhase,
+    signals,
+    setSignals,
+    signalDisplays,
+    setSignalDisplays,
+    aiNarration,
+    setAINarration,
+    selectedCardId,
+    setSelectedCardId,
+    aiSpeed,
+    setAISpeed,
+    dispatch,
+    isHumanTurn,
+    getCurrentPlayerId,
+    getPlayerName,
+    advanceOneAICommit,
+    advanceOneAIBroadcast,
+    winner: getWinner(engineState),
+  };
 }

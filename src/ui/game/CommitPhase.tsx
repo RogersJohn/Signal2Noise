@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { GameState, GameAction } from '../../engine/types';
 import { canSupport } from '../../engine/deck';
 import PlayerHand from './PlayerHand';
@@ -7,62 +7,95 @@ import ConspiracyBoard from './ConspiracyBoard';
 interface CommitPhaseProps {
   state: GameState;
   dispatch: (action: GameAction) => void;
-  isAITurn: boolean;
+  selectedCardId: string | null;
+  onSelectCard: (id: string) => void;
+  onDoneCommitting: () => void;
+  isPlayerTurn: boolean;
 }
 
-export default function CommitPhase({ state, dispatch, isAITurn }: CommitPhaseProps) {
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+export default function CommitPhase({
+  state, dispatch, selectedCardId, onSelectCard, onDoneCommitting, isPlayerTurn,
+}: CommitPhaseProps) {
   const humanPlayer = state.players.find(p => p.isHuman);
+  if (!humanPlayer) return null;
 
-  if (!humanPlayer) return <div style={styles.waiting}>AI players are committing evidence...</div>;
-
-  const isMyTurn = !state.committedPlayers.includes(humanPlayer.id);
+  const isMyTurn = isPlayerTurn && !state.committedPlayers.includes(humanPlayer.id);
+  const selectedCard = humanPlayer.hand.find(c => c.id === selectedCardId);
+  const selectedCardTargets = selectedCard ? selectedCard.targets : null;
 
   const handleSelectConspiracy = (conspiracyId: string) => {
-    if (!selectedCardId || !isMyTurn) return;
-
-    const card = humanPlayer.hand.find(c => c.id === selectedCardId);
-    if (!card || !canSupport(card, conspiracyId)) return;
-
+    if (!selectedCardId || !isMyTurn || !selectedCard) return;
+    if (!canSupport(selectedCard, conspiracyId)) return;
     dispatch({
-      type: 'ASSIGN_EVIDENCE',
-      playerId: humanPlayer.id,
-      cardId: selectedCardId,
-      conspiracyId,
+      type: 'ASSIGN_EVIDENCE', playerId: humanPlayer.id,
+      cardId: selectedCardId, conspiracyId,
     });
-    setSelectedCardId(null);
+    onSelectCard('');
   };
 
-  const handleDoneCommitting = () => {
-    dispatch({ type: 'DONE_COMMITTING', playerId: humanPlayer.id });
-  };
+  // Build evidence summary
+  const myEvidence: Array<{ name: string; total: number; specific: number }> = [];
+  for (const ac of state.activeConspiracies) {
+    const assignments = ac.evidenceAssignments.filter(a => a.playerId === humanPlayer.id);
+    if (assignments.length > 0) {
+      myEvidence.push({
+        name: ac.card.name,
+        total: assignments.length,
+        specific: assignments.filter(a => a.specific).length,
+      });
+    }
+  }
+
+  const hasCommitted = myEvidence.length > 0;
 
   return (
     <div>
       <div style={styles.phaseHeader}>
         <h2 style={styles.phaseTitle}>📋 COMMIT PHASE — Round {state.round}/{state.maxRounds}</h2>
         <p style={styles.instruction}>
-          {isAITurn ? 'Waiting for AI...' :
-           isMyTurn ? 'Select a card, then click a conspiracy to assign it. Click DONE when finished.' :
-           'Waiting for other players...'}
+          {isMyTurn
+            ? 'Select a card, then click a highlighted conspiracy to assign it.'
+            : 'Waiting for other players...'}
         </p>
       </div>
+
       <ConspiracyBoard
         conspiracies={state.activeConspiracies}
         players={state.players}
-        selectedConspiracyId={null}
+        selectedCardTargets={selectedCardTargets}
         onSelectConspiracy={handleSelectConspiracy}
         interactive={isMyTurn && selectedCardId !== null}
       />
+
+      {myEvidence.length > 0 && (
+        <div data-testid="evidence-summary" style={styles.summary}>
+          <strong style={styles.summaryTitle}>Your committed evidence:</strong>
+          {myEvidence.map(e => (
+            <div key={e.name} style={styles.summaryLine}>
+              {e.name}: {e.total} card{e.total > 1 ? 's' : ''}{' '}
+              ({e.specific > 0 ? `${e.specific} specific 🎯` : 'generic 📋'})
+              → {e.specific > 0 ? 4 : 3} pts if majority
+            </div>
+          ))}
+        </div>
+      )}
+
       <PlayerHand
         cards={humanPlayer.hand}
         selectedCardId={selectedCardId}
-        onSelectCard={setSelectedCardId}
+        onSelectCard={onSelectCard}
         disabled={!isMyTurn}
       />
+
       {isMyTurn && (
-        <button style={styles.doneButton} onClick={handleDoneCommitting}>
-          ✓ DONE COMMITTING
+        <button
+          data-testid="done-committing"
+          style={styles.doneButton}
+          onClick={onDoneCommitting}
+        >
+          {hasCommitted
+            ? '✓ DONE — Proceed to signals'
+            : 'Nothing to commit — click to proceed anyway'}
         </button>
       )}
     </div>
@@ -73,16 +106,15 @@ const styles: Record<string, React.CSSProperties> = {
   phaseHeader: { padding: '8px', fontFamily: 'monospace' },
   phaseTitle: { color: '#0f0', fontSize: '16px', margin: '0 0 4px' },
   instruction: { color: '#888', fontSize: '12px', margin: 0 },
-  waiting: { color: '#fa0', fontFamily: 'monospace', padding: '20px', textAlign: 'center' },
+  summary: {
+    background: '#1a1a0a', border: '1px solid #333', borderRadius: '4px',
+    padding: '8px 12px', margin: '8px', fontFamily: 'monospace', fontSize: '12px',
+  },
+  summaryTitle: { color: '#fa0', display: 'block', marginBottom: '4px' },
+  summaryLine: { color: '#ccc', marginLeft: '8px', marginBottom: '2px' },
   doneButton: {
-    background: '#0a3d0a',
-    border: '1px solid #0f0',
-    color: '#0f0',
-    fontFamily: 'monospace',
-    fontSize: '14px',
-    padding: '8px 24px',
-    cursor: 'pointer',
-    margin: '8px',
-    borderRadius: '4px',
+    background: '#0a3d0a', border: '1px solid #0f0', color: '#0f0',
+    fontFamily: 'monospace', fontSize: '14px', padding: '8px 24px',
+    cursor: 'pointer', margin: '8px', borderRadius: '4px',
   },
 };

@@ -1,115 +1,65 @@
-/**
- * Page Object Model — centralised selectors for the Signal to Noise UI.
- *
- * All selectors target visible text or structural patterns so that tests
- * remain resilient to minor styling changes.
- */
-
-// ── Menu Screen ──────────────────────────────────────────────────
+// Menu screen
 export const Menu = {
-  /** The main title heading */
-  title: "//h1[contains(text(), 'SIGNAL TO NOISE')]",
-  /** Player name input */
-  nameInput: "//input[@type='text' or not(@type)]",
-  /** AI opponent count slider */
+  startButton: "//*[contains(text(), 'START GAME')]",
+  nameInput: "//input",
   aiSlider: "//input[@type='range']",
-  /** START GAME button */
-  startButton: "//button[contains(text(), 'START GAME')]",
-  /** Version label */
-  version: "//*[contains(text(), 'v2.0')]",
 };
 
-// ── Shared / Layout ──────────────────────────────────────────────
+// Layout elements
 export const Layout = {
-  /** Back-to-menu button */
-  backButton: "//button[contains(text(), 'Menu')]",
-  /** Scoreboard container heading */
+  backButton: "//*[contains(text(), '← Menu')]",
   scoreboardTitle: "//*[contains(text(), 'SCOREBOARD')]",
-  /** Scoreboard table */
   scoreboardTable: "//table",
-  /** Individual score cells (Score column) — td elements with fa0 colour */
-  scoreCells: "//td[contains(@style, '#fa0')]",
+  scoreCells: "//td",
 };
 
-// ── Commit Phase ─────────────────────────────────────────────────
+// Commit Phase
 export const CommitPhase = {
-  /** Phase heading */
   phaseTitle: "//*[contains(text(), 'COMMIT PHASE')]",
-  /** Instruction text underneath the heading */
-  instruction: "//p[contains(text(), 'Select a card') or contains(text(), 'Waiting')]",
-  /** Active conspiracies section heading */
-  conspiracyBoardTitle: "//*[contains(text(), 'ACTIVE CONSPIRACIES')]",
-  /** All conspiracy card buttons on the board */
-  conspiracyCards: "//button[.//div[contains(@style, 'font-weight')]]",
-  /** A specific conspiracy card by name */
-  conspiracyByName: (name: string) =>
-    `//button[./div[contains(text(), '${name}')]]`,
-  /** Evidence dots on a conspiracy card (the coloured dot spans) */
-  evidenceDots: (conspiracyName: string) =>
-    `//button[./div[contains(text(), '${conspiracyName}')]]//span[contains(text(), '●')]`,
-  /** Player hand heading */
-  handTitle: "//*[contains(text(), 'YOUR HAND')]",
-  /** All cards in the player hand */
-  handCards: "//div[./h3[contains(text(), 'YOUR HAND')]]//button",
-  /** A specific hand card by name */
-  handCardByName: (cardName: string) =>
-    `//div[./h3[contains(text(), 'YOUR HAND')]]//button[./div[contains(text(), '${cardName}')]]`,
-  /** DONE COMMITTING button */
-  doneButton: "//button[contains(text(), 'DONE COMMITTING')]",
-  /** AI-waiting message */
-  aiWaiting: "//*[contains(text(), 'AI players are committing')]",
+  doneButton: "[data-testid='done-committing']",
+  handTitle: "[data-testid='hand-title']",
+  handCards: "[data-testid^='hand-card-']",
+  conspiracyCards: "[data-testid^='conspiracy-card-']",
+  evidenceSummary: "[data-testid='evidence-summary']",
+  aiWaiting: "//*[contains(text(), 'Waiting')]",
 };
 
-// ── Broadcast Phase ──────────────────────────────────────────────
+// Signal Display
+export const Signals = {
+  panel: "[data-testid='signal-panel']",
+  dismissButton: "[data-testid='dismiss-signals']",
+  signalEntry: "[data-testid^='signal-entry-']",
+  header: "//*[contains(text(), 'THE TABLE IS TALKING')]",
+};
+
+// Broadcast Phase
 export const BroadcastPhase = {
-  /** Phase heading */
   phaseTitle: "//*[contains(text(), 'BROADCAST PHASE')]",
-  /** Instruction text */
-  instruction: "//p[contains(text(), 'Choose a conspiracy') or contains(text(), 'Waiting')]",
-  /** Broadcast order section */
-  turnOrder: "//h4[contains(text(), 'Broadcast Order')]",
-  /** All REAL buttons (one per conspiracy) */
-  realButtons: "//button[text()='REAL']",
-  /** All FAKE buttons (one per conspiracy) */
-  fakeButtons: "//button[text()='FAKE']",
-  /** REAL button for a named conspiracy */
-  realButtonFor: (conspiracyName: string) =>
-    `//div[./span[contains(text(), '${conspiracyName}')]]//button[text()='REAL']`,
-  /** FAKE button for a named conspiracy */
-  fakeButtonFor: (conspiracyName: string) =>
-    `//div[./span[contains(text(), '${conspiracyName}')]]//button[text()='FAKE']`,
-  /** PASS button */
-  passButton: "//button[contains(text(), 'PASS')]",
-  /** Broadcast entries on conspiracy cards (player: REAL/FAKE labels) */
-  broadcastEntries: "//span[contains(text(), 'REAL') or contains(text(), 'FAKE')]",
-  /** Action label "Pick a conspiracy:" */
-  actionLabel: "//*[contains(text(), 'Pick a conspiracy')]",
+  passButton: "[data-testid='broadcast-pass']",
+  realButton: (id: string) => `[data-testid='broadcast-real-${id}']`,
+  fakeButton: (id: string) => `[data-testid='broadcast-fake-${id}']`,
+  pointProjection: (id: string) => `[data-testid='point-projection-${id}']`,
 };
 
-// ── Resolve Phase ────────────────────────────────────────────────
-export const ResolvePhase = {
-  /** Phase heading */
-  phaseTitle: "//*[contains(text(), 'RESOLVING')]",
-  /** "Calculating results" text */
-  calculating: "//*[contains(text(), 'Calculating results')]",
-  /** Consensus reached label */
-  consensus: "//span[contains(text(), 'CONSENSUS')]",
-  /** No-consensus label */
-  noConsensus: "//span[contains(text(), 'NO CONSENSUS')]",
-  /** Point values in results */
-  points: "//span[contains(text(), 'pts')]",
-  /** First-mover badge */
-  firstMoverBadge: "//span[contains(text(), '🥇')]",
-  /** Specific-evidence badge */
-  specificBadge: "//span[contains(text(), '🎯')]",
-  /** Individual result rows */
-  resultRows: "//div[contains(@style, '1a1a2e')]",
+// AI Narration
+export const Narration = {
+  bar: "[data-testid='ai-narration']",
+  speedToggle: "[data-testid='speed-toggle']",
 };
 
-// ── Game Over ────────────────────────────────────────────────────
+// Resolve Display
+export const Resolve = {
+  container: "[data-testid='resolve-display']",
+  continueButton: "[data-testid='continue-resolve']",
+  resultEntry: "[data-testid^='result-']",
+  playerScore: "[data-testid^='player-score-']",
+  title: "//*[contains(text(), 'RESULTS')]",
+};
+
+// Game Over
 export const GameOver = {
-  /** GAME OVER heading */
-  title: "//h1[contains(text(), 'GAME OVER')]",
-  /** Winner announcement text */
-  winnerText: "//p[contains(text(), 'wins with')]",
+  container: "[data-testid='game-over']",
+  title: "//*[contains(text(), 'GAME OVER')]",
+  winnerText: "//*[contains(text(), 'wins with')]",
+  playAgain: "//*[contains(text(), 'Play Again')]",
 };

@@ -1,50 +1,82 @@
 import React from 'react';
 import { GameState, GameAction } from '../../engine/types';
+import { UIPhase } from '../hooks/useGame';
 import CommitPhase from './CommitPhase';
+import SignalDisplay from './SignalDisplay';
 import BroadcastPhase from './BroadcastPhase';
-import ResolvePhase from './ResolvePhase';
+import ResolveDisplay from './ResolveDisplay';
+import GameOverScreen from './GameOverScreen';
+import ActionNarration from './ActionNarration';
 import Scoreboard from './Scoreboard';
 import GameLog from './GameLog';
-import { getWinner } from '../../engine/engine';
 
 interface GameViewProps {
   state: GameState;
+  uiPhase: UIPhase;
   dispatch: (action: GameAction) => void;
-  isAITurn: boolean;
+  aiNarration: string | null;
+  aiSpeed: 'normal' | 'fast';
+  onToggleSpeed: () => void;
+  selectedCardId: string | null;
+  onSelectCard: (id: string) => void;
+  onDoneCommitting: () => void;
+  signalDisplays: string[];
+  onDismissSignals: () => void;
+  onContinueResolve: () => void;
+  onPlayAgain: () => void;
 }
 
-export default function GameView({ state, dispatch, isAITurn }: GameViewProps) {
-  const winner = getWinner(state);
-  const currentPlayerId = state.turnOrder[state.currentPlayerIndex];
-
-  if (state.phase === 'GAME_OVER') {
-    return (
-      <div style={styles.container}>
-        <div style={styles.gameOver}>
-          <h1 style={styles.gameOverTitle}>🏆 GAME OVER</h1>
-          <p style={styles.winnerText}>
-            {winner ? `${winner.name} wins with ${winner.score} points!` : 'No winner'}
-          </p>
-          <Scoreboard players={state.players} />
-        </div>
-      </div>
-    );
+export default function GameView({
+  state, uiPhase, dispatch, aiNarration, aiSpeed, onToggleSpeed,
+  selectedCardId, onSelectCard, onDoneCommitting,
+  signalDisplays, onDismissSignals, onContinueResolve, onPlayAgain,
+}: GameViewProps) {
+  if (uiPhase === 'GAME_OVER') {
+    return <GameOverScreen state={state} onPlayAgain={onPlayAgain} />;
   }
+
+  const currentPlayerId = state.turnOrder[state.currentPlayerIndex];
+  const isPlayerCommit = uiPhase === 'COMMIT_PLAYER';
+  const isPlayerBroadcast = uiPhase === 'BROADCAST_PLAYER';
 
   return (
     <div style={styles.container}>
+      <ActionNarration narration={aiNarration} aiSpeed={aiSpeed} onToggleSpeed={onToggleSpeed} />
+
       <div style={styles.main}>
         <div style={styles.gameArea}>
-          {state.phase === 'COMMIT' && (
-            <CommitPhase state={state} dispatch={dispatch} isAITurn={isAITurn} />
+          {(uiPhase === 'COMMIT_PLAYER' || uiPhase === 'COMMIT_AI') && (
+            <CommitPhase
+              state={state}
+              dispatch={dispatch}
+              selectedCardId={selectedCardId}
+              onSelectCard={onSelectCard}
+              onDoneCommitting={onDoneCommitting}
+              isPlayerTurn={isPlayerCommit}
+            />
           )}
-          {state.phase === 'BROADCAST' && (
-            <BroadcastPhase state={state} dispatch={dispatch} isAITurn={isAITurn} />
+
+          {uiPhase === 'SIGNALS' && (
+            <SignalDisplay
+              signalDisplays={signalDisplays}
+              state={state}
+              onDismiss={onDismissSignals}
+            />
           )}
-          {state.phase === 'RESOLVE' && (
-            <ResolvePhase state={state} />
+
+          {(uiPhase === 'BROADCAST_PLAYER' || uiPhase === 'BROADCAST_WAITING' || uiPhase === 'BROADCAST_AI') && (
+            <BroadcastPhase
+              state={state}
+              dispatch={dispatch}
+              isPlayerTurn={isPlayerBroadcast}
+            />
+          )}
+
+          {uiPhase === 'RESOLVE_DISPLAY' && (
+            <ResolveDisplay state={state} onContinue={onContinueResolve} />
           )}
         </div>
+
         <div style={styles.sidebar}>
           <Scoreboard players={state.players} currentPlayerId={currentPlayerId} />
           <GameLog entries={state.log} />
@@ -59,7 +91,4 @@ const styles: Record<string, React.CSSProperties> = {
   main: { display: 'flex', gap: '8px' },
   gameArea: { flex: 1 },
   sidebar: { width: '280px', borderLeft: '1px solid #222', flexShrink: 0 },
-  gameOver: { textAlign: 'center', padding: '40px', fontFamily: 'monospace' },
-  gameOverTitle: { color: '#fa0', fontSize: '32px' },
-  winnerText: { color: '#0f0', fontSize: '18px' },
 };
