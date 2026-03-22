@@ -78,8 +78,8 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
             // Calculate projected points for each broadcast choice
             const realMatchesEvidence = hasEvidence && evidencePosition === 'REAL';
             const fakeMatchesEvidence = hasEvidence && evidencePosition === 'FAKE';
-            const realBase = hasEvidence ? (realMatchesEvidence ? 3 : 2) : 2;
-            const fakeBase = hasEvidence ? (fakeMatchesEvidence ? 3 : 2) : 2;
+            const realBase = hasEvidence ? (realMatchesEvidence ? 3 : 2) : 1;
+            const fakeBase = hasEvidence ? (fakeMatchesEvidence ? 3 : 2) : 1;
             const realSpecific = (hasSpecific && realMatchesEvidence) ? 1 : 0;
             const fakeSpecific = (hasSpecific && fakeMatchesEvidence) ? 1 : 0;
 
@@ -87,10 +87,10 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
               <div key={c.card.id} data-testid={`point-projection-${c.card.id}`} style={styles.conspiracyRow}>
                 <div style={styles.conspiracyInfo}>
                   <span style={styles.conspiracyName}>{c.card.icon} {c.card.name}</span>
-                  <span style={styles.evidenceInfo}>
+                  <span style={hasEvidence ? styles.evidenceInfo : styles.noEvidenceWarning}>
                     {hasEvidence
                       ? `${myEvidence.length} card${myEvidence.length > 1 ? 's' : ''} ${hasSpecific ? '(specific 🎯)' : '(generic 📋)'} — ${realEvidence > 0 && fakeEvidence > 0 ? `${realEvidence} REAL, ${fakeEvidence} FAKE` : evidencePosition}`
-                      : 'No evidence'}
+                      : '⚠ No evidence — 1 pt if majority, -2 cred if minority'}
                   </span>
                 </div>
                 <div style={styles.projections}>
@@ -128,7 +128,7 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
           })}
 
           <button data-testid="broadcast-pass" style={styles.passButton} onClick={handlePass}>
-            ⏭ PASS — Score 0, draw 1 card for next round
+            ⏭ PASS — Score 0, draw 1 card. No credibility risk.
           </button>
         </div>
       )}
@@ -146,6 +146,7 @@ const styles: Record<string, React.CSSProperties> = {
   conspiracyInfo: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' },
   conspiracyName: { color: '#fff', fontSize: '14px' },
   evidenceInfo: { color: '#9ca3af', fontSize: '12px' },
+  noEvidenceWarning: { color: '#fa0', fontSize: '12px' },
   projections: { display: 'flex', gap: '16px', marginBottom: '6px' },
   projLabel: { fontSize: '12px' },
   buttons: { display: 'flex', gap: '8px' },

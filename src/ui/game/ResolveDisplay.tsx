@@ -40,7 +40,9 @@ export default function ResolveDisplay({ state, onContinue }: ResolveDisplayProp
               const player = state.players.find(p => p.id === pr.playerId);
               const pname = player?.name ?? pr.playerId;
               const reason = pr.points === 0
-                ? (result.consensusReached ? '(minority)' : '(no consensus)')
+                ? (result.consensusReached
+                  ? (pr.hasEvidence ? '(minority)' : '(minority, no evidence: -2 cred)')
+                  : '(no consensus)')
                 : (pr.hasEvidence && pr.evidenceMatchesBroadcast && pr.hasSpecificEvidence) ? '(evidence match + specific)'
                 : (pr.hasEvidence && pr.evidenceMatchesBroadcast) ? '(evidence match)'
                 : (pr.hasEvidence && !pr.evidenceMatchesBroadcast) ? '(bluff)'

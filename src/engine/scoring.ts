@@ -23,10 +23,10 @@ export function calculatePlayerScore(
     return { base: 0, specificBonus: 0, firstMoverBonus: 0, consensusSizeBonus: 0, total: 0 };
   }
 
-  // Evidence match = 3, evidence mismatch (bluff) = 2, no evidence (bandwagon) = 2
+  // Evidence match = 3, evidence mismatch (bluff) = 2, no evidence (bandwagon) = 1
   const base = hasEvidence
     ? (evidenceMatchesBroadcast ? 3 : 2)
-    : 2;
+    : 1;
   const specificBonus = (hasSpecificEvidence && evidenceMatchesBroadcast) ? 1 : 0;
   const firstMoverBonus = 0;
   const consensusSizeBonus = Math.max(0, majorityCount - threshold);
@@ -131,7 +131,7 @@ export function resolveConspiracy(
       evidenceMatchesBroadcast: evidenceMatches,
       isFirstMover: isFirst,
       points: scoring.total,
-      credibilityChange: onMajority ? 1 : -1,
+      credibilityChange: onMajority ? 1 : (hasEvidence ? -1 : -2),
     };
   });
 

@@ -45,10 +45,10 @@ describe('calculatePlayerScore', () => {
     expect(s.specificBonus).toBe(0);
   });
 
-  it('majority bandwagon (no evidence): 2 points', () => {
+  it('majority bandwagon (no evidence): 1 point', () => {
     const s = calculatePlayerScore(true, false, false, false, 2, 2);
-    expect(s.total).toBe(2);
-    expect(s.base).toBe(2);
+    expect(s.total).toBe(1);
+    expect(s.base).toBe(1);
   });
 
   it('first mover bonus is nerfed to 0', () => {
@@ -159,7 +159,7 @@ describe('resolveConspiracy', () => {
     const p3 = result.playerResults.find(r => r.playerId === 'p3')!;
     expect(p3.onMajority).toBe(false);
     expect(p3.points).toBe(0);
-    expect(p3.credibilityChange).toBe(-1);
+    expect(p3.credibilityChange).toBe(-2); // no evidence on minority = -2 cred
   });
 
   it('scores majority with mismatching evidence as bluff (2 pts)', () => {
@@ -187,7 +187,7 @@ describe('resolveConspiracy', () => {
     });
   });
 
-  it('bandwagon scores 2 points', () => {
+  it('bandwagon scores 1 point', () => {
     const c = makeConspiracy(
       [broadcast('p1', 'REAL'), broadcast('p2', 'REAL')],
       [assignment('p1', false, 'REAL')] // only p1 has evidence
@@ -195,8 +195,32 @@ describe('resolveConspiracy', () => {
     const result = resolveConspiracy(c, 2);
     const p2 = result.playerResults.find(r => r.playerId === 'p2')!;
     expect(p2.hasEvidence).toBe(false);
-    // p2 base is 2 (bandwagon), no consensus bonus since majority=threshold
-    expect(p2.points).toBe(2);
+    // p2 base is 1 (bandwagon), no consensus bonus since majority=threshold
+    expect(p2.points).toBe(1);
+  });
+
+  it('minority with no evidence loses 2 credibility', () => {
+    const c = makeConspiracy(
+      [broadcast('p1', 'REAL'), broadcast('p2', 'REAL'), broadcast('p3', 'FAKE')],
+      [] // p3 has no evidence
+    );
+    const result = resolveConspiracy(c, 2);
+    const p3 = result.playerResults.find(r => r.playerId === 'p3')!;
+    expect(p3.onMajority).toBe(false);
+    expect(p3.hasEvidence).toBe(false);
+    expect(p3.credibilityChange).toBe(-2);
+  });
+
+  it('minority with evidence loses only 1 credibility', () => {
+    const c = makeConspiracy(
+      [broadcast('p1', 'REAL'), broadcast('p2', 'REAL'), broadcast('p3', 'FAKE')],
+      [assignment('p3', false, 'FAKE')] // p3 has evidence
+    );
+    const result = resolveConspiracy(c, 2);
+    const p3 = result.playerResults.find(r => r.playerId === 'p3')!;
+    expect(p3.onMajority).toBe(false);
+    expect(p3.hasEvidence).toBe(true);
+    expect(p3.credibilityChange).toBe(-1);
   });
 
   it('first mover gets +1 bonus', () => {

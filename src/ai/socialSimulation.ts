@@ -129,9 +129,9 @@ export function runSocialGame(
             pointSources.evidence += 3;
             if (pr.hasSpecificEvidence) pointSources.evidence += 1;
           } else if (pr.hasEvidence) {
-            pointSources.bandwagon += 2; // bluff = same as bandwagon
+            pointSources.bandwagon += 2; // bluff
           } else {
-            pointSources.bandwagon += 2;
+            pointSources.bandwagon += 1; // bandwagon
           }
           if (pr.isFirstMover) pointSources.firstMover += 1;
         }

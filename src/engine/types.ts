@@ -96,7 +96,7 @@ export interface PlayerConspiracyResult {
 // ── Scoring Breakdown ──
 
 export interface ScoringBreakdown {
-  base: number;        // 3 with evidence, 2 bandwagon
+  base: number;        // 3 with matching evidence, 2 bluff, 1 bandwagon
   specificBonus: number; // +1 for specific evidence
   firstMoverBonus: number; // +1 for first broadcaster
   consensusSizeBonus: number; // +1 per player beyond threshold

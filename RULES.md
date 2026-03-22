@@ -58,20 +58,19 @@ After resolving, each player **draws 2 cards** (max hand size: 7).
 
 ## Scoring
 
-| Situation | Points |
-|-----------|--------|
-| Majority side, with evidence committed | **3** |
-| …and evidence is specific to this conspiracy | **+1** |
-| Majority side, no evidence (bandwagon) | **2** |
-| First to broadcast on a conspiracy that reaches consensus | **+1** |
-| Each additional player on majority beyond threshold | **+1** |
-| Minority side | **0** |
-| No consensus reached | **0** |
-| Pass | **0** |
+| Situation | Points | Credibility |
+|-----------|--------|-------------|
+| Majority side, evidence matches broadcast | **3** | +1 |
+| …and evidence is specific | **+1** | |
+| Majority side, evidence contradicts (bluff) | **2** | +1 |
+| Majority side, no evidence (bandwagon) | **1** | +1 |
+| Each additional majority voter beyond threshold | **+1** | |
+| Minority side, with evidence | **0** | -1 |
+| Minority side, no evidence | **0** | **-2** |
+| No consensus reached | **0** | 0 |
+| Pass | **0** | 0 (draws 1 card) |
 
 ### Credibility
-- Majority side: **+1 credibility**
-- Minority side: **−1 credibility**
 - Range: 0–10. Starts at 5.
 - Credibility is **only a tiebreaker** at end of game. It does not multiply scoring.
 
@@ -84,6 +83,7 @@ After 6 rounds, the player with the **highest score** wins. Tie: highest credibi
 
 - **Going first is risky but rewarding.** The first mover bonus is valuable, but you broadcast without information.
 - **Watch what others commit.** The number of cards assigned (even hidden) reveals intent.
-- **Bandwagoning is viable but limited.** 2 points with no evidence investment — efficient, but you need others to commit evidence.
+- **Bandwagoning is risky.** Only 1 point if right, but -2 credibility if wrong. Evidence-backed plays are safer and more rewarding.
 - **Specific evidence is powerful.** The +1 specific bonus plus the base 3 makes focused play strong.
+- **Bluffing has a place.** Broadcasting the opposite of your evidence still earns 2 pts on majority — more than bandwagoning.
 - **Consensus size matters.** Building a large consensus benefits everyone on the majority side. Sometimes it's better to join than to oppose.
