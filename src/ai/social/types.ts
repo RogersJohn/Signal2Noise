@@ -66,6 +66,7 @@ export interface SocialMetrics {
   signalHonestyRate: number;
   bluffDetectionRate: number;
   betrayalCount: number;
+  totalBroadcasts: number;
   avgTrustAtEnd: number;
   trustPolarization: number;
   betrayalsByRound: number[];

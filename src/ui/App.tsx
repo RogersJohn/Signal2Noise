@@ -1,9 +1,13 @@
-import React, { useState, useReducer, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useReducer, useEffect, useRef } from 'react';
 import { GameState, GameAction, GameConfig } from '../engine/types';
-import { createGame, applyAction, getWinner } from '../engine/engine';
-import { getStrategy, STRATEGY_NAMES } from '../ai/strategies';
+import { createGame, applyAction } from '../engine/engine';
+import { STRATEGY_NAMES } from '../ai/strategies';
 import { CONSPIRACIES } from '../data/conspiracies';
 import { EVIDENCE_CARDS } from '../data/evidence';
+import { createAdvancedAI, AdvancedAI } from '../ai/social/advancedAgent';
+import { SOCIAL_PERSONALITY_NAMES } from '../ai/social/personalities';
+import { Signal } from '../ai/social/types';
+import { formatSignalDisplay } from '../ai/social/signalFlavor';
 import GameView from './game/GameView';
 
 type AppMode = 'menu' | 'playing';
@@ -84,13 +88,20 @@ export default function App() {
   );
 }
 
+function pickRandomPersonalities(count: number): string[] {
+  return Array.from({ length: count }, () =>
+    SOCIAL_PERSONALITY_NAMES[Math.floor(Math.random() * SOCIAL_PERSONALITY_NAMES.length)]
+  );
+}
+
 function GameContainer({ playerName, aiCount, onBack }: {
   playerName: string;
   aiCount: number;
   onBack: () => void;
 }) {
   const aiStrategies = useRef(pickRandomStrategies(aiCount)).current;
-  const names = [playerName, ...aiStrategies.map((s, i) => `${s} AI ${i + 1}`)];
+  const aiPersonalities = useRef(pickRandomPersonalities(aiCount)).current;
+  const names = [playerName, ...aiPersonalities.map((p, i) => `The ${p}`)];
   const config: GameConfig = {
     playerNames: names,
     humanPlayerIds: ['player_0'],
@@ -104,6 +115,13 @@ function GameContainer({ playerName, aiCount, onBack }: {
   );
 
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const agentsRef = useRef<AdvancedAI[]>(
+    aiStrategies.map((s, i) => createAdvancedAI(`player_${i + 1}`, s, aiPersonalities[i]))
+  );
+  const signalsRef = useRef<Signal[]>([]);
+  const [signalDisplay, setSignalDisplay] = useState<string[]>([]);
+  const [showSignals, setShowSignals] = useState(false);
+  const signalsGenerated = useRef(false);
 
   const currentPlayerId = state.phase === 'COMMIT' || state.phase === 'BROADCAST'
     ? state.turnOrder[state.currentPlayerIndex]
@@ -113,35 +131,69 @@ function GameContainer({ playerName, aiCount, onBack }: {
     : undefined;
   const isAITurn = currentPlayer ? !currentPlayer.isHuman : false;
 
+  // Generate signals when transitioning from COMMIT to BROADCAST
+  useEffect(() => {
+    if (state.phase === 'BROADCAST' && !signalsGenerated.current) {
+      signalsGenerated.current = true;
+      const signals: Signal[] = [];
+      const displays: string[] = [];
+      for (const agent of agentsRef.current) {
+        const signal = agent.generateSignal(state);
+        signals.push(signal);
+        const conspiracy = state.activeConspiracies.find(c => c.card.id === signal.conspiracyId);
+        const conspiracyName = conspiracy?.card.name ?? signal.conspiracyId;
+        displays.push(formatSignalDisplay(signal, agent.personalityName, conspiracyName));
+      }
+      signalsRef.current = signals;
+      setSignalDisplay(displays);
+      setShowSignals(true);
+      // Auto-hide after a few seconds
+      setTimeout(() => setShowSignals(false), 4000);
+    }
+    if (state.phase === 'COMMIT') {
+      signalsGenerated.current = false;
+    }
+  }, [state.phase, state]);
+
   // AI turns
   useEffect(() => {
     if (state.phase === 'GAME_OVER') return;
 
-    if (state.phase === 'COMMIT' && isAITurn && currentPlayer?.strategyName) {
-      aiTimeoutRef.current = setTimeout(() => {
-        const strategy = getStrategy(currentPlayer.strategyName!);
-        const actions = strategy.decideCommit(state, currentPlayer.id);
-        for (const a of actions) {
-          try { dispatch(a); } catch { /* skip */ }
-        }
-        dispatch({ type: 'DONE_COMMITTING', playerId: currentPlayer.id });
-      }, 300);
-      return () => clearTimeout(aiTimeoutRef.current);
+    if (state.phase === 'COMMIT' && isAITurn && currentPlayer) {
+      const agent = agentsRef.current.find(a => a.playerId === currentPlayer.id);
+      if (agent) {
+        aiTimeoutRef.current = setTimeout(() => {
+          const actions = agent.decideCommit(state);
+          for (const a of actions) {
+            try { dispatch(a); } catch { /* skip */ }
+          }
+          dispatch({ type: 'DONE_COMMITTING', playerId: currentPlayer.id });
+        }, 300);
+        return () => clearTimeout(aiTimeoutRef.current);
+      }
     }
 
-    if (state.phase === 'BROADCAST' && isAITurn && currentPlayer?.strategyName) {
-      aiTimeoutRef.current = setTimeout(() => {
-        const strategy = getStrategy(currentPlayer.strategyName!);
-        const action = strategy.decideBroadcast(state, currentPlayer.id);
-        dispatch(action);
-      }, 500);
-      return () => clearTimeout(aiTimeoutRef.current);
+    if (state.phase === 'BROADCAST' && isAITurn && currentPlayer) {
+      const agent = agentsRef.current.find(a => a.playerId === currentPlayer.id);
+      if (agent) {
+        aiTimeoutRef.current = setTimeout(() => {
+          const action = agent.decideBroadcast(state, signalsRef.current);
+          dispatch(action);
+        }, 500);
+        return () => clearTimeout(aiTimeoutRef.current);
+      }
     }
 
     if (state.phase === 'RESOLVE') {
       aiTimeoutRef.current = setTimeout(() => {
         dispatch({ type: 'RESOLVE' });
-        setTimeout(() => dispatch({ type: 'NEXT_ROUND' }), 1500);
+        setTimeout(() => {
+          // Update agents after resolve
+          for (const agent of agentsRef.current) {
+            agent.onRoundEnd(state, signalsRef.current);
+          }
+          dispatch({ type: 'NEXT_ROUND' });
+        }, 1500);
       }, 800);
       return () => clearTimeout(aiTimeoutRef.current);
     }
@@ -150,6 +202,14 @@ function GameContainer({ playerName, aiCount, onBack }: {
   return (
     <div>
       <button style={styles.backButton} onClick={onBack}>← Menu</button>
+      {showSignals && signalDisplay.length > 0 && (
+        <div style={styles.signalPanel}>
+          <div style={styles.signalTitle}>📡 Pre-broadcast signals:</div>
+          {signalDisplay.map((s, i) => (
+            <div key={i} style={styles.signalEntry}>{s}</div>
+          ))}
+        </div>
+      )}
       <GameView state={state} dispatch={dispatch} isAITurn={isAITurn} />
     </div>
   );
@@ -210,5 +270,26 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     margin: '8px',
     borderRadius: '3px',
+  },
+  signalPanel: {
+    background: '#111a11',
+    border: '1px solid #0a3d0a',
+    borderRadius: '6px',
+    padding: '12px 16px',
+    margin: '8px',
+    fontFamily: 'monospace',
+  },
+  signalTitle: {
+    color: '#0f0',
+    fontSize: '13px',
+    fontWeight: 'bold' as const,
+    marginBottom: '8px',
+  },
+  signalEntry: {
+    color: '#aaa',
+    fontSize: '11px',
+    marginBottom: '4px',
+    paddingLeft: '8px',
+    fontStyle: 'italic' as const,
   },
 };

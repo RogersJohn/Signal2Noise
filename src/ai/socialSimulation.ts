@@ -1,6 +1,6 @@
 import { GameState, GameConfig } from '../engine/types';
 import { createGame, applyAction, getWinner } from '../engine/engine';
-import { getStrategy, STRATEGY_NAMES } from './strategies';
+import { getStrategy } from './strategies';
 import { createSocialAgent, SocialAIStrategy } from './social/socialAgent';
 import { getSocialPersonality } from './social/personalities';
 import { SocialPersonality, Signal, SocialMetrics } from './social/types';
@@ -42,20 +42,25 @@ export function runSocialGame(
 
   let state = createGame(config, CONSPIRACIES, EVIDENCE_CARDS);
 
-  // Create social agents
-  const agents: SocialAIStrategy[] = matchup.map((m, i) =>
+  const agents: SocialAIStrategy[] = matchup.map((m) =>
     createSocialAgent(getStrategy(m.baseName), m.personality)
   );
 
   let totalSignals = 0;
   let honestSignals = 0;
   let totalBetrayals = 0;
+  let totalBroadcastCount = 0;
   const betrayalsByRound: number[] = [];
   let grudgesFormed = 0;
   let retaliationCount = 0;
   let desperationActivations = 0;
   let dishonestSignalsDetected = 0;
   let dishonestSignalsTotal = 0;
+
+  // Bug 1: Track consensus and point sources
+  let consensusCount = 0;
+  let totalBroadcasted = 0;
+  const pointSources = { evidence: 0, bandwagon: 0, firstMover: 0, consensusBonus: 0 };
 
   for (let round = 0; round < 6; round++) {
     let roundBetrayals = 0;
@@ -86,24 +91,26 @@ export function runSocialGame(
       const action = agents[agentIdx].decideBroadcast(state, pid, signals);
       state = applyAction(state, action);
 
-      // Track betrayals (signal said one conspiracy, broadcast on another)
-      const playerSignal = signals.find(s => s.senderId === pid);
-      if (playerSignal && action.type === 'BROADCAST') {
-        const broadcastCid = (action as { conspiracyId: string }).conspiracyId;
-        if (broadcastCid !== playerSignal.conspiracyId) {
-          roundBetrayals++;
-          totalBetrayals++;
-        }
-        // Track dishonest signal detection
-        if (!playerSignal.truthful) {
-          dishonestSignalsTotal++;
-          // Was it detected? Check if others have low trust for this player
-          const otherAgents = agents.filter((_, idx) => state.players[idx].id !== pid);
-          const detected = otherAgents.some(a => {
-            const trust = a.socialState?.trustScores?.get(pid);
-            return trust && trust.score < 0;
-          });
-          if (detected) dishonestSignalsDetected++;
+      if (action.type === 'BROADCAST') {
+        totalBroadcasted++;
+        totalBroadcastCount++;
+
+        const playerSignal = signals.find(s => s.senderId === pid);
+        if (playerSignal) {
+          const broadcastCid = (action as { conspiracyId: string }).conspiracyId;
+          if (broadcastCid !== playerSignal.conspiracyId) {
+            roundBetrayals++;
+            totalBetrayals++;
+          }
+          if (!playerSignal.truthful) {
+            dishonestSignalsTotal++;
+            const otherAgents = agents.filter((_, idx) => state.players[idx].id !== pid);
+            const detected = otherAgents.some(a => {
+              const trust = a.socialState?.trustScores?.get(pid);
+              return trust && trust.score < 0;
+            });
+            if (detected) dishonestSignalsDetected++;
+          }
         }
       }
     }
@@ -112,6 +119,27 @@ export function runSocialGame(
 
     // RESOLVE
     state = applyAction(state, { type: 'RESOLVE' });
+
+    // Bug 1: Read roundResults for consensus and point sources
+    for (const result of state.roundResults) {
+      if (result.consensusReached) consensusCount++;
+      for (const pr of result.playerResults) {
+        if (pr.onMajority) {
+          if (pr.hasEvidence) {
+            pointSources.evidence += 3;
+            if (pr.hasSpecificEvidence) pointSources.evidence += 1;
+          } else {
+            pointSources.bandwagon += 2;
+          }
+          if (pr.isFirstMover) pointSources.firstMover += 1;
+        }
+      }
+      if (result.consensusReached) {
+        const majorityPlayers = result.playerResults.filter(pr => pr.onMajority).length;
+        const bonus = Math.max(0, result.majorityCount - result.threshold);
+        pointSources.consensusBonus += bonus * majorityPlayers;
+      }
+    }
 
     // onRoundEnd
     for (let i = 0; i < agents.length; i++) {
@@ -135,7 +163,6 @@ export function runSocialGame(
   const winner = getWinner(state);
   const winnerIdx = state.players.findIndex(p => p.id === winner?.id);
 
-  // Compute end trust stats
   let totalTrust = 0;
   let trustCount = 0;
   const trustValues: number[] = [];
@@ -167,13 +194,14 @@ export function runSocialGame(
     winnerStrategy: winnerIdx >= 0 ? matchup[winnerIdx].personality.name : 'none',
     finalScores,
     finalCredibility,
-    consensusCount: 0,
-    totalBroadcasted: 0,
-    pointSources: { evidence: 0, bandwagon: 0, firstMover: 0, consensusBonus: 0 },
+    consensusCount,
+    totalBroadcasted,
+    pointSources,
     socialMetrics: {
       signalHonestyRate: totalSignals > 0 ? honestSignals / totalSignals : 1,
       bluffDetectionRate: dishonestSignalsTotal > 0 ? dishonestSignalsDetected / dishonestSignalsTotal : 0,
       betrayalCount: totalBetrayals,
+      totalBroadcasts: totalBroadcastCount,
       avgTrustAtEnd: avgTrust,
       trustPolarization: trustStddev,
       betrayalsByRound,
@@ -195,22 +223,17 @@ export function runSocialSimulation(config: SocialSimulationConfig): SocialSimul
     games.push(runSocialGame(matchup, i));
   }
 
-  // Aggregate
   const personalityNames = [...new Set(config.socialMatchup.map(m => m.personalityName))];
   const winCounts: Record<string, number> = {};
   const scoreSums: Record<string, number> = {};
   const scoreCounts: Record<string, number> = {};
 
   for (const name of personalityNames) {
-    winCounts[name] = 0;
-    scoreSums[name] = 0;
-    scoreCounts[name] = 0;
+    winCounts[name] = 0; scoreSums[name] = 0; scoreCounts[name] = 0;
   }
 
   for (const game of games) {
-    if (winCounts[game.winnerStrategy] !== undefined) {
-      winCounts[game.winnerStrategy]++;
-    }
+    if (winCounts[game.winnerStrategy] !== undefined) winCounts[game.winnerStrategy]++;
     for (const [name, score] of Object.entries(game.finalScores)) {
       if (scoreSums[name] !== undefined) {
         scoreSums[name] += score;
@@ -226,12 +249,17 @@ export function runSocialSimulation(config: SocialSimulationConfig): SocialSimul
     avgScoreByPersonality[name] = scoreCounts[name] > 0 ? scoreSums[name] / scoreCounts[name] : 0;
   }
 
+  // Bug 2: Fix betrayal rate — use totalBroadcasts as denominator
+  const totalBroadcasts = games.reduce((s, g) => s + g.socialMetrics.totalBroadcasts, 0);
+  const totalBetrayals = games.reduce((s, g) => s + g.socialMetrics.betrayalCount, 0);
+  const avgBetrayalRate = totalBroadcasts > 0 ? totalBetrayals / totalBroadcasts : 0;
+
   return {
     config,
     games,
     aggregate: {
       avgSignalHonesty: games.reduce((s, g) => s + g.socialMetrics.signalHonestyRate, 0) / games.length,
-      avgBetrayalRate: games.reduce((s, g) => s + g.socialMetrics.betrayalCount, 0) / (games.length * 6 * config.socialMatchup.length),
+      avgBetrayalRate,
       avgEndTrust: games.reduce((s, g) => s + g.socialMetrics.avgTrustAtEnd, 0) / games.length,
       winRateByPersonality,
       avgScoreByPersonality,
