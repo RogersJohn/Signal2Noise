@@ -6,6 +6,7 @@ coverage/
 *.log
 data/simulation-results/*.json
 data/transcripts/*.json
+data/evolution-results/*.json
 !data/simulation-results/.gitkeep
 !data/transcripts/.gitkeep
 e2e/screenshots/
