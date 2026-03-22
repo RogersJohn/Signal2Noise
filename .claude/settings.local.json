@@ -43,7 +43,17 @@
       "Bash(xargs:*)",
       "Bash(for f in ANALYTICS_REPORT.md COALITION_2_1_1_REPORT.md HOMOGENEOUS_GROUP_REPORT.md KNOCKOUT_TOURNAMENT_REPORT.md MAJORITY_MINORITY_REPORT.md MONTE_CARLO_REPORT.md ROUND_ROBIN_TOURNAMENT_REPORT.md TEAM_2V2_REPORT.md)",
       "Bash(do mv \"$f\" test-results/)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(git checkout:*)",
+      "Bash(git mv:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npx react-scripts:*)",
+      "Bash(node:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(pkill -f \"react-scripts\")"
     ],
     "deny": [],
     "ask": []

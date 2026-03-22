@@ -43,42 +43,55 @@ export default function GameContainer({ playerName, aiCount, onBack }: GameConta
     }
 
     if (state.phase === 'COMMIT') {
-      const currentId = getCurrentPlayerId(state);
-      const player = state.players.find(p => p.id === currentId);
-      if (player?.isHuman && !state.committedPlayers.includes(currentId)) {
+      // Find the next uncommitted player (COMMIT doesn't use currentPlayerIndex)
+      const uncommitted = state.turnOrder.filter(
+        id => !state.committedPlayers.includes(id)
+      );
+      if (uncommitted.length === 0) return; // all done, wait for phase transition
+      const nextPlayer = state.players.find(p => p.id === uncommitted[0]);
+      if (nextPlayer?.isHuman) {
         setUIPhase('COMMIT_PLAYER');
-      } else if (!state.committedPlayers.includes(currentId)) {
+      } else {
         setUIPhase('COMMIT_AI');
       }
     }
-  }, [state.phase, state.round]);
+  }, [state.phase, state.round, state.committedPlayers.length]);
   // Process AI commits
   useEffect(() => {
     if (uiPhase !== 'COMMIT_AI') return;
     if (state.phase !== 'COMMIT') return;
 
-    const currentId = getCurrentPlayerId(state);
-    const player = state.players.find(p => p.id === currentId);
+    // Find the next uncommitted player
+    const uncommitted = state.turnOrder.filter(
+      id => !state.committedPlayers.includes(id)
+    );
+    if (uncommitted.length === 0) return; // all done
 
-    if (!player) return;
+    const nextId = uncommitted[0];
+    const nextPlayer = state.players.find(p => p.id === nextId);
+    if (!nextPlayer) return;
 
-    if (player.isHuman) {
+    if (nextPlayer.isHuman) {
       setUIPhase('COMMIT_PLAYER');
       setAINarration(null);
       return;
     }
 
     timerRef.current = setTimeout(() => {
-      const result = advanceOneAICommit(state, agents);
-      if (result) {
-        setAINarration(`🤖 ${result.narration}`);
+      const agent = agents.find(a => a.playerId === nextId);
+      if (agent) {
+        const actions = agent.decideCommit(state);
+        const count = actions.length;
+        for (const a of actions) {
+          try { dispatch(a); } catch { /* skip */ }
+        }
+        dispatch({ type: 'DONE_COMMITTING', playerId: nextId });
+        setAINarration(`🤖 ${nextPlayer.name} ${count > 0 ? `assigned ${count} card${count > 1 ? 's' : ''}` : 'committed nothing'}`);
       }
-      // Check if all committed -> signals
-      // The dispatch in advanceOneAICommit will trigger re-render
     }, delay);
 
     return clearTimer;
-  }, [uiPhase, state, delay]);
+  }, [uiPhase, state, delay, agents, dispatch, setAINarration, setUIPhase, clearTimer]);
   // Transition from COMMIT to SIGNALS when engine enters BROADCAST
   useEffect(() => {
     if (state.phase === 'BROADCAST' && uiPhase !== 'SIGNALS' && uiPhase !== 'BROADCAST_PLAYER' && uiPhase !== 'BROADCAST_AI' && uiPhase !== 'BROADCAST_WAITING') {
