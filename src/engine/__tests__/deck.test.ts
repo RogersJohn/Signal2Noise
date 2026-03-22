@@ -1,8 +1,8 @@
 import { shuffle, seededShuffle, draw, canSupport, isSpecificTo, dealHands, setupConspiracies } from '../deck';
 import { EvidenceCard, ConspiracyCard } from '../types';
 
-const makeCard = (id: string, targets: string[] = ['ALL'], specific = false): EvidenceCard => ({
-  id, name: `Card ${id}`, targets, specific, flavorText: 'test',
+const makeCard = (id: string, targets: string[] = ['ALL'], specific = false, position: 'REAL' | 'FAKE' = 'REAL'): EvidenceCard => ({
+  id, name: `Card ${id}`, targets, specific, position, flavorText: 'test',
 });
 
 const makeConspiracy = (id: string): ConspiracyCard => ({

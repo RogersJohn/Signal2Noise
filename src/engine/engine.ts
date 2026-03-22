@@ -144,6 +144,7 @@ function handleAssignEvidence(state: GameState, playerId: string, cardId: string
               playerId,
               conspiracyId,
               specific: isSpecificTo(card, conspiracyId),
+              position: card.position,
             },
           ],
         }

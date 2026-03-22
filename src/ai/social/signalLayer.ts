@@ -1,5 +1,5 @@
 import { Signal, SocialPersonality, AdaptiveState, BeliefState, TrustEntry } from './types';
-import { GameState, ActiveConspiracy } from '../../engine/types';
+import { GameState, ActiveConspiracy, Position } from '../../engine/types';
 import { getTrustScore } from './trustTracker';
 
 export function generateSignal(

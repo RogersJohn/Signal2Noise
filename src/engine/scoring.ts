@@ -16,14 +16,18 @@ export function calculatePlayerScore(
   hasSpecificEvidence: boolean,
   isFirstMover: boolean,
   majorityCount: number,
-  threshold: number
+  threshold: number,
+  evidenceMatchesBroadcast: boolean = false
 ): ScoringBreakdown {
   if (!onMajority) {
     return { base: 0, specificBonus: 0, firstMoverBonus: 0, consensusSizeBonus: 0, total: 0 };
   }
 
-  const base = hasEvidence ? 3 : 2;
-  const specificBonus = hasSpecificEvidence ? 1 : 0;
+  // Evidence match = 3, evidence mismatch (bluff) = 2, no evidence (bandwagon) = 2
+  const base = hasEvidence
+    ? (evidenceMatchesBroadcast ? 3 : 2)
+    : 2;
+  const specificBonus = (hasSpecificEvidence && evidenceMatchesBroadcast) ? 1 : 0;
   const firstMoverBonus = 0;
   const consensusSizeBonus = Math.max(0, majorityCount - threshold);
   const total = base + specificBonus + firstMoverBonus + consensusSizeBonus;
@@ -54,6 +58,21 @@ export function playerHasSpecificEvidence(
 }
 
 /**
+ * Check if a player's evidence position matches their broadcast position.
+ */
+export function doesEvidenceMatchBroadcast(
+  conspiracy: ActiveConspiracy,
+  playerId: string,
+  broadcastPosition: Position
+): boolean {
+  const assignments = conspiracy.evidenceAssignments.filter(a => a.playerId === playerId);
+  if (assignments.length === 0) return false;
+  // Evidence matches if majority of assigned cards support the broadcast position
+  const matchCount = assignments.filter(a => a.position === broadcastPosition).length;
+  return matchCount > assignments.length / 2;
+}
+
+/**
  * Check if a player was the first to broadcast on a conspiracy.
  */
 export function isFirstBroadcaster(
@@ -80,6 +99,7 @@ export function resolveConspiracy(
         onMajority: false,
         hasEvidence: playerHasEvidence(conspiracy, broadcast.playerId),
         hasSpecificEvidence: playerHasSpecificEvidence(conspiracy, broadcast.playerId),
+        evidenceMatchesBroadcast: doesEvidenceMatchBroadcast(conspiracy, broadcast.playerId, broadcast.position),
         isFirstMover: isFirstBroadcaster(conspiracy, broadcast.playerId),
         points: 0,
         credibilityChange: 0,
@@ -90,6 +110,7 @@ export function resolveConspiracy(
     const hasEvidence = playerHasEvidence(conspiracy, broadcast.playerId);
     const hasSpecific = playerHasSpecificEvidence(conspiracy, broadcast.playerId);
     const isFirst = isFirstBroadcaster(conspiracy, broadcast.playerId);
+    const evidenceMatches = doesEvidenceMatchBroadcast(conspiracy, broadcast.playerId, broadcast.position);
 
     const scoring = calculatePlayerScore(
       onMajority,
@@ -97,7 +118,8 @@ export function resolveConspiracy(
       hasSpecific,
       isFirst,
       consensus.majorityCount,
-      threshold
+      threshold,
+      evidenceMatches
     );
 
     return {
@@ -106,6 +128,7 @@ export function resolveConspiracy(
       onMajority,
       hasEvidence,
       hasSpecificEvidence: hasSpecific,
+      evidenceMatchesBroadcast: evidenceMatches,
       isFirstMover: isFirst,
       points: scoring.total,
       credibilityChange: onMajority ? 1 : -1,

@@ -1,4 +1,4 @@
-import { calculatePlayerScore, resolveConspiracy, resolveAllConspiracies, playerHasEvidence, playerHasSpecificEvidence, isFirstBroadcaster } from '../scoring';
+import { calculatePlayerScore, resolveConspiracy, resolveAllConspiracies, playerHasEvidence, playerHasSpecificEvidence, isFirstBroadcaster, doesEvidenceMatchBroadcast } from '../scoring';
 import { ActiveConspiracy, BroadcastEntry, EvidenceAssignment } from '../types';
 
 function makeConspiracy(
@@ -16,21 +16,33 @@ function broadcast(playerId: string, position: 'REAL' | 'FAKE', isFirst = false)
   return { playerId, conspiracyId: 'test', position, isFirstOnConspiracy: isFirst };
 }
 
-function assignment(playerId: string, specific = false): EvidenceAssignment {
-  return { cardId: `card_${playerId}`, playerId, conspiracyId: 'test', specific };
+function assignment(playerId: string, specific = false, position: 'REAL' | 'FAKE' = 'REAL'): EvidenceAssignment {
+  return { cardId: `card_${playerId}`, playerId, conspiracyId: 'test', specific, position };
 }
 
 describe('calculatePlayerScore', () => {
-  it('majority with evidence: 3 points', () => {
-    const s = calculatePlayerScore(true, true, false, false, 2, 2);
+  it('majority with evidence matching broadcast: 3 points', () => {
+    const s = calculatePlayerScore(true, true, false, false, 2, 2, true);
     expect(s.total).toBe(3);
     expect(s.base).toBe(3);
   });
 
-  it('majority with specific evidence: 4 points', () => {
-    const s = calculatePlayerScore(true, true, true, false, 2, 2);
+  it('majority with evidence NOT matching broadcast (bluff): 2 points', () => {
+    const s = calculatePlayerScore(true, true, false, false, 2, 2, false);
+    expect(s.total).toBe(2);
+    expect(s.base).toBe(2);
+  });
+
+  it('majority with specific evidence matching: 4 points', () => {
+    const s = calculatePlayerScore(true, true, true, false, 2, 2, true);
     expect(s.total).toBe(4);
     expect(s.specificBonus).toBe(1);
+  });
+
+  it('majority with specific evidence NOT matching: no specific bonus', () => {
+    const s = calculatePlayerScore(true, true, true, false, 2, 2, false);
+    expect(s.total).toBe(2);
+    expect(s.specificBonus).toBe(0);
   });
 
   it('majority bandwagon (no evidence): 2 points', () => {
@@ -40,24 +52,24 @@ describe('calculatePlayerScore', () => {
   });
 
   it('first mover bonus is nerfed to 0', () => {
-    const s = calculatePlayerScore(true, true, false, true, 2, 2);
+    const s = calculatePlayerScore(true, true, false, true, 2, 2, true);
     expect(s.firstMoverBonus).toBe(0);
     expect(s.total).toBe(3);
   });
 
   it('consensus size bonus: +1 per player beyond threshold', () => {
-    const s = calculatePlayerScore(true, true, false, false, 4, 2);
+    const s = calculatePlayerScore(true, true, false, false, 4, 2, true);
     expect(s.consensusSizeBonus).toBe(2);
     expect(s.total).toBe(5);
   });
 
   it('minority side: 0 points', () => {
-    const s = calculatePlayerScore(false, true, true, true, 2, 2);
+    const s = calculatePlayerScore(false, true, true, true, 2, 2, true);
     expect(s.total).toBe(0);
   });
 
-  it('max scoring: specific + consensus bonus (first mover nerfed)', () => {
-    const s = calculatePlayerScore(true, true, true, true, 4, 2);
+  it('max scoring: specific match + consensus bonus', () => {
+    const s = calculatePlayerScore(true, true, true, true, 4, 2, true);
     // base 3 + specific 1 + first mover 0 + consensus (4-2)=2 = 6
     expect(s.total).toBe(6);
   });
@@ -87,6 +99,34 @@ describe('playerHasSpecificEvidence', () => {
   });
 });
 
+describe('doesEvidenceMatchBroadcast', () => {
+  it('returns true when evidence position matches broadcast', () => {
+    const c = makeConspiracy([], [assignment('p1', false, 'REAL')]);
+    expect(doesEvidenceMatchBroadcast(c, 'p1', 'REAL')).toBe(true);
+  });
+
+  it('returns false when evidence position differs from broadcast', () => {
+    const c = makeConspiracy([], [assignment('p1', false, 'REAL')]);
+    expect(doesEvidenceMatchBroadcast(c, 'p1', 'FAKE')).toBe(false);
+  });
+
+  it('returns false when player has no evidence', () => {
+    const c = makeConspiracy([], []);
+    expect(doesEvidenceMatchBroadcast(c, 'p1', 'REAL')).toBe(false);
+  });
+
+  it('uses majority position with mixed evidence', () => {
+    const c = makeConspiracy([], [
+      assignment('p1', false, 'REAL'),
+      assignment('p1', false, 'REAL'),
+      assignment('p1', false, 'FAKE'),
+    ]);
+    // 2 REAL vs 1 FAKE — majority is REAL
+    expect(doesEvidenceMatchBroadcast(c, 'p1', 'REAL')).toBe(true);
+    expect(doesEvidenceMatchBroadcast(c, 'p1', 'FAKE')).toBe(false);
+  });
+});
+
 describe('isFirstBroadcaster', () => {
   it('returns true for first broadcaster', () => {
     const c = makeConspiracy([broadcast('p1', 'REAL'), broadcast('p2', 'REAL')]);
@@ -100,10 +140,10 @@ describe('isFirstBroadcaster', () => {
 });
 
 describe('resolveConspiracy', () => {
-  it('scores majority with evidence correctly', () => {
+  it('scores majority with matching evidence correctly', () => {
     const c = makeConspiracy(
       [broadcast('p1', 'REAL'), broadcast('p2', 'REAL'), broadcast('p3', 'FAKE')],
-      [assignment('p1'), assignment('p2')]
+      [assignment('p1', false, 'REAL'), assignment('p2', false, 'REAL')]
     );
     const result = resolveConspiracy(c, 2);
     expect(result.consensusReached).toBe(true);
@@ -112,6 +152,7 @@ describe('resolveConspiracy', () => {
     const p1 = result.playerResults.find(r => r.playerId === 'p1')!;
     expect(p1.onMajority).toBe(true);
     expect(p1.hasEvidence).toBe(true);
+    expect(p1.evidenceMatchesBroadcast).toBe(true);
     expect(p1.points).toBeGreaterThanOrEqual(3);
     expect(p1.credibilityChange).toBe(1);
 
@@ -119,6 +160,18 @@ describe('resolveConspiracy', () => {
     expect(p3.onMajority).toBe(false);
     expect(p3.points).toBe(0);
     expect(p3.credibilityChange).toBe(-1);
+  });
+
+  it('scores majority with mismatching evidence as bluff (2 pts)', () => {
+    const c = makeConspiracy(
+      [broadcast('p1', 'REAL'), broadcast('p2', 'REAL')],
+      [assignment('p1', false, 'FAKE')] // p1 has FAKE evidence but broadcast REAL
+    );
+    const result = resolveConspiracy(c, 2);
+    const p1 = result.playerResults.find(r => r.playerId === 'p1')!;
+    expect(p1.hasEvidence).toBe(true);
+    expect(p1.evidenceMatchesBroadcast).toBe(false);
+    expect(p1.points).toBe(2); // bluff = bandwagon points
   });
 
   it('no consensus: everyone gets 0', () => {
@@ -137,7 +190,7 @@ describe('resolveConspiracy', () => {
   it('bandwagon scores 2 points', () => {
     const c = makeConspiracy(
       [broadcast('p1', 'REAL'), broadcast('p2', 'REAL')],
-      [assignment('p1')] // only p1 has evidence
+      [assignment('p1', false, 'REAL')] // only p1 has evidence
     );
     const result = resolveConspiracy(c, 2);
     const p2 = result.playerResults.find(r => r.playerId === 'p2')!;
@@ -149,7 +202,7 @@ describe('resolveConspiracy', () => {
   it('first mover gets +1 bonus', () => {
     const c = makeConspiracy(
       [broadcast('p1', 'REAL'), broadcast('p2', 'REAL')],
-      [assignment('p1'), assignment('p2')]
+      [assignment('p1', false, 'REAL'), assignment('p2', false, 'REAL')]
     );
     const result = resolveConspiracy(c, 2);
     const p1 = result.playerResults.find(r => r.playerId === 'p1')!;

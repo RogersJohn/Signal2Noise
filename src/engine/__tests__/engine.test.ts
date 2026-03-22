@@ -13,6 +13,7 @@ const testEvidence: EvidenceCard[] = Array.from({ length: 48 }, (_, i) => ({
   name: `Evidence ${i}`,
   targets: i < 12 ? ['ALL'] : [`conspiracy_${i % 5}`],
   specific: i >= 12,
+  position: (i % 2 === 0 ? 'REAL' : 'FAKE') as 'REAL' | 'FAKE',
   flavorText: `Flavor ${i}`,
 }));
 

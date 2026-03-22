@@ -29,7 +29,7 @@ export default function Scoreboard({ players, currentPlayerId }: ScoreboardProps
               </td>
               <td style={{ ...styles.td, color: '#fa0' }}>{p.score}</td>
               <td style={{ ...styles.td, color: '#0af' }}>{p.credibility}</td>
-              <td style={{ ...styles.td, color: '#888' }}>{p.hand.length}</td>
+              <td style={{ ...styles.td, color: '#9ca3af' }}>{p.hand.length}</td>
             </tr>
           ))}
         </tbody>
@@ -40,9 +40,9 @@ export default function Scoreboard({ players, currentPlayerId }: ScoreboardProps
 
 const styles: Record<string, React.CSSProperties> = {
   container: { padding: '8px', fontFamily: 'monospace' },
-  title: { color: '#0f0', fontSize: '14px', margin: '0 0 8px' },
-  table: { width: '100%', borderCollapse: 'collapse', fontSize: '12px' },
-  th: { textAlign: 'left', color: '#888', padding: '4px 8px', borderBottom: '1px solid #333' },
-  td: { padding: '4px 8px', color: '#ccc' },
+  title: { color: '#0f0', fontSize: '15px', margin: '0 0 8px' },
+  table: { width: '100%', borderCollapse: 'collapse', fontSize: '13px' },
+  th: { textAlign: 'left', color: '#9ca3af', padding: '4px 8px', borderBottom: '1px solid #333' },
+  td: { padding: '4px 8px', color: '#d1d5db' },
   currentRow: { background: '#1a2a1a' },
 };

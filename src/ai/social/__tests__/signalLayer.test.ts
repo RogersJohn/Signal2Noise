@@ -15,7 +15,7 @@ function makeState(conspiracyIds: string[], assignments: Record<string, string[]
   const activeConspiracies: ActiveConspiracy[] = conspiracyIds.map(id => ({
     card: { id, name: id, description: '', icon: '' },
     evidenceAssignments: (assignments[id] ?? []).map(playerId => ({
-      cardId: `card_${playerId}_${id}`, playerId, conspiracyId: id, specific: false,
+      cardId: `card_${playerId}_${id}`, playerId, conspiracyId: id, specific: false, position: 'REAL' as 'REAL' | 'FAKE',
     })),
     broadcasts: [],
   }));

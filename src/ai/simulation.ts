@@ -95,9 +95,11 @@ function runSingleGame(matchup: string[], gameIndex: number): GameResult {
       if (result.consensusReached) totalConsensus++;
       for (const pr of result.playerResults) {
         if (pr.onMajority) {
-          if (pr.hasEvidence) {
+          if (pr.hasEvidence && pr.evidenceMatchesBroadcast) {
             pointSources.evidence += 3;
             if (pr.hasSpecificEvidence) pointSources.evidence += 1;
+          } else if (pr.hasEvidence) {
+            pointSources.bandwagon += 2; // bluff = same as bandwagon
           } else {
             pointSources.bandwagon += 2;
           }

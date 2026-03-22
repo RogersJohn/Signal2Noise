@@ -10,7 +10,7 @@ const testConspiracies: ConspiracyCard[] = Array.from({ length: 12 }, (_, i) => 
 const testEvidence: EvidenceCard[] = Array.from({ length: 48 }, (_, i) => ({
   id: `ev_${i}`, name: `Evidence ${i}`,
   targets: i < 12 ? ['ALL'] : [`c${i % 5}`],
-  specific: i >= 12, flavorText: `Flavor ${i}`,
+  specific: i >= 12, position: (i % 2 === 0 ? 'REAL' : 'FAKE') as 'REAL' | 'FAKE', flavorText: `Flavor ${i}`,
 }));
 
 function createTestGame() {

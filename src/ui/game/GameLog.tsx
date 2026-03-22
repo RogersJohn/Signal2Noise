@@ -50,13 +50,13 @@ export default function GameLog({ entries }: GameLogProps) {
 
 const styles: Record<string, React.CSSProperties> = {
   container: { padding: '8px', fontFamily: 'monospace' },
-  title: { color: '#0f0', fontSize: '14px', margin: '0 0 8px' },
+  title: { color: '#0f0', fontSize: '15px', margin: '0 0 8px' },
   logArea: {
     maxHeight: '250px', overflowY: 'auto', background: '#0a0a0a',
-    border: '1px solid #222', borderRadius: '4px', padding: '6px', fontSize: '10px',
+    border: '1px solid #222', borderRadius: '4px', padding: '6px', fontSize: '12px',
   },
-  roundHeader: { color: '#fa0', margin: '6px 0 2px', fontWeight: 'bold', fontSize: '10px' },
+  roundHeader: { color: '#fa0', margin: '6px 0 2px', fontWeight: 'bold', fontSize: '12px' },
   entry: { marginBottom: '2px', lineHeight: '1.4' },
-  phase: { color: '#0af', marginRight: '4px', fontSize: '9px' },
-  text: { color: '#888' },
+  phase: { color: '#38bdf8', marginRight: '4px', fontSize: '11px' },
+  text: { color: '#9ca3af' },
 };

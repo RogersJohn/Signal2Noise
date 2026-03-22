@@ -33,8 +33,8 @@ export default function CommitPhase({
     onSelectCard('');
   };
 
-  // Build evidence summary
-  const myEvidence: Array<{ name: string; total: number; specific: number }> = [];
+  // Build evidence summary with position breakdown
+  const myEvidence: Array<{ name: string; total: number; specific: number; realCount: number; fakeCount: number }> = [];
   for (const ac of state.activeConspiracies) {
     const assignments = ac.evidenceAssignments.filter(a => a.playerId === humanPlayer.id);
     if (assignments.length > 0) {
@@ -42,6 +42,8 @@ export default function CommitPhase({
         name: ac.card.name,
         total: assignments.length,
         specific: assignments.filter(a => a.specific).length,
+        realCount: assignments.filter(a => a.position === 'REAL').length,
+        fakeCount: assignments.filter(a => a.position === 'FAKE').length,
       });
     }
   }
@@ -70,13 +72,18 @@ export default function CommitPhase({
       {myEvidence.length > 0 && (
         <div data-testid="evidence-summary" style={styles.summary}>
           <strong style={styles.summaryTitle}>Your committed evidence:</strong>
-          {myEvidence.map(e => (
-            <div key={e.name} style={styles.summaryLine}>
-              {e.name}: {e.total} card{e.total > 1 ? 's' : ''}{' '}
-              ({e.specific > 0 ? `${e.specific} specific 🎯` : 'generic 📋'})
-              → {e.specific > 0 ? 4 : 3} pts if majority
-            </div>
-          ))}
+          {myEvidence.map(e => {
+            const positionLabel = e.realCount > 0 && e.fakeCount > 0
+              ? `${e.realCount} REAL, ${e.fakeCount} FAKE`
+              : e.realCount > 0 ? 'supports REAL' : 'supports FAKE';
+            return (
+              <div key={e.name} style={styles.summaryLine}>
+                {e.name}: {e.total} card{e.total > 1 ? 's' : ''}{' '}
+                ({e.specific > 0 ? `${e.specific} specific 🎯` : 'generic 📋'})
+                {' — '}{positionLabel}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -104,14 +111,14 @@ export default function CommitPhase({
 
 const styles: Record<string, React.CSSProperties> = {
   phaseHeader: { padding: '8px', fontFamily: 'monospace' },
-  phaseTitle: { color: '#0f0', fontSize: '16px', margin: '0 0 4px' },
-  instruction: { color: '#888', fontSize: '12px', margin: 0 },
+  phaseTitle: { color: '#0f0', fontSize: '18px', margin: '0 0 4px' },
+  instruction: { color: '#9ca3af', fontSize: '13px', margin: 0 },
   summary: {
     background: '#1a1a0a', border: '1px solid #333', borderRadius: '4px',
-    padding: '8px 12px', margin: '8px', fontFamily: 'monospace', fontSize: '12px',
+    padding: '8px 12px', margin: '8px', fontFamily: 'monospace', fontSize: '13px',
   },
   summaryTitle: { color: '#fa0', display: 'block', marginBottom: '4px' },
-  summaryLine: { color: '#ccc', marginLeft: '8px', marginBottom: '2px' },
+  summaryLine: { color: '#d1d5db', marginLeft: '8px', marginBottom: '2px' },
   doneButton: {
     background: '#0a3d0a', border: '1px solid #0f0', color: '#0f0',
     fontFamily: 'monospace', fontSize: '14px', padding: '8px 24px',

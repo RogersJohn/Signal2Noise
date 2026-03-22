@@ -53,8 +53,22 @@ function assignCardToConspiracy(playerId: string, cardId: string, conspiracyId: 
   return { type: 'ASSIGN_EVIDENCE', playerId, cardId, conspiracyId };
 }
 
+/**
+ * Get the majority evidence position for a player on a conspiracy.
+ * Returns the position most of their evidence supports, or null if no evidence.
+ */
+function getEvidencePosition(conspiracy: ActiveConspiracy, playerId: string): Position | null {
+  const assignments = conspiracy.evidenceAssignments.filter(a => a.playerId === playerId);
+  if (assignments.length === 0) return null;
+  const realCount = assignments.filter(a => a.position === 'REAL').length;
+  const fakeCount = assignments.filter(a => a.position === 'FAKE').length;
+  if (realCount > fakeCount) return 'REAL';
+  if (fakeCount > realCount) return 'FAKE';
+  return assignments[0].position; // tie: use first card's position
+}
+
 // ── Strategy 1: Evidence-Only ──
-// Focused commit, only broadcasts with evidence, never bandwagons
+// Focused commit, only broadcasts with evidence, never bluffs
 
 const evidenceOnly: AIStrategy = {
   name: 'Evidence-Only',
@@ -90,15 +104,16 @@ const evidenceOnly: AIStrategy = {
   },
 
   decideBroadcast(state, playerId) {
-    // Only broadcast on conspiracies where we have evidence
+    // Only broadcast on conspiracies where we have evidence — always match evidence position
     for (const conspiracy of state.activeConspiracies) {
       const myEvidence = getEvidenceCountForPlayer(conspiracy, playerId);
       if (myEvidence > 0) {
+        const evidencePos = getEvidencePosition(conspiracy, playerId)!;
         return {
           type: 'BROADCAST',
           playerId,
           conspiracyId: conspiracy.card.id,
-          position: pickRandomPosition(),
+          position: evidencePos, // never bluffs
         };
       }
     }
@@ -107,7 +122,7 @@ const evidenceOnly: AIStrategy = {
 };
 
 // ── Strategy 2: Aggressive ──
-// Spread commit, broadcasts frequently, occasionally bandwagons
+// Spread commit, broadcasts frequently, bluffs 20% when momentum is against evidence
 
 const aggressive: AIStrategy = {
   name: 'Aggressive',
@@ -136,19 +151,17 @@ const aggressive: AIStrategy = {
   },
 
   decideBroadcast(state, playerId) {
-    // Aggressive: frequently broadcasts but doesn't always follow the crowd
-    // 40% chance to go contrarian (pick opposite of leading position)
     const withEvidence = state.activeConspiracies.filter(
       c => getEvidenceCountForPlayer(c, playerId) > 0
     );
 
     if (withEvidence.length > 0) {
       const target = withEvidence[0];
+      const evidencePos = getEvidencePosition(target, playerId)!;
       const leading = getLeadingPosition(target);
-      const goContrarian = Math.random() < 0.4;
-      const position = leading
-        ? (goContrarian ? (leading.position === 'REAL' ? 'FAKE' : 'REAL') as Position : leading.position)
-        : pickRandomPosition();
+      // Bluff 20% of the time if momentum is on the other side
+      const shouldBluff = leading && leading.position !== evidencePos && Math.random() < 0.2;
+      const position = shouldBluff ? leading!.position : evidencePos;
       return { type: 'BROADCAST', playerId, conspiracyId: target.card.id, position };
     }
 
@@ -164,7 +177,7 @@ const aggressive: AIStrategy = {
 };
 
 // ── Strategy 3: Follower ──
-// Light commit, heavily uses sequential info, bandwagons onto near-consensus
+// Light commit, heavily uses sequential info, follows whatever's been broadcast
 
 const follower: AIStrategy = {
   name: 'Follower',
@@ -188,7 +201,7 @@ const follower: AIStrategy = {
   decideBroadcast(state, playerId) {
     const threshold = state.consensusThreshold;
 
-    // Look for near-consensus conspiracies to bandwagon (but only 70% of the time)
+    // Look for near-consensus conspiracies to bandwagon (70% of the time, follow regardless of evidence)
     if (Math.random() < 0.7) {
       for (const conspiracy of state.activeConspiracies) {
         const realCount = getBroadcastCountForPosition(conspiracy, 'REAL');
@@ -226,7 +239,7 @@ const follower: AIStrategy = {
 };
 
 // ── Strategy 4: Cautious ──
-// Focused commit, only broadcasts with 2+ evidence, passes more often
+// Focused commit, only broadcasts when evidence matches forming consensus
 
 const cautious: AIStrategy = {
   name: 'Cautious',
@@ -265,23 +278,29 @@ const cautious: AIStrategy = {
   },
 
   decideBroadcast(state, playerId) {
-    // Only broadcast if we have 2+ evidence on a conspiracy
+    // Only broadcast if we have 2+ evidence on a conspiracy — match evidence position
     for (const conspiracy of state.activeConspiracies) {
       if (getEvidenceCountForPlayer(conspiracy, playerId) >= 2) {
-        return {
-          type: 'BROADCAST',
-          playerId,
-          conspiracyId: conspiracy.card.id,
-          position: pickRandomPosition(),
-        };
+        const evidencePos = getEvidencePosition(conspiracy, playerId)!;
+        // Only broadcast if evidence matches forming consensus (or no consensus yet)
+        const leading = getLeadingPosition(conspiracy);
+        if (!leading || leading.position === evidencePos) {
+          return {
+            type: 'BROADCAST',
+            playerId,
+            conspiracyId: conspiracy.card.id,
+            position: evidencePos,
+          };
+        }
       }
     }
 
-    // Or if consensus is very close and we're on the majority side
+    // Or if consensus is very close and we're on the majority side with matching evidence
     for (const conspiracy of state.activeConspiracies) {
       const leading = getLeadingPosition(conspiracy);
       if (leading && leading.count >= state.consensusThreshold - 1) {
-        if (getEvidenceCountForPlayer(conspiracy, playerId) >= 1) {
+        const evidencePos = getEvidencePosition(conspiracy, playerId);
+        if (evidencePos === leading.position) {
           return {
             type: 'BROADCAST',
             playerId,
@@ -297,7 +316,7 @@ const cautious: AIStrategy = {
 };
 
 // ── Strategy 5: Opportunist ──
-// Spread commit, uses sequential info, bandwagons when consensus is forming
+// Spread commit, bluffs when expected value of joining majority exceeds honest play
 
 const opportunist: AIStrategy = {
   name: 'Opportunist',
@@ -327,7 +346,7 @@ const opportunist: AIStrategy = {
   decideBroadcast(state, playerId) {
     const threshold = state.consensusThreshold;
 
-    // Bandwagon if consensus is forming
+    // Bandwagon if consensus is forming — bluff to join majority even if evidence disagrees
     for (const conspiracy of state.activeConspiracies) {
       const leading = getLeadingPosition(conspiracy);
       if (leading && leading.count >= threshold - 1) {
@@ -340,15 +359,25 @@ const opportunist: AIStrategy = {
       }
     }
 
-    // Otherwise broadcast where we have evidence
+    // Otherwise broadcast where we have evidence, matching evidence position
     for (const conspiracy of state.activeConspiracies) {
       if (getEvidenceCountForPlayer(conspiracy, playerId) > 0) {
+        const evidencePos = getEvidencePosition(conspiracy, playerId)!;
         const leading = getLeadingPosition(conspiracy);
+        // If momentum is against evidence, bluff to join majority (opportunistic)
+        if (leading && leading.position !== evidencePos && leading.count >= 1) {
+          return {
+            type: 'BROADCAST',
+            playerId,
+            conspiracyId: conspiracy.card.id,
+            position: leading.position,
+          };
+        }
         return {
           type: 'BROADCAST',
           playerId,
           conspiracyId: conspiracy.card.id,
-          position: leading ? leading.position : pickRandomPosition(),
+          position: evidencePos,
         };
       }
     }

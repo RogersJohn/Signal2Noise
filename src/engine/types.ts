@@ -12,6 +12,7 @@ export interface EvidenceCard {
   name: string;
   targets: string[]; // conspiracy IDs or ['ALL']
   specific: boolean;
+  position: Position; // 'REAL' or 'FAKE' — what this evidence supports
   flavorText: string;
 }
 
@@ -49,6 +50,7 @@ export interface EvidenceAssignment {
   playerId: string;
   conspiracyId: string;
   specific: boolean;
+  position: Position; // the position this evidence supports
 }
 
 // ── Broadcast Tracking ──
@@ -85,6 +87,7 @@ export interface PlayerConspiracyResult {
   onMajority: boolean;
   hasEvidence: boolean;
   hasSpecificEvidence: boolean;
+  evidenceMatchesBroadcast: boolean; // did their evidence position match their broadcast?
   isFirstMover: boolean;
   points: number;
   credibilityChange: number;

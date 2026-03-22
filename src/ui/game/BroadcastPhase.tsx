@@ -42,9 +42,9 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
           const isCurrent = pid === currentPlayerId;
           return (
             <span key={pid} style={{
-              color: done ? '#555' : isCurrent ? '#0f0' : '#888',
+              color: done ? '#8b95a5' : isCurrent ? '#0f0' : '#9ca3af',
               fontWeight: isCurrent ? 'bold' : 'normal',
-              fontFamily: 'monospace', fontSize: '12px',
+              fontFamily: 'monospace', fontSize: '13px',
             }}>
               {p.name}{done ? ' ✓' : isCurrent ? ' ◀' : ''}
               {i < state.turnOrder.length - 1 ? ' → ' : ''}
@@ -67,11 +67,21 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
             const myEvidence = c.evidenceAssignments.filter(a => a.playerId === humanPlayer.id);
             const hasEvidence = myEvidence.length > 0;
             const hasSpecific = myEvidence.some(a => a.specific);
-            const basePoints = hasEvidence ? (hasSpecific ? 4 : 3) : 2;
+            const realEvidence = myEvidence.filter(a => a.position === 'REAL').length;
+            const fakeEvidence = myEvidence.filter(a => a.position === 'FAKE').length;
+            const evidencePosition = realEvidence >= fakeEvidence ? 'REAL' : 'FAKE';
 
             const realVotes = c.broadcasts.filter(b => b.position === 'REAL').length;
             const fakeVotes = c.broadcasts.filter(b => b.position === 'FAKE').length;
             const threshold = state.consensusThreshold;
+
+            // Calculate projected points for each broadcast choice
+            const realMatchesEvidence = hasEvidence && evidencePosition === 'REAL';
+            const fakeMatchesEvidence = hasEvidence && evidencePosition === 'FAKE';
+            const realBase = hasEvidence ? (realMatchesEvidence ? 3 : 2) : 2;
+            const fakeBase = hasEvidence ? (fakeMatchesEvidence ? 3 : 2) : 2;
+            const realSpecific = (hasSpecific && realMatchesEvidence) ? 1 : 0;
+            const fakeSpecific = (hasSpecific && fakeMatchesEvidence) ? 1 : 0;
 
             return (
               <div key={c.card.id} data-testid={`point-projection-${c.card.id}`} style={styles.conspiracyRow}>
@@ -79,18 +89,26 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
                   <span style={styles.conspiracyName}>{c.card.icon} {c.card.name}</span>
                   <span style={styles.evidenceInfo}>
                     {hasEvidence
-                      ? `${myEvidence.length} card${myEvidence.length > 1 ? 's' : ''} ${hasSpecific ? '(specific 🎯)' : '(generic 📋)'}`
+                      ? `${myEvidence.length} card${myEvidence.length > 1 ? 's' : ''} ${hasSpecific ? '(specific 🎯)' : '(generic 📋)'} — ${realEvidence > 0 && fakeEvidence > 0 ? `${realEvidence} REAL, ${fakeEvidence} FAKE` : evidencePosition}`
                       : 'No evidence'}
                   </span>
                 </div>
                 <div style={styles.projections}>
-                  <span style={styles.projLabel}>
-                    REAL: ~{realVotes + 1 >= threshold ? basePoints : 0} pts
-                    {realVotes > 0 && ` (${realVotes} voted REAL)`}
+                  <span style={{
+                    ...styles.projLabel,
+                    color: realMatchesEvidence ? '#0f0' : '#9ca3af',
+                  }}>
+                    REAL: ~{realVotes + 1 >= threshold ? (realBase + realSpecific) : 0} pts
+                    {realMatchesEvidence ? ' (matches)' : hasEvidence ? ' (bluff)' : ''}
+                    {realVotes > 0 && ` [${realVotes} voted]`}
                   </span>
-                  <span style={styles.projLabel}>
-                    FAKE: ~{fakeVotes + 1 >= threshold ? basePoints : 0} pts
-                    {fakeVotes > 0 && ` (${fakeVotes} voted FAKE)`}
+                  <span style={{
+                    ...styles.projLabel,
+                    color: fakeMatchesEvidence ? '#f44' : '#9ca3af',
+                  }}>
+                    FAKE: ~{fakeVotes + 1 >= threshold ? (fakeBase + fakeSpecific) : 0} pts
+                    {fakeMatchesEvidence ? ' (matches)' : hasEvidence ? ' (bluff)' : ''}
+                    {fakeVotes > 0 && ` [${fakeVotes} voted]`}
                   </span>
                 </div>
                 <div style={styles.buttons}>
@@ -120,28 +138,28 @@ export default function BroadcastPhase({ state, dispatch, isPlayerTurn }: Broadc
 
 const styles: Record<string, React.CSSProperties> = {
   phaseHeader: { padding: '8px', fontFamily: 'monospace' },
-  phaseTitle: { color: '#0af', fontSize: '16px', margin: '0 0 4px' },
-  instruction: { color: '#888', fontSize: '12px', margin: 0 },
+  phaseTitle: { color: '#0af', fontSize: '18px', margin: '0 0 4px' },
+  instruction: { color: '#9ca3af', fontSize: '13px', margin: 0 },
   turnOrder: { padding: '4px 8px' },
   actions: { padding: '8px', fontFamily: 'monospace' },
   conspiracyRow: { background: '#1a1a2e', borderRadius: '4px', padding: '8px', marginBottom: '8px' },
   conspiracyInfo: { display: 'flex', justifyContent: 'space-between', marginBottom: '4px' },
-  conspiracyName: { color: '#fff', fontSize: '12px' },
-  evidenceInfo: { color: '#888', fontSize: '11px' },
+  conspiracyName: { color: '#fff', fontSize: '14px' },
+  evidenceInfo: { color: '#9ca3af', fontSize: '12px' },
   projections: { display: 'flex', gap: '16px', marginBottom: '6px' },
-  projLabel: { color: '#666', fontSize: '10px' },
+  projLabel: { fontSize: '12px' },
   buttons: { display: 'flex', gap: '8px' },
   realButton: {
     background: '#0a3d0a', border: '1px solid #0f0', color: '#0f0',
-    fontFamily: 'monospace', padding: '4px 16px', cursor: 'pointer', borderRadius: '3px',
+    fontFamily: 'monospace', padding: '4px 16px', cursor: 'pointer', borderRadius: '3px', fontSize: '13px',
   },
   fakeButton: {
     background: '#3d0a0a', border: '1px solid #f44', color: '#f44',
-    fontFamily: 'monospace', padding: '4px 16px', cursor: 'pointer', borderRadius: '3px',
+    fontFamily: 'monospace', padding: '4px 16px', cursor: 'pointer', borderRadius: '3px', fontSize: '13px',
   },
   passButton: {
     background: '#2a2a0a', border: '1px solid #fa0', color: '#fa0',
-    fontFamily: 'monospace', fontSize: '13px', padding: '8px 24px',
+    fontFamily: 'monospace', fontSize: '14px', padding: '8px 24px',
     cursor: 'pointer', marginTop: '12px', borderRadius: '4px', width: '100%',
   },
 };

@@ -42,6 +42,9 @@ export default function PlayerHand({ cards, selectedCardId, onSelectCard, disabl
               <div style={card.specific ? styles.typeSpecific : styles.typeGeneric}>
                 {card.specific ? '🎯 SPECIFIC' : '📋 GENERIC'}
               </div>
+              <div style={card.position === 'REAL' ? styles.positionReal : styles.positionFake}>
+                {card.position === 'REAL' ? 'Supports REAL ✓' : 'Supports FAKE ✗'}
+              </div>
               <div style={styles.cardTargets}>
                 {card.targets.includes('ALL') ? 'Supports: ALL' : `Supports: ${card.targets.join(', ')}`}
               </div>
@@ -56,20 +59,28 @@ export default function PlayerHand({ cards, selectedCardId, onSelectCard, disabl
 
 const styles: Record<string, React.CSSProperties> = {
   container: { padding: '8px' },
-  title: { color: '#0f0', fontFamily: 'monospace', fontSize: '14px', margin: '0 0 8px' },
-  emptyMsg: { color: '#666', fontFamily: 'monospace', fontSize: '12px', fontStyle: 'italic' },
+  title: { color: '#0f0', fontFamily: 'monospace', fontSize: '15px', margin: '0 0 8px' },
+  emptyMsg: { color: '#8b95a5', fontFamily: 'monospace', fontSize: '13px', fontStyle: 'italic' },
   cardList: { display: 'flex', flexWrap: 'wrap', gap: '8px' },
   card: {
     background: '#1a1a2e', border: '1px solid #333', borderRadius: '4px', padding: '8px',
-    width: '180px', cursor: 'pointer', textAlign: 'left', fontFamily: 'monospace',
-    color: '#ccc', fontSize: '11px', transition: 'all 0.2s',
+    width: '220px', cursor: 'pointer', textAlign: 'left', fontFamily: 'monospace',
+    color: '#d1d5db', fontSize: '12px', transition: 'all 0.2s',
   },
   selected: { border: '2px solid #0f0', background: '#1a2a1a', transform: 'scale(1.03)' },
   otherDimmed: { opacity: 0.5 },
   disabled: { opacity: 0.5, cursor: 'not-allowed' },
-  cardName: { fontWeight: 'bold', color: '#fff', marginBottom: '4px', fontSize: '12px' },
-  typeSpecific: { color: '#fa0', marginBottom: '2px' },
-  typeGeneric: { color: '#888', marginBottom: '2px' },
-  cardTargets: { color: '#666', marginBottom: '4px', fontSize: '10px' },
-  flavorText: { fontStyle: 'italic', color: '#555', fontSize: '10px' },
+  cardName: { fontWeight: 'bold', color: '#fff', marginBottom: '4px', fontSize: '14px' },
+  typeSpecific: { color: '#fa0', marginBottom: '2px', fontSize: '12px' },
+  typeGeneric: { color: '#9ca3af', marginBottom: '2px', fontSize: '12px' },
+  positionReal: {
+    color: '#0f0', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px',
+    background: '#0a2a0a', padding: '2px 6px', borderRadius: '3px', display: 'inline-block',
+  },
+  positionFake: {
+    color: '#f44', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px',
+    background: '#2a0a0a', padding: '2px 6px', borderRadius: '3px', display: 'inline-block',
+  },
+  cardTargets: { color: '#9ca3af', marginBottom: '4px', fontSize: '12px' },
+  flavorText: { fontStyle: 'italic', color: '#8b95a5', fontSize: '12px' },
 };
