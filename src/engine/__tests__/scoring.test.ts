@@ -39,10 +39,10 @@ describe('calculatePlayerScore', () => {
     expect(s.base).toBe(2);
   });
 
-  it('first mover bonus: +1', () => {
+  it('first mover bonus is nerfed to 0', () => {
     const s = calculatePlayerScore(true, true, false, true, 2, 2);
-    expect(s.firstMoverBonus).toBe(1);
-    expect(s.total).toBe(4);
+    expect(s.firstMoverBonus).toBe(0);
+    expect(s.total).toBe(3);
   });
 
   it('consensus size bonus: +1 per player beyond threshold', () => {
@@ -56,10 +56,10 @@ describe('calculatePlayerScore', () => {
     expect(s.total).toBe(0);
   });
 
-  it('max scoring: specific + first mover + consensus bonus', () => {
+  it('max scoring: specific + consensus bonus (first mover nerfed)', () => {
     const s = calculatePlayerScore(true, true, true, true, 4, 2);
-    // base 3 + specific 1 + first mover 1 + consensus (4-2)=2 = 7
-    expect(s.total).toBe(7);
+    // base 3 + specific 1 + first mover 0 + consensus (4-2)=2 = 6
+    expect(s.total).toBe(6);
   });
 });
 
@@ -156,7 +156,7 @@ describe('resolveConspiracy', () => {
     const p2 = result.playerResults.find(r => r.playerId === 'p2')!;
     expect(p1.isFirstMover).toBe(true);
     expect(p2.isFirstMover).toBe(false);
-    expect(p1.points).toBe(p2.points + 1); // first mover bonus
+    expect(p1.points).toBe(p2.points); // first mover bonus nerfed to 0
   });
 });
 

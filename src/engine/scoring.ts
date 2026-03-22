@@ -24,7 +24,7 @@ export function calculatePlayerScore(
 
   const base = hasEvidence ? 3 : 2;
   const specificBonus = hasSpecificEvidence ? 1 : 0;
-  const firstMoverBonus = isFirstMover ? 1 : 0;
+  const firstMoverBonus = 0;
   const consensusSizeBonus = Math.max(0, majorityCount - threshold);
   const total = base + specificBonus + firstMoverBonus + consensusSizeBonus;
 

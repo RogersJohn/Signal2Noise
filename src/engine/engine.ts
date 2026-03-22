@@ -242,12 +242,25 @@ function handlePass(state: GameState, playerId: string): GameState {
   const allBroadcasted = newBroadcasted.length === state.players.length;
   const nextIndex = allBroadcasted ? state.currentPlayerIndex : state.currentPlayerIndex + 1;
 
+  // Pass draws 1 card (respecting max hand size)
+  const player = state.players.find(p => p.id === playerId)!;
+  let newEvidenceDeck = [...state.evidenceDeck];
+  let newPlayers = state.players;
+  if (player.hand.length < MAX_HAND_SIZE && newEvidenceDeck.length > 0) {
+    const drawn = draw(newEvidenceDeck, 1);
+    newPlayers = state.players.map(p =>
+      p.id === playerId ? { ...p, hand: [...p.hand, ...drawn] } : p
+    );
+  }
+
   return {
     ...state,
+    players: newPlayers,
+    evidenceDeck: newEvidenceDeck,
     broadcastedPlayers: newBroadcasted,
     currentPlayerIndex: nextIndex,
     phase: allBroadcasted ? 'RESOLVE' : 'BROADCAST',
-    log: [...state.log, addLog(state, playerId, 'PASS', 'Passed on broadcasting')],
+    log: [...state.log, addLog(state, playerId, 'PASS', 'Passed on broadcasting, drew 1 card')],
   };
 }
 
