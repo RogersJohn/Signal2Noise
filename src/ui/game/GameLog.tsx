@@ -6,17 +6,8 @@ interface GameLogProps {
 }
 
 function formatEntry(entry: LogEntry): string {
-  const { action, details } = entry;
-  switch (action) {
-    case 'ASSIGN_EVIDENCE': return details;
-    case 'DONE_COMMITTING': return details;
-    case 'BROADCAST': return details;
-    case 'PASS': return details;
-    case 'RESOLVE': return details;
-    case 'NEXT_ROUND': return details;
-    case 'GAME_OVER': return '🏆 Game complete!';
-    default: return details;
-  }
+  if (entry.action === 'GAME_OVER') return '🏆 Game complete!';
+  return entry.details;
 }
 
 export default function GameLog({ entries }: GameLogProps) {

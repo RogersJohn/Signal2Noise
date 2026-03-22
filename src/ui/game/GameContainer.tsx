@@ -115,6 +115,24 @@ export default function GameContainer({ playerName, aiCount, onBack }: GameConta
 
     return clearTimer;
   }, [uiPhase, state, delay]);
+
+  // Transition from BROADCAST_PLAYER to BROADCAST_AI after human broadcasts
+  useEffect(() => {
+    if (uiPhase !== 'BROADCAST_PLAYER') return;
+    if (state.phase !== 'BROADCAST') return;
+
+    const humanPlayer = state.players.find(p => p.isHuman);
+    if (!humanPlayer) return;
+
+    if (state.broadcastedPlayers.includes(humanPlayer.id)) {
+      const currentId = getCurrentPlayerId(state);
+      const nextPlayer = state.players.find(p => p.id === currentId);
+      if (nextPlayer && !nextPlayer.isHuman) {
+        setUIPhase('BROADCAST_AI');
+      }
+    }
+  }, [uiPhase, state, getCurrentPlayerId, setUIPhase]);
+
   // Transition to RESOLVE when engine enters RESOLVE
   useEffect(() => {
     if (state.phase === 'RESOLVE' && uiPhase !== 'RESOLVE_DISPLAY') {
